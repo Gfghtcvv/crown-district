@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CROWN DISTRICT | Premium Streetwear</title>
+
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --gold:#d4af37;
+    --gold2:#f5d76e;
+    --black:#050505;
+    --card:#101010;
+    --border:#292929;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--black);
+    color:#fff;
+}
+
+header{
+    background:#050505;
+    border-bottom:1px solid var(--gold);
+    padding:18px 15px;
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.header-inner{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.logo-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+    border:2px solid var(--gold);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--gold);
+    font-size:18px;
+    font-weight:bold;
+}
+
+.brand h1{
+    color:var(--gold2);
+    font-size:20px;
+    letter-spacing:2px;
+}
+
+.brand p{
+    color:#aaa;
+    font-size:11px;
+    margin-top:3px;
+}
+
+.search{
+    width:240px;
+    padding:11px 14px;
+    border:1px solid var(--gold);
+    border-radius:25px;
+    background:#111;
+    color:white;
+    outline:none;
+}
+
+.search::placeholder{
+    color:#888;
+}
+
+.hero{
+    max-width:1200px;
+    margin:auto;
+    padding:60px 20px 35px;
+    text-align:center;
+}
+
+.hero h2{
+    font-size:42px;
+    color:var(--gold2);
+    letter-spacing:3px;
+}
+
+.hero p{
+    color:#aaa;
+    margin-top:12px;
+}
+
+.gold-line{
+    width:80px;
+    height:3px;
+    background:var(--gold);
+    margin:20px auto;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.status{
+    text-align:center;
+    padding:12px;
+    margin-bottom:20px;
+    color:#aaa;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:20px;
+}
+
+.product{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.product:hover{
+    transform:translateY(-5px);
+    border-color:var(--gold);
+}
+
+.product-img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    display:block;
+    background:#171717;
+}
+
+.product-info{
+    padding:17px;
+}
+
+.product-name{
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.price{
+    color:var(--gold2);
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.description{
+    color:#999;
+    font-size:13px;
+    line-height:1.5;
+    min-height:40px;
+}
+
+.buttons{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.btn{
+    flex:1;
+    padding:11px 8px;
+    border-radius:8px;
+    border:1px solid var(--gold);
+    cursor:pointer;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.details-btn{
+    background:transparent;
+    color:var(--gold2);
+}
+
+.whatsapp-btn{
+    background:var(--gold);
+    color:#000;
+}
+
+.btn:hover{
+    opacity:.85;
+}
+
+.empty{
+    text-align:center;
+    color:#888;
+    padding:50px 10px;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.88);
+    z-index:500;
+    padding:20px;
+    overflow:auto;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    width:100%;
+    max-width:500px;
+    background:#101010;
+    border:1px solid var(--gold);
+    border-radius:15px;
+    overflow:hidden;
+    position:relative;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.modal-content img{
+    width:100%;
+    max-height:400px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.modal-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#000;
+    color:var(--gold2);
+    border:none;
+    font-size:24px;
+    cursor:pointer;
+    z-index:2;
+}
+
+#modalTitle{
+    color:var(--gold2);
+    font-size:25px;
+    margin:15px 0 10px;
+}
+
+#modalPrice{
+    color:var(--gold);
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+#modalDescription{
+    color:#bbb;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+
+.full-btn{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:8px;
+    background:var(--gold);
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* ADMIN */
+
+.admin-section{
+    display:none;
+    max-width:700px;
+    margin:60px auto;
+    padding:25px;
+    border:1px solid var(--gold);
+    border-radius:15px;
+    background:#0b0b0b;
+}
+
+.admin-section h2{
+    color:var(--gold2);
+    margin-bottom:20px;
+}
+
+.input{
+    width:100%;
+    padding:13px;
+    margin-bottom:12px;
+    border:1px solid #333;
+    border-radius:8px;
+    background:#151515;
+    color:#fff;
+    outline:none;
+}
+
+.input:focus{
+    border-color:var(--gold);
+}
+
+.admin-btn{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:8px;
+    background:var(--gold);
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:10px;
+}
+
+.logout{
+    background:#222;
+    color:#fff;
+    border:1px solid #444;
+}
+
+.cancel{
+    background:#333;
+    color:#fff;
+}
+
+.admin-product{
+    border:1px solid #292929;
+    padding:15px;
+    margin-top:15px;
+    border-radius:10px;
+}
+
+.admin-product h3{
+    color:var(--gold2);
+    margin-bottom:8px;
+}
+
+.admin-product p{
+    color:#aaa;
+    margin:5px 0;
+}
+
+.admin-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.admin-actions button{
+    flex:1;
+    padding:9px;
+    border:1px solid var(--gold);
+    background:#111;
+    color:var(--gold2);
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.delete-btn{
+    border-color:#aa3333 !important;
+    color:#ff7777 !important;
+}
+
+.message{
+    text-align:center;
+    margin:10px 0;
+    color:var(--gold2);
+    font-size:14px;
+}
+
+footer{
+    margin-top:60px;
+    padding:30px 15px;
+    text-align:center;
+    border-top:1px solid #222;
+    color:#777;
+}
+
+footer strong{
+    color:var(--gold);
+}
+
+@media(max-width:600px){
+
+    .header-inner{
+        flex-direction:column;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .hero h2{
+        font-size:30px;
+    }
+
+    .product-img{
+        height:260px;
+    }
+
+    .admin-section{
+    display:none;
+    margin:40px 15px;
+    }
+}
+
+
+
+
+
+
+</style>
+
+<body>
+
+<header>
+    <div class="header-inner">
+
+        <div class="logo-box">
+
+            <div class="logo">
+                CD
+            </div>
+
+            <div class="brand">
+                <h1>CROWN DISTRICT</h1>
+                <p>PREMIUM STREETWEAR</p>
+            </div>
+
+        </div>
+
+        <input
+            type="text"
+            id="search"
+            class="search"
+            placeholder="Search products..."
+        >
+
+    </div>
+</header>
+
+<section class="hero">
+
+    <h2>CROWN DISTRICT</h2>
+
+    <div class="gold-line"></div>
+
+    <p>
+        Premium Streetwear • Quality • Style
+    </p>
+
+</section>
+
+<div class="container">
+
+    <div id="status" class="status">
+        Loading products...
+    </div>
+
+    <div id="products" class="products"></div>
+
+</div>
+
+
+<!-- PRODUCT DETAILS MODAL -->
+<!-- PRODUCT DETAILS MODAL -->
+
+<div id="productModal" class="modal">
+
+    <div class="modal-box">
+
+        <span
+            class="close"
+            onclick="closeModal()">
+            ×
+        </span>
+
+        <img
+            id="modalImage"
+            src=""
+            alt="Product"
+        >
+
+        <h2
+            id="modalTitle"
+            class="modal-title">
+        </h2>
+
+        <div
+            id="modalPrice"
+            class="modal-price">
+            Rs. 0
+        </div>
+
+        <p
+            id="modalDescription"
+            class="modal-description">
+        </p>
+
+        <button
+            id="modalOrder"
+            class="full-btn">
+            ORDER ON WHATSAPP
+        </button>
+
+    </div>
+
+</div>
+
+
+
+
+<!-- ADMIN SECTION -->
+
+<section class="admin-section">
+
+    <h2>ADMIN PANEL</h2>
+
+    <!-- LOGIN -->
+
+    <div id="loginBox" style="display:none;">
+
+        <input
+            id="adminEmail"
+            class="input"
+            type="email"
+            placeholder="Admin Email"
+        >
+
+        <input
+            id="adminPassword"
+            class="input"
+            type="password"
+            placeholder="Admin Password"
+        >
+
+        <button
+            class="admin-btn"
+            onclick="adminLogin()">
+            LOGIN
+        </button>
+
+        <p
+            id="loginMessage"
+            class="message">
+        </p>
+
+    </>
+
+
+    <!-- ADMIN PANEL -->
+
+    <div
+        id="adminPanel"
+        style="display:none;">
+
+        <h3
+            style="color:#d4af37;margin-bottom:15px;">
+            ADD / UPDATE PRODUCT
+        </h3>
+
+        <input
+            id="productName"
+            class="input"
+            placeholder="Product Name"
+        >
+
+        <input
+            id="productPrice"
+            class="input"
+            type="number"
+            placeholder="Price"
+        >
+
+        <input
+            id="productImage"
+            class="input"
+            placeholder="Direct Image URL"
+        >
+
+        <textarea
+            id="productDescription"
+            class="input"
+            rows="4"
+            placeholder="Product Description"></textarea>
+
+        <button
+            id="saveProductBtn"
+            class="admin-btn"
+            onclick="saveProduct()">
+            ADD PRODUCT
+        </button>
+
+        <button
+            id="cancelEditBtn"
+            class="admin-btn cancel"
+            onclick="cancelEdit()"
+            style="display:none;">
+            CANCEL EDIT
+        </button>
+
+        <button
+            class="admin-btn logout"
+            onclick="adminLogout()">
+            LOGOUT
+        </button>
+
+        <div id="adminProducts"></div>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    © 2026
+    <strong>CROWN DISTRICT</strong>
+    — Premium Streetwear
+
+</footer>
+
+
+<script>
+
+/* =====================================
+   FIREBASE
+===================================== */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAF28BfcGnEsVRubNyTgxi7L63fA55aKlc",
+    authDomain: "crown-district.firebaseapp.com",
+    projectId: "crown-district",
+    storageBucket: "crown-district.firebasestorage.app",
+    messagingSenderId: "206237211893",
+    appId: "1:206237211893:web:56b74db12ce91829dc39bc",
+    measurementId: "G-2P6KXSVH0T"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+  db.settings({
+    experimentalAutoDetectLongPolling: true
+});
+const auth = firebase.auth();
+  db.collection("products").limit(1).get()
+    .then(function(snapshot){
+        console.log("TEST SUCCESS");
+        console.log("Products found:", snapshot.size);
+    })
+    .catch(function(error){
+        console.error("TEST FIRESTORE ERROR:", error);
+    });
+/* =====================================
+   ADMIN LOGIN
+===================================== */
+
+function adminLogin(){
+
+    const email =
+        document.getElementById("adminEmail").value.trim();
+
+    const password =
+        document.getElementById("adminPassword").value;
+
+    const message =
+        document.getElementById("loginMessage");
+
+    if(!email || !password){
+        message.textContent = "Email aur password enter karo.";
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(function(){
+
+            message.textContent =
+                "Login successful!";
+
+        })
+        .catch(function(error){
+
+            console.error("LOGIN ERROR:", error);
+
+            message.textContent =
+                error.message;
+
+        });
+}
+
+
+/* =====================================
+   ADMIN AUTH STATE
+===================================== */
+
+auth.onAuthStateChanged(function(user){
+
+    const loginBox =
+        document.getElementById("loginBox");
+
+    const adminPanel =
+        document.getElementById("adminPanel");
+
+    if(user && user.email === "muhammadshehroz2008@gmail.com"){
+
+        isAdmin = true;
+
+        if(loginBox){
+            loginBox.style.display = "none";
+        }
+
+        if(adminPanel){
+            adminPanel.style.display = "block";
+        }
+
+    }else{
+
+        isAdmin = false;
+
+        if(loginBox){
+            loginBox.style.display = "block";
+        }
+
+        if(adminPanel){
+            adminPanel.style.display = "none";
+        }
+
+    }
+
+    updateAdminUI();
+
+});
+auth.onAuthStateChanged(function(user){
+
+    const loginBox =
+        document.getElementById("loginBox");
+
+    const adminPanel =
+        document.getElementById("adminPanel");
+
+    if(user && user.email === "muhammadshehroz2008@gmail.com"){
+
+        isAdmin = true;
+
+        if(loginBox){
+            loginBox.style.display = "none";
+        }
+
+        if(adminPanel){
+            adminPanel.style.display = "block";
+        }
+
+    }else{
+
+        isAdmin = false;
+
+        if(loginBox){
+            loginBox.style.display = "block";
+        }
+
+        if(adminPanel){
+            adminPanel.style.display = "none";
+        }
+
+    }
+
+    updateAdminUI();
+
+});
+/* =====================================
+   ADMIN LOGOUT
+===================================== */
+
+function adminLogout(){
+
+    auth.signOut();
+
+}
+const WHATSAPP_NUMBER = "923358134489";
+
+let allProducts = [];
+let editingId = null;
+  let isAdmin = false;
+  function updateAdminUI() {
+    const adminSection = document.querySelector(".admin-section");
+
+    if (adminSection) {
+        adminSection.style.display = isAdmin ? "block" : "none";
+    }
+
+    displayProducts(allProducts);
+  }
+function saveProduct(){
+
+    const name =
+        document.getElementById("productName").value.trim();
+
+    const price =
+        document.getElementById("productPrice").value.trim();
+
+    const image =
+        document.getElementById("productImage").value.trim();
+
+    const description =
+        document.getElementById("productDescription").value.trim();
+
+    if(!name || !price || !image){
+
+        alert("Product Name, Price aur Image URL bharo.");
+
+        return;
+    }
+
+    db.collection("products").add({
+
+        name: name,
+        price: price,
+        image: image,
+        description: description,
+        createdAt:
+            firebase.firestore.FieldValue.serverTimestamp()
+
+    })
+    .then(function(){
+
+        alert("Product successfully added!");
+
+        document.getElementById("productName").value = "";
+        document.getElementById("productPrice").value = "";
+        document.getElementById("productImage").value = "";
+        document.getElementById("productDescription").value = "";
+
+        loadProducts();
+
+    })
+    .catch(function(error){
+
+        console.error("PRODUCT ERROR:", error);
+
+        alert(
+            "Product add nahi hua: " +
+            error.message
+        );
+
+    });
+}
+
+/* =====================================
+   ESCAPE HTML
+===================================== */
+
+/**
+ * @param {any} text
+ * @returns {string}
+ */
+function escapeHtml(text){
+
+    if(text === null || text === undefined){
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+/* =====================================
+   LOAD PRODUCTS
+===================================== */
+async function loadProducts(){
+
+    const status = document.getElementById("status");
+
+    if(!status){
+        console.error("STATUS ELEMENT NOT FOUND");
+        return;
+    }
+
+    status.textContent = "Connecting to Firestore...";
+
+    try {
+
+        console.log("Starting Firestore request...");
+
+        const snapshot = await db
+            .collection("products")
+            .get();
+
+        console.log(
+            "FIRESTORE SUCCESS:",
+            snapshot.size,
+            "products found"
+        );
+
+        allProducts = [];
+
+        snapshot.forEach(function(doc){
+
+            console.log("PRODUCT:", doc.id, doc.data());
+
+            allProducts.push({
+                id: doc.id,
+                ...doc.data()
+            });
+
+        });
+
+        allProducts.sort(function(a, b){
+
+            const aTime =
+                a.createdAt &&
+                typeof a.createdAt.toMillis === "function"
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const bTime =
+                b.createdAt &&
+                typeof b.createdAt.toMillis === "function"
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return bTime - aTime;
+
+        });
+
+        console.log(
+            "TOTAL PRODUCTS:",
+            allProducts.length
+        );
+
+        displayProducts(allProducts);
+
+        if(allProducts.length === 0){
+
+            status.textContent =
+                "No products yet.";
+
+        }else{
+
+            status.textContent =
+                allProducts.length +
+                " product(s) available";
+
+        }
+
+    } catch(error){
+
+        console.error(
+            "FIRESTORE ERROR:",
+            error
+        );
+
+        status.textContent =
+            "Firebase error: " +
+            error.message;
+
+    }
+
+}
+
+    
+
+
+
+/* =====================================
+   DISPLAY PRODUCTS
+===================================== */
+
+/**
+ * @param {Array<any>} products
+ */
+function displayProducts(products){
+
+    const container =
+        document.getElementById("products");
+
+    if(!container){
+        return;
+    }
+
+    if(products.length === 0){
+
+        container.innerHTML =
+            '<div class="empty">No product found.</div>';
+
+        return;
+    }
+
+    container.innerHTML =
+        products
+            .map(
+                /**
+                 * @param {any} product
+                 */
+                function(product){
+
+                    const name =
+                        escapeHtml(
+                            product.name || "Product"
+                        );
+
+                    const price =
+                        escapeHtml(
+                            product.price || "0"
+                        );
+
+                    const description =
+                        escapeHtml(
+                            product.description || ""
+                        );
+
+                    const image =
+                        escapeHtml(
+                            product.image || ""
+                        );
+
+                    const productId =
+                        escapeHtml(
+                            String(product.id || "")
+                        );
+
+                    return `
+                        <div class="product">
+
+                            <img
+                                class="product-img"
+                                src="${image}"
+                                alt="${name}"
+                                onerror="this.style.display='none'"
+                            >
+
+                            <div class="product-info">
+
+                                <div class="product-name">
+                                    ${name}
+                                </div>
+
+                                <div class="price">
+                                    Rs. ${price}
+                                </div>
+
+                                <div class="description">
+                                    ${description}
+                                </div>
+
+                                <div class="buttons">
+${isAdmin ? `
+    <button
+        class="btn"
+        onclick="editProduct('${productId}')">
+        ✏️ EDIT
+    </button>
+
+    <button
+        class="btn"
+        onclick="deleteProduct('${productId}')">
+        🗑️ DELETE
+    </button>
+` : ""}
+                                    <button
+                                        class="btn details-btn"
+                                        onclick="openDetails('${productId}')">
+                                        VIEW DETAILS
+                                    </button>
+
+                                    <button
+                                        class="btn whatsapp-btn"
+                                        onclick="orderWhatsApp('${productId}')">
+                                        WHATSAPP
+                                    </button
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+}
+
+async function deleteProduct(id) {
+    if (!confirm("Delete this product?")) return;
+
+    try {
+        await db.collection("products").doc(id).delete();
+        alert("Product deleted!");
+        loadProducts();
+    } catch (error) {
+        alert("Delete error: " + error.message);
+    }
+}
+
+async function editProduct(id) {
+    const product = allProducts.find(function(p) {
+        return p.id === id;
+    });
+
+    if (!product) return;
+
+    const name = prompt("Product name:", product.name || "");
+    if (name === null) return;
+
+    const price = prompt("Price:", product.price || "");
+    if (price === null) return;
+
+    const description = prompt(
+        "Description:",
+        product.description || ""
+    );
+    if (description === null) return;
+
+    try {
+        await db.collection("products").doc(id).update({
+            name: name,
+            price: price,
+            description: description
+        });
+
+        alert("Product updated!");
+        loadProducts();
+
+    } catch (error) {
+        alert("Edit error: " + error.message);
+    }
+}
+/* =====================================
+   SEARCH
+===================================== */
+
+const searchInput =
+    document.getElementById("search");
+
+if(searchInput){
+
+    searchInput.addEventListener(
+        "input",
+        /**
+         * @param {Event} event
+         */
+        function(event){
+
+            const target =
+                event.target;
+
+            const query =
+                target &&
+                "value" in target
+                ? String(target.value).toLowerCase().trim()
+                : "";
+
+            if(!query){
+
+                displayProducts(allProducts);
+
+                return;
+            }
+
+            const filtered =
+                allProducts.filter(
+                    /**
+                     * @param {any} product
+                     */
+                    function(product){
+
+                        const name =
+                            String(
+                                product.name || ""
+                            ).toLowerCase();
+
+                        const description =
+                            String(
+                                product.description || ""
+                            ).toLowerCase();
+
+                        return (
+                            name.includes(query) ||
+                            description.includes(query)
+                        );
+                    }
+                );
+
+            displayProducts(filtered);
+
+        }
+    );
+}
+
+
+/* =====================================
+   PRODUCT DETAILS
+===================================== */
+
+/**
+ * @param {string} id
+ */
+function openDetails(id){
+
+    const product =
+    allProducts.find(
+        /**
+         * @param {any} item
+         */
+        function(item){
+
+            return String(item.id) === String(id);
+
+        }
+    );
+
+if(!product){
+    return;
+}
+
+const modal =
+    document.getElementById("productModal");
+
+const modalImage =
+    document.getElementById("modalImage");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const modalPrice =
+    document.getElementById("modalPrice");
+
+const modalDescription =
+    document.getElementById("modalDescription");
+
+const modalOrder =
+    document.getElementById("modalOrder");
+
+if(
+    !modal ||
+    !modalImage ||
+    !modalTitle ||
+    !modalPrice ||
+    !modalDescription ||
+    !modalOrder
+){
+    return;
+}
+
+modalImage.src =
+    product.image || "";
+
+modalTitle.textContent =
+    product.name || "Product";
+
+modalPrice.textContent =
+    "Rs. " +
+    (product.price || "0");
+
+modalDescription.textContent =
+    product.description || "";
+
+modalOrder.onclick =
+    function(){
+
+        orderWhatsApp(
+            String(product.id)
+        );
+
+    };
+
+modal.style.display =
+    "flex";
+}
+
+
+function closeModal(){
+
+    const modal =
+        document.getElementById("productModal");
+
+    if(modal){
+
+        modal.style.display =
+            "none";
+    }
+}
+
+
+window.addEventListener(
+    "click",
+    /**
+     * @param {MouseEvent} event
+     */
+    function(event){
+
+        const modal =
+            document.getElementById("productModal");
+
+        if(
+            modal &&
+            event.target === modal
+        ){
+
+            closeModal();
+
+        }
+    }
+);
+
+
+/* =====================================
+   WHATSAPP ORDER
+===================================== */
+
+/**
+ * @param {string} id
+ */
+function orderWhatsApp(id){
+
+    const product =
+        allProducts.find(
+            /**
+             * @param {any} item
+             */
+            function(item){
+
+                return String(item.id) === String(id);
+
+            }
+        );
+
+    if(!product){
+        return;
+    }
+
+    const message =
+`Hello CROWN DISTRICT,
+
+I want to order this product.
+
+Product: ${product.name || ""}
+Price: Rs. ${product.price || ""}
+
+Product Details:
+${product.description || ""}
+
+Thank you.
+`;
+
+    const url =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(message);
+
+    window.open(url, "_blank");
+}
+  /* LOAD PRODUCTS WHEN PAGE OPENS */
+window.addEventListener("load", function(){
+    loadProducts();
+});
+  </script>
+
+</body>
+</html>
