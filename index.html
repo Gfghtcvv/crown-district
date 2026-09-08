@@ -137,6 +137,11 @@ img{display:block}
 .oc-actions button{padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #111}
 .oc-reply-box{width:100%;margin-top:8px}
 .message{font-size:13px;margin-top:8px}
+.color-btn{border:1px solid #ccc;padding:8px 14px;font-size:13px}
+.color-btn.sel{background:#111;color:#fff;border-color:#111}
+.color-btn.disabled{opacity:.45}
+.sold-badge{background:#c0392b;color:#fff;font-size:11px;padding:4px 12px;letter-spacing:1px;display:inline-block;margin-bottom:10px}
+.track-item{background:#fff;border:1px solid #eee;padding:14px;margin-bottom:10px}
 .empty{text-align:center;color:#999;padding:30px;font-size:14px}
 </style>
 </head>
@@ -185,6 +190,7 @@ img{display:block}
     <a>Exchange &amp; Returns</a><a>Retail Stores</a>
     <a>Shipping &amp; Delivery</a><a>Contact Us</a>
     <a>How To Buy</a><a onclick="openAdminLogin()" style="cursor:pointer">Admin</a>
+    <a onclick="openTrack()" style="cursor:pointer">Track Order</a>
   </div>
   <div class="f-support">
     <h3>CUSTOMER SUPPORT</h3>
@@ -207,6 +213,8 @@ img{display:block}
         <p class="pdp-cat" id="pdpCat"></p>
 <h1 class="pdp-name" id="pdpName"></h1>
 <div class="pdp-price" id="pdpPrice"></div>
+                <div id="pdpSold" class="sold-badge" style="display:none">SOLD OUT</div>
+        <div class="pdp-sizes" id="pdpColors"></div>
         <div class="pdp-sizes" id="pdpSizes"></div>
         <p class="pdp-desc" id="pdpDesc"></p>
         <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button><div class="acc-body">S: 38-40 inch chest<br>M: 40-42 inch chest<br>L: 42-44 inch chest<br>XL: 44-46 inch chest<br>XXL: 46-48 inch chest</div></div>
@@ -236,7 +244,7 @@ img{display:block}
     <div class="modal-head"><h2>CHECKOUT</h2><button onclick="closeCheckout()">&#10005;</button></div>
     <input id="coName" placeholder="Full Name">
     <input id="coPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
-    <input id="coEmail" type="email" placeholder="Email (for order updates)">
+    <input id="coEmail" type="email" placeholder="Email (required)">
     <input id="coAddress" placeholder="Full Address">
     <input id="coCity" placeholder="City">
     <textarea id="coNotes" rows="2" placeholder="Notes (optional)"></textarea>
@@ -284,6 +292,14 @@ img{display:block}
     <p class="message" id="settingsMsg"></p>
   </div>
 </div>
+<div id="trackModal" class="modal">
+  <div class="modal-card">
+    <div class="modal-head"><h2>TRACK ORDER</h2><button onclick="closeTrack()">&#10005;</button></div>
+    <input id="trackPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
+    <button class="full-btn" onclick="trackOrder()">TRACK ORDER</button>
+    <div id="trackResult" style="margin-top:14px"></div>
+  </div>
+</div>
 <div id="productFormModal" class="modal">
   <div class="modal-card">
     <div class="modal-head"><h2 id="pfTitle">ADD PRODUCT</h2><button onclick="closeProductForm()">&#10005;</button></div>
@@ -296,6 +312,9 @@ img{display:block}
     <input id="pfImg2" placeholder="Image 2 URL (optional)">
     <input id="pfImg3" placeholder="Image 3 URL (optional)">
     <div id="pfSizesBox" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
+        <div id="pfColors" style="margin-top:10px"></div>
+    <button type="button" class="full-btn" onclick="addColorRow()">+ ADD COLOR</button>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px"><input type="checkbox" id="pfSoldOut" style="width:auto;margin:0"> PRODUCT SOLD OUT</label>
     <textarea id="pfDesc" rows="3" placeholder="Description"></textarea>
     <button class="full-btn" onclick="saveProduct()">SAVE PRODUCT</button>
     <p class="message" id="pfMsg"></p>
@@ -306,7 +325,8 @@ const ADMIN_EMAIL = "muhammadshehroz2008@gmail.com";
 const ADMIN_PASSWORD = "1127shehroz";
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
 const EMAILJS_SERVICE_ID = "service_g55ha9n";
-const EMAILJS_TEMPLATE_ID = "template_6612i5d";
+const EMAILJS_TEMPLATE_ID = "template_5p2fqnz";
+const EMAILJS_REPLY_TEMPLATE_ID = "template_4303qye";
 const firebaseConfig = {
   apiKey: "AIzaSyAF28BfcGnEsVRubNyTgxi7L63fA55aKlc",
   authDomain: "crown-district.firebaseapp.com",
@@ -358,6 +378,10 @@ function renderDrawer(){
     d.appendChild(a);
   });
   const a2 = document.createElement("a");
+    const a1 = document.createElement("a");
+  a1.textContent = "TRACK ORDER";
+  a1.onclick = () => { openTrack(); toggleDrawer(); };
+  d.appendChild(a1);
   a2.textContent = "ADMIN";
   a2.onclick = () => { openAdminLogin(); toggleDrawer(); };
   d.appendChild(a2);
@@ -377,6 +401,7 @@ function renderDrawer(){
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
     d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
+    (p.soldOut ? '<span class="sold-badge">SOLD OUT</span>' : '')
     grid.appendChild(d);
   });
   renderFocus();
@@ -394,9 +419,14 @@ function renderFocus(){
     g.appendChild(d);
   });
 }
-function openPDP(p){
-  currentProduct = p;
+function getColors(p){
+  if (p.colors && p.colors.length) return p.colors;
   const imgs = [p.image, p.image2, p.image3].filter(Boolean);
+  return [{ name: "Default", soldOut: false, images: imgs }];
+}
+function buildGallery(c){
+  let imgs = (c.images || []).filter(Boolean);
+  if (!imgs.length) imgs = ["https://via.placeholder.com/600x660?text=" + c.name];
   const track = document.getElementById("pdpTrack");
   track.innerHTML = "";
   imgs.forEach(u => {
@@ -412,7 +442,7 @@ function openPDP(p){
     if (i < 0) i = 0;
     if (i >= imgs.length) i = imgs.length - 1;
     idx = i;
-        track.style.transform = "translateX(-" + (idx * 100) + "%)";
+    track.style.transform = "translateX(-" + (idx * 100) + "%)";
     counter.textContent = (idx + 1) + " / " + imgs.length;
   }
   let sx = 0;
@@ -427,7 +457,31 @@ function openPDP(p){
     const r = sw.getBoundingClientRect();
     if (e.clientX < r.left + r.width / 2) go(idx - 1); else go(idx + 1);
   };
-    document.getElementById("pdpName").textContent = p.name;
+}
+function openPDP(p){
+  currentProduct = p;
+  const colors = getColors(p);
+  let ci = 0;
+  for (let i = 0; i < colors.length; i++) { if (!colors[i].soldOut) { ci = i; break; } }
+  currentColor = colors[ci];
+  const cBox = document.getElementById("pdpColors");
+  cBox.innerHTML = "<strong style='font-size:13px'>COLOR:</strong>";
+  colors.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "color-btn" + (c === currentColor ? " sel" : "") + (c.soldOut ? " disabled" : "");
+    b.textContent = c.soldOut ? c.name + " (SOLD OUT)" : c.name;
+    b.onclick = () => {
+      if (c.soldOut) return;
+      currentColor = c;
+      cBox.querySelectorAll(".color-btn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel");
+      buildGallery(c);
+    };
+    cBox.appendChild(b);
+  });
+  buildGallery(currentColor);
+  document.getElementById("pdpSold").style.display = p.soldOut ? "inline-block" : "none";
+  document.getElementById("pdpName").textContent = p.name;
   document.getElementById("pdpCat").textContent = p.category;
   let priceHtml = fmt(p.price);
   if (p.oldPrice > p.price) {
@@ -435,7 +489,7 @@ function openPDP(p){
     priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span> ' + fmt(p.price) + ' <span class="disc">-' + disc + '%</span>';
   }
   document.getElementById("pdpPrice").innerHTML = priceHtml;
-  const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.category] || ["One Size"]);
+    const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.category] || ["One Size"]);
   currentSize = sizes.length === 1 ? sizes[0] : null;
   const sz = document.getElementById("pdpSizes");
   sz.innerHTML = "<strong style='font-size:13px'>SIZE:</strong>";
@@ -471,11 +525,13 @@ function closePDP(){
 }
 function addFromPDP(){
   if (!currentProduct) return;
+  if (currentProduct.soldOut) { alert("This product is sold out"); return; }
   if (!currentSize) { alert("Please select a size"); return; }
-  const key = currentProduct.id + "_" + currentSize;
+  if (!currentColor || currentColor.soldOut) { alert("Please select a color"); return; }
+  const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name;
   const existing = cart.find(c => c.key === key);
   if (existing) existing.qty++;
-  else cart.push({ key, id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: currentProduct.image, size: currentSize, qty: 1 });
+  else cart.push({ key, id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: (currentColor.images && currentColor.images[0]) || currentProduct.image, size: currentSize, color: currentColor.name, qty: 1 });
   saveCart();
   closePDP();
   openCart();
@@ -499,7 +555,7 @@ function saveCart(){
       total += c.price * c.qty;
       const d = document.createElement("div");
       d.className = "cart-item";
-      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + '</div><div class="ci-size">Size: ' + c.size + '</div><div class="ci-price">' + fmt(c.price * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
+      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(c.price * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
       items.appendChild(d);
     });
     document.getElementById("cartTotal").textContent = fmt(total);
@@ -536,12 +592,12 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
   const address = document.getElementById("coAddress").value.trim();
   const city = document.getElementById("coCity").value.trim();
   const notes = document.getElementById("coNotes").value.trim();
-  if (!name || !phone || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields"; return; }
+  if (!name || !phone || !email || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields (email required)"; return; }
   const btn = document.getElementById("placeOrderBtn");
   btn.disabled = true;
   btn.textContent = "PLACING...";
   let total = 0;
-  const items = cart.map(c => { total += c.price * c.qty; return { name: c.name, size: c.size, qty: c.qty, price: c.price }; });
+  const items = cart.map(c => { total += c.price * c.qty; return { name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
   const order = { customer: name, phone, email, address, city, notes, items, total, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   try {
     await db.collection("orders").add(order);
@@ -549,15 +605,10 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
     saveCart();
     closeCheckout();
     alert("Order placed successfully! We will contact you on " + phone);
-    try {
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: ADMIN_EMAIL,
-        order_name: name, order_phone: phone, order_address: address,
-        order_city: city,
-        order_items: items.map(i => i.name + " (" + i.size + ") x" + i.qty).join(", "),
-        order_total: fmt(total)
-      }, EMAILJS_PUBLIC_KEY);
-    } catch(e) { console.log("email failed", e); }
+        const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
+    const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) };
+    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
+    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
     btn.disabled = false;
@@ -622,6 +673,33 @@ function loadAdminProducts(){
 function getSelectedSizes(){
   return Array.from(document.querySelectorAll("#pfSizesBox .size-btn.sel")).map(b => b.textContent);
 }
+  function addColorRow(c){
+  if (document.querySelectorAll("#pfColors > div").length >= 5) { alert("Maximum 5 colors"); return; }
+  const box = document.getElementById("pfColors");
+  const d = document.createElement("div");
+  d.style.cssText = "border:1px solid #eee;padding:10px;margin-bottom:10px";
+  d.innerHTML = '<input placeholder="Color name (e.g. Black)" class="cr-name" style="margin-bottom:8px">'
+    + '<input placeholder="Image 1 URL" class="cr-i0" style="margin-bottom:6px">'
+    + '<input placeholder="Image 2 URL" class="cr-i1" style="margin-bottom:6px">'
+    + '<input placeholder="Image 3 URL" class="cr-i2" style="margin-bottom:6px">'
+    + '<input placeholder="Image 4 URL" class="cr-i3" style="margin-bottom:6px">'
+    + '<input placeholder="Image 5 URL" class="cr-i4" style="margin-bottom:6px">'
+    + '<label style="display:flex;align-items:center;gap:8px;font-size:12px"><input type="checkbox" class="cr-so" style="width:auto;margin:0"> SOLD OUT</label>'
+    + '<button type="button" onclick="this.parentNode.remove()" style="margin-top:8px;font-size:11px;border:1px solid #c0392b;color:#c0392b;padding:6px 10px">REMOVE COLOR</button>';
+  box.appendChild(d);
+  if (c) {
+    d.querySelector(".cr-name").value = c.name;
+    for (let i = 0; i < 5; i++) d.querySelector(".cr-i" + i).value = (c.images && c.images[i]) || "";
+    d.querySelector(".cr-so").checked = !!c.soldOut;
+  }
+}
+function getColorsFromForm(){
+  return Array.from(document.querySelectorAll("#pfColors > div")).map(d => ({
+    name: d.querySelector(".cr-name").value.trim(),
+    soldOut: d.querySelector(".cr-so").checked,
+    images: [0,1,2,3,4].map(i => d.querySelector(".cr-i" + i).value.trim()).filter(Boolean)
+  })).filter(c => c.name);
+}
   function openProductForm(id){
   const sel = document.getElementById("pfCat");
   sel.innerHTML = CATEGORIES.map(c => '<option value="' + c + '">' + c + '</option>').join("");
@@ -638,11 +716,17 @@ function getSelectedSizes(){
     document.getElementById("pfImg2").value = p.image2 || "";
     document.getElementById("pfImg3").value = p.image3 || "";
     renderSizeButtons(p.category, p.sizes || []);
+        const cb = document.getElementById("pfColors");
+    cb.innerHTML = "";
+    (p.colors || []).forEach(c => addColorRow(c));
+    document.getElementById("pfSoldOut").checked = !!p.soldOut;
     document.getElementById("pfDesc").value = p.description || "";
   } else {
     document.getElementById("pfTitle").textContent = "ADD PRODUCT";
     ["pfId","pfName","pfPrice","pfOldPrice","pfImg1","pfImg2","pfImg3","pfDesc"].forEach(x => document.getElementById(x).value = "");
 renderSizeButtons("T-SHIRTS", []);
+        document.getElementById("pfColors").innerHTML = "";
+    document.getElementById("pfSoldOut").checked = false;
   }
   document.getElementById("pfMsg").textContent = "";
   document.getElementById("productFormModal").classList.add("show");
@@ -659,8 +743,10 @@ async function saveProduct(){
   const image3 = document.getElementById("pfImg3").value.trim();
   const sizes = getSelectedSizes();
   const description = document.getElementById("pfDesc").value.trim();
+    const colors = getColorsFromForm();
+  const soldOut = document.getElementById("pfSoldOut").checked;
   if (!name || !price || !image) { document.getElementById("pfMsg").textContent = "Name, price and image URL are required"; return; }
-  const data = { name, category, price, oldPrice, image, image2, image3, sizes, description };
+    const data = { name, category, price, oldPrice, image, image2, image3, sizes, description, colors, soldOut };
   try {
     if (id) await db.collection("products").doc(id).update(data);
     else await db.collection("products").add(data);
@@ -690,7 +776,7 @@ function loadOrders(){
     orders.forEach(o => {
       const d = document.createElement("div");
       d.className = "order-card";
-      const itemsStr = o.items.map(i => i.name + " (" + i.size + ") x" + i.qty).join(", ");
+            const itemsStr = o.items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
       d.innerHTML = '<div class="oc-head"><strong>' + o.customer + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
         + '<div class="oc-row">Phone: ' + o.phone + '</div>'
         + (o.email ? '<div class="oc-row">Email: ' + o.email + '</div>' : '')
@@ -729,7 +815,7 @@ async function replyToOrder(id){
     }
     if (o.data().email) {
       try {
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_REPLY_TEMPLATE_ID, {
           to_email: o.data().email,
           order_name: o.data().customer,
           reply: msg
@@ -750,6 +836,31 @@ async function replyToOrder(id){
     alert("Order deleted");
   } catch(e) { alert(e.message); }
   }
+  function openTrack(){
+  document.getElementById("trackResult").innerHTML = "";
+  document.getElementById("trackModal").classList.add("show");
+}
+function closeTrack(){ document.getElementById("trackModal").classList.remove("show"); }
+function trackOrder(){
+  const phone = document.getElementById("trackPhone").value.replace(/[^0-9]/g, "");
+  if (phone.length < 10) { alert("Enter a valid phone number"); return; }
+  const res = document.getElementById("trackResult");
+  res.innerHTML = "Searching...";
+  db.collection("orders").where("phone", "==", phone).get().then(snap => {
+    if (snap.empty) { res.innerHTML = '<p class="empty">No order found for this phone</p>'; return; }
+    res.innerHTML = "";
+    snap.forEach(doc => {
+      const o = doc.data();
+      const d = document.createElement("div");
+      d.className = "track-item";
+      d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><strong>' + o.customer + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
+        + '<div class="oc-row">Order: ' + doc.id + '</div>'
+        + '<div class="oc-row">Total: ' + fmt(o.total) + '</div>'
+        + (o.reply ? '<div class="oc-reply">' + o.reply + '</div>' : '');
+      res.appendChild(d);
+    });
+  }).catch(e => { res.innerHTML = "Error: " + e.message; });
+}
 function whatsappOrder(id){
   const o = products; // not used, get from order list
   const sel = document.getElementById("st_" + id);
