@@ -312,7 +312,7 @@ img{display:block}
   <div class="modal-card">
     <div class="modal-head"><h2>TRACK ORDER</h2><button onclick="closeTrack()">&#10005;</button></div>
         <p style="font-size:13px;color:#666;margin-bottom:14px">Enter the phone number you used to place your order</p>
-    <input id="trackPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
+    <input id="trackPhone" type="tel" placeholder="Phone number or Order ID">
     <button class="full-btn" onclick="trackOrder()">TRACK ORDER</button>
     <div id="trackResult" style="margin-top:14px"></div>
   </div>
@@ -617,6 +617,8 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
   const items = cart.map(c => { total += c.price * c.qty; return { name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
   const order = { customer: name, phone, email, address, city, notes, items, total, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   try {
+      const docId = "JZB" + Date.now().toString().slice(-6);
+  order.orderId = docId;
     await db.collection("orders").add(order);
     cart = [];
     saveCart();
@@ -625,6 +627,7 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
         const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
     const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) };
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
+        const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(total) + "\n\nWe will contact you shortly.";
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
@@ -859,12 +862,16 @@ async function replyToOrder(id){
 }
 function closeTrack(){ document.getElementById("trackModal").classList.remove("show"); }
 function trackOrder(){
-  const phone = document.getElementById("trackPhone").value.replace(/[^0-9]/g, "");
-  if (phone.length < 10) { alert("Enter a valid phone number"); return; }
+  const val = document.getElementById("trackPhone").value.trim();
+  if (!val) { alert("Enter your phone number or Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
-  db.collection("orders").where("phone", "==", phone).get().then(snap => {
-    if (snap.empty) { res.innerHTML = '<p class="empty">No order found for this phone number</p>'; return; }
+  const isOrderId = /^[A-Za-z0-9]+$/.test(val) && val.length >= 8 && !/^\d{10,}$/.test(val);
+  const q = isOrderId
+    ? db.collection("orders").where("orderId", "==", val)
+    : db.collection("orders").where("phone", "==", val.replace(/[^0-9]/g, ""));
+  q.get().then(snap => {
+    if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your phone number or Order ID.</p>'; return; }
     res.innerHTML = "";
     const steps = ["Pending", "Confirmed", "Shipped", "Delivered"];
     snap.forEach(doc => {
@@ -882,7 +889,7 @@ function trackOrder(){
         + '<span class="track-status ' + o.status + '">' + o.status + '</span>'
         + '</div>'
         + timeline
-        + '<div class="track-info">Order ID: ' + doc.id + '</div>'
+        + '<div class="track-info">Order ID: ' + (o.orderId || doc.id) + '</div>'
         + '<div class="track-info">Total: ' + fmt(o.total) + '</div>'
         + '<div class="track-info">Items: ' + o.items.map(i => i.name + ' (' + (i.color || "") + ', ' + i.size + ') x' + i.qty).join(', ') + '</div>'
         + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
