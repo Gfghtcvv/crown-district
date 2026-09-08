@@ -625,7 +625,7 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
     closeCheckout();
     alert("Order placed successfully! We will contact you on " + phone);
         const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) };
+    const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total), orderId: docId };
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
         const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(total) + "\n\nWe will contact you shortly.";
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total) }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
