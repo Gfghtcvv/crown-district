@@ -141,7 +141,23 @@ img{display:block}
 .color-btn.sel{background:#111;color:#fff;border-color:#111}
 .color-btn.disabled{opacity:.45}
 .sold-badge{background:#c0392b;color:#fff;font-size:11px;padding:4px 12px;letter-spacing:1px;display:inline-block;margin-bottom:10px}
-.track-item{background:#fff;border:1px solid #eee;padding:14px;margin-bottom:10px}
+.track-item{background:#fff;border:1px solid #eee;padding:16px;margin-bottom:12px;border-left:4px solid #111}
+.track-status{display:inline-block;padding:4px 14px;font-size:11px;letter-spacing:1px;font-weight:600}
+.track-status.Pending{background:#fff3cd;color:#856404}
+.track-status.Confirmed{background:#d4edda;color:#155724}
+.track-status.Shipped{background:#cce5ff;color:#004085}
+.track-status.Delivered{background:#d1e7dd;color:#0f5132}
+.track-status.Cancelled{background:#f8d7da;color:#721c24}
+.track-timeline{display:flex;gap:0;margin:14px 0}
+.track-step{flex:1;text-align:center;position:relative}
+.track-step::before{content:'';width:12px;height:12px;border-radius:50%;background:#ddd;display:inline-block;margin-bottom:4px}
+.track-step.done::before{background:#111}
+.track-step span{font-size:10px;color:#999;display:block}
+.track-step.done span{color:#111;font-weight:600}
+.track-step::after{content:'';position:absolute;top:5px;left:50%;width:100%;height:2px;background:#eee;z-index:-1}
+.track-step:last-child::after{display:none}
+.track-info{font-size:13px;color:#555;margin-top:8px}
+.track-reply{background:#f9f9f9;padding:10px;font-size:13px;margin-top:10px;border-left:3px solid #111}
 .empty{text-align:center;color:#999;padding:30px;font-size:14px}
 </style>
 </head>
@@ -295,6 +311,7 @@ img{display:block}
 <div id="trackModal" class="modal">
   <div class="modal-card">
     <div class="modal-head"><h2>TRACK ORDER</h2><button onclick="closeTrack()">&#10005;</button></div>
+        <p style="font-size:13px;color:#666;margin-bottom:14px">Enter the phone number you used to place your order</p>
     <input id="trackPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
     <button class="full-btn" onclick="trackOrder()">TRACK ORDER</button>
     <div id="trackResult" style="margin-top:14px"></div>
@@ -845,22 +862,36 @@ function trackOrder(){
   const phone = document.getElementById("trackPhone").value.replace(/[^0-9]/g, "");
   if (phone.length < 10) { alert("Enter a valid phone number"); return; }
   const res = document.getElementById("trackResult");
-  res.innerHTML = "Searching...";
+  res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
   db.collection("orders").where("phone", "==", phone).get().then(snap => {
-    if (snap.empty) { res.innerHTML = '<p class="empty">No order found for this phone</p>'; return; }
+    if (snap.empty) { res.innerHTML = '<p class="empty">No order found for this phone number</p>'; return; }
     res.innerHTML = "";
+    const steps = ["Pending", "Confirmed", "Shipped", "Delivered"];
     snap.forEach(doc => {
       const o = doc.data();
+      const curIdx = steps.indexOf(o.status);
       const d = document.createElement("div");
       d.className = "track-item";
-      d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><strong>' + o.customer + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
-        + '<div class="oc-row">Order: ' + doc.id + '</div>'
-        + '<div class="oc-row">Total: ' + fmt(o.total) + '</div>'
-        + (o.reply ? '<div class="oc-reply">' + o.reply + '</div>' : '');
+      let timeline = '<div class="track-timeline">';
+      steps.forEach((s, i) => {
+        timeline += '<div class="track-step' + (i <= curIdx ? ' done' : '') + '"><span>' + s + '</span></div>';
+      });
+      timeline += '</div>';
+      d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+        + '<strong style="font-size:15px">' + o.customer + '</strong>'
+        + '<span class="track-status ' + o.status + '">' + o.status + '</span>'
+        + '</div>'
+        + timeline
+        + '<div class="track-info">Order ID: ' + doc.id + '</div>'
+        + '<div class="track-info">Total: ' + fmt(o.total) + '</div>'
+        + '<div class="track-info">Items: ' + o.items.map(i => i.name + ' (' + (i.color || "") + ', ' + i.size + ') x' + i.qty).join(', ') + '</div>'
+        + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
+        + '<div class="track-info" style="margin-top:10px;font-size:12px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : "N/A") + '</div>';
       res.appendChild(d);
     });
   }).catch(e => { res.innerHTML = "Error: " + e.message; });
 }
+
 function whatsappOrder(id){
   const o = products; // not used, get from order list
   const sel = document.getElementById("st_" + id);
