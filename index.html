@@ -1395,7 +1395,7 @@ function whatsappOrder(id){
     if (doc.exists) await db.collection("settings").doc("site").update({ [key]: val });
     else await db.collection("settings").doc("site").set({ [key]: val });
     applySettings({ [key]: val });
-    document.getElementById("settingsMsg").textContent = "Saved!";
+    const settingsMsgEl=document.getElementById("settingsMsg");if(settingsMsgEl)settingsMsgEl.textContent
   } catch(e) { alert(e.message); }
 }
 function applySettings(s){
