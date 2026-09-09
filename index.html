@@ -526,7 +526,7 @@ function renderTabs(){
             b.classList.add("all-tab");
       b.innerHTML = '<span>ALL</span>';
     } else {
-      const img = catImages[c] || "https://via.placeholder.com/200x140?text=" + c;
+            let img = (catImages[c] || "https://via.placeholder.com/200x140?text=" + c).replace(/"/g, "");
       b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/200x140?text=' + c + '\'"><span>' + c + '</span>';
     }
     b.onclick = () => setCat(c);
@@ -587,11 +587,11 @@ function renderFocus(){
   const g = document.getElementById("focusGrid");
   g.innerHTML = "";
   ["T-SHIRTS","TROUSERS","SHORTS"].forEach(c => {
-        const img = catImages[c] || "https://via.placeholder.com/300x400?text=" + c;
+        let img = (focusImages[c] || "https://via.placeholder.com/300x400?text=" + c).replace(/"/g, "");
     const d = document.createElement("div");
     d.className = "focus-card";
     d.onclick = () => { setCat(c); document.getElementById("shop").scrollIntoView({behavior:"smooth"}); };
-    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=' + c + '\'"><span>' + c + ' (' + products.filter(p => p.category === c).length + ')</span>';
+    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=' + c + '\'"><span>' + c + '</span>';
     g.appendChild(d);
   });
 }
@@ -1404,8 +1404,8 @@ function whatsappOrder(id){
 function applySettings(s){
   if (s.logo) document.getElementById("logoImg").src = s.logo;
   if (s.hero) document.getElementById("heroImg").src = s.hero;
-    if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
-    if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
+  if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
+  if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
   const catMap = {catT:"T-SHIRTS",catTrackSuit:"TRACK SUIT",catShirts:"SHIRTS",catTrousers:"TROUSERS",catShorts:"SHORTS",catHoodies:"HOODIES",catJackets:"JACKETS",catJeans:"JEANS",catCaps:"CAPS",catAccessories:"ACCESSORIES"};
   const focusMap = {focusT:"T-SHIRTS",focusTrousers:"TROUSERS",focusShorts:"SHORTS"};
   for (const k in catMap) { if (s[k]) { catImages[catMap[k]] = s[k]; const el = document.getElementById("set" + k[0].toUpperCase() + k.slice(1)); if (el) el.value = s[k]; } }
