@@ -27,9 +27,11 @@ img{display:block}
 .badge{position:absolute;top:0;right:0;background:#111;color:#fff;font-size:10px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
 .search-bar{display:none;padding:0 16px 12px}
 .search-bar.show{display:block}
-.tabs{display:flex;gap:18px;overflow-x:auto;padding:0 16px 10px;white-space:nowrap}
-.tab{font-size:13px;letter-spacing:1px;padding:6px 2px;border-bottom:2px solid transparent;color:#999}
-.tab.active{color:#111;border-bottom:2px solid #111}
+.tabs{display:flex;gap:10px;overflow-x:auto;padding:0 16px 10px;white-space:nowrap}
+.tab{flex:0 0 90px;position:relative;border:2px solid transparent;background:#f5f5f5;cursor:pointer;padding:0}
+.tab.active{border-color:#111}
+.tab img{width:100%;height:70px;object-fit:cover;display:block}
+.tab span{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;text-align:center;font-size:11px;letter-spacing:1px;padding:4px 2px}
 .drawer{position:fixed;top:0;left:-280px;width:280px;height:100%;background:#fff;z-index:300;transition:left .25s;padding:20px;overflow-y:auto}
 .drawer.open{left:0}
 .drawer-head{display:flex;justify-content:space-between;font-size:20px;margin-bottom:20px}
@@ -414,6 +416,8 @@ img{display:block}
     <input id="setInsta" placeholder="jazb.wear">
     <button class="full-btn" onclick="saveSetting('insta')">SAVE INSTAGRAM</button>
     <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS IMAGE</button>
+          <input id="setCatTrackSuit" placeholder="Track Suit catalog image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catTrackSuit')">SAVE TRACK SUIT IMAGE</button>
     <input id="setCatTrousers" placeholder="Trousers catalog image URL" style="margin-top:16px">
     <button class="full-btn" onclick="saveSetting('catTrousers')">SAVE TROUSERS IMAGE</button>
     <input id="setCatShorts" placeholder="Shorts catalog image URL" style="margin-top:16px">
@@ -468,7 +472,7 @@ const firebaseConfig = {
   messagingSenderId: "206237211893",
   appId: "1:206237211893:web:56b74db12ce91829dc39bc"
 };
-const CATEGORIES = ["T-SHIRTS","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS","CAPS","ACCESSORIES"];
+const CATEGORIES = ["T-SHIRTS","TRACK SUIT","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS","CAPS","ACCESSORIES"];
 const DEFAULT_SIZES = {
   "T-SHIRTS":["S","M","L","XL","XXL"],
   "SHIRTS":["S","M","L","XL","XXL"],
@@ -477,6 +481,7 @@ const DEFAULT_SIZES = {
   "TROUSERS":["30","32","34","36","38"],
   "JEANS":["30","32","34","36","38"],
   "SHORTS":["30","32","34","36","38"],
+    "TRACK SUIT":["S","M","L","XL","XXL"],
   "CAPS":["One Size"],
   "ACCESSORIES":["One Size"]
 };
@@ -495,7 +500,12 @@ function renderTabs(){
   ["ALL", ...CATEGORIES].forEach(c => {
     const b = document.createElement("button");
     b.className = "tab" + (c === currentCat ? " active" : "");
-    b.textContent = c;
+    if (c === "ALL") {
+      b.innerHTML = '<span style="position:static;background:none;color:#111;padding:28px 0">ALL</span>';
+    } else {
+      const img = catImages[c] || "https://via.placeholder.com/200x140?text=" + c;
+      b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/200x140?text=' + c + '\'"><span>' + c + '</span>';
+    }
     b.onclick = () => setCat(c);
     t.appendChild(b);
   });
@@ -548,7 +558,7 @@ d.appendChild(wb);
   });
   renderFocus();
 }
-let catImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
+let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "TROUSERS":"", "SHORTS":"" };
 function renderFocus(){
   const g = document.getElementById("focusGrid");
   g.innerHTML = "";
@@ -1372,10 +1382,11 @@ function applySettings(s){
   if (s.hero) document.getElementById("heroImg").src = s.hero;
     if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
     if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
-   if (s.catT) catImages["T-SHIRTS"] = s.catT;
+     if (s.catT) catImages["T-SHIRTS"] = s.catT;
+  if (s.catTrackSuit) catImages["TRACK SUIT"] = s.catTrackSuit;
   if (s.catTrousers) catImages["TROUSERS"] = s.catTrousers;
   if (s.catShorts) catImages["SHORTS"] = s.catShorts;
-  if (s.catT || s.catTrousers || s.catShorts) renderFocus();
+    if (s.catT || s.catTrackSuit || s.catTrousers || s.catShorts) { renderFocus(); renderTabs(); }
   if (s.catT) document.getElementById("setCatT").value = s.catT;
   if (s.catTrousers) document.getElementById("setCatTrousers").value = s.catTrousers;
   if (s.catShorts) document.getElementById("setCatShorts").value = s.catShorts;
@@ -1396,7 +1407,8 @@ async function loadSettings(){
       if (s.logo) document.getElementById("setLogo").value = s.logo;
       if (s.hero) document.getElementById("setHero").value = s.hero;
       if (s.phone) document.getElementById("setPhone").value = s.phone;
-            if (s.catT) document.getElementById("setCatT").value = s.catT;
+                  if (s.catT) document.getElementById("setCatT").value = s.catT;
+      if (s.catTrackSuit) document.getElementById("setCatTrackSuit").value = s.catTrackSuit;
       if (s.catTrousers) document.getElementById("setCatTrousers").value = s.catTrousers;
       if (s.catShorts) document.getElementById("setCatShorts").value = s.catShorts;
             if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
