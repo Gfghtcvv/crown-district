@@ -74,6 +74,7 @@ img{display:block}
 .pdp-sizes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
 .size-btn{border:1px solid #ccc;padding:8px 14px;font-size:13px}
 .size-btn.sel{background:#111;color:#fff;border-color:#111}
+  .size-btn.disabled{opacity:.45}
 .pdp-desc{font-size:14px;color:#444;line-height:1.6;margin-bottom:16px}
 .acc-item{border:1px solid #eee;margin-bottom:8px}
 .acc-item>button{width:100%;text-align:left;padding:12px;font-size:13px;letter-spacing:1px}
@@ -229,13 +230,14 @@ img{display:block}
 .empty{text-align:center;color:#999;padding:30px;font-size:14px}
 </style>
 </head>
-<body>
+<>
   <div id="announceBar">FREE DELIVERY on orders above Rs. 3,000 🚚</div>
   <div id="saleBar" style="background:#c0392b;color:#fff;text-align:center;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.5px">🔥 SALE ENDS IN <span id="saleTimer">23:59:59</span></div>
   <div id="loader"><div class="spinner"></div><p>JAZB</p></div>
   <div id="toast"></div>
   <button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
   <div id="sizeGuide"><div class="sg-box"><h3>SIZE GUIDE</h3><table><tr><th>Size</th><th>Chest</th><th>Length</th></tr><tr><td>S</td><td>96 cm</td><td>68 cm</td></tr><tr><td>M</td><td>102 cm</td><td>70 cm</td></tr><tr><td>L</td><td>108 cm</td><td>72 cm</td></tr><tr><td>XL</td><td>114 cm</td><td>74 cm</td></tr><tr><td>XXL</td><td>120 cm</td><td>76 cm</td></tr></table><p style="font-size:11px;color:#999;margin-top:10px">Measurements in cm. For a relaxed fit, size up.</p><button class="sg-close" onclick="document.getElementById('sizeGuide').classList.remove('show')">CLOSE</button></div></div>
+
   
   <div id="pdpSticky"><span class="sticky-price" id="stickyPrice"></span><button onclick="addFromPDP()">ADD TO CART</button></div>
 <header class="header">
@@ -244,7 +246,7 @@ img{display:block}
     <img id="logoImg" class="logo" src="https://via.placeholder.com/160x40?text=JAZB" alt="JAZB">
     <div>
       <button class="icon-btn" onclick="toggleSearch()">&#128269;</button>
-      <button class="icon-btn" onclick="openAdminLogin()">&#128100;</button>
+      <button class="icon-btn" onclick="openWishlist()">❤️</button>
       <button class="icon-btn" onclick="openCart()">&#128717;<span id="cartCount" class="badge">0</span></button>
     </div>
   </div>
@@ -305,7 +307,7 @@ img{display:block}
     <a>Shopping Guide</a><a>About Us</a>
     <a>Exchange &amp; Returns</a><a>Retail Stores</a>
     <a>Shipping &amp; Delivery</a><a>Contact Us</a>
-    <a>How To Buy</a><a onclick="openAdminLogin()" style="cursor:pointer">Admin</a>
+    <a>How To Buy</a>
     <a onclick="openTrack()" style="cursor:pointer">Track Order</a>
   </div>
   <div class="f-support">
@@ -334,7 +336,7 @@ img{display:block}
         <div class="pdp-sizes" id="pdpColors"></div>
         <div class="pdp-sizes" id="pdpSizes"></div>
         <p class="pdp-desc" id="pdpDesc"></p>
-        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button><div class="acc-body">S: 38-40 inch chest<br>M: 40-42 inch chest<br>L: 42-44 inch chest<br>XL: 44-46 inch chest<br>XXL: 46-48 inch chest</div></div>
+        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button><div class="acc-body"><div style="margin:0 0 12px;padding:12px;background:#f5f5f5;border-radius:10px"><p style="margin:0 0 8px;font-weight:700;font-size:14px">Find Your Size</p><div style="display:flex;gap:8px"><input type="number" id="sgChest" placeholder="Chest (inch)" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px"><button onclick="sgRecommend()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px">GO</button></div><div id="sgResult" style="margin-top:10px;font-weight:700;font-size:16px"></div></div>S: 38-40 inch chest<br>M: 40-42 inch chest<br>L: 42-44 inch chest<br>XL: 44-46 inch chest<br>XXL: 46-48 inch chest</div></div>
         <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">PRODUCT DETAILS</button><div class="acc-body">Premium quality fabric. Pre-shrunk. Machine wash cold. Made in Pakistan.</div></div>
         <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">DELIVERY INFO</button><div class="acc-body">Cash on delivery all over Pakistan. Delivery 2-5 working days. Free delivery above Rs. 3000.</div></div>
       </div>
@@ -356,6 +358,7 @@ img{display:block}
       <button class="full-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
     </div>
   </div>
+  
 </div>
 <div id="checkoutModal" class="modal">
   <div class="modal-card">
@@ -422,7 +425,7 @@ img{display:block}
   <div class="modal-card">
     <div class="modal-head"><h2>TRACK ORDER</h2><button onclick="closeTrack()">&#10005;</button></div>
         <p style="font-size:13px;color:#666;margin-bottom:14px">Enter the phone number you used to place your order</p>
-    <input id="trackPhone" type="tel" placeholder="Phone number or Order ID">
+    <input id="trackPhone" type="text" placeholder="Phone number or Order ID">
     <button class="full-btn" onclick="trackOrder()">TRACK ORDER</button>
     <div id="trackResult" style="margin-top:14px"></div>
   </div>
@@ -441,7 +444,8 @@ img{display:block}
     <div id="pfSizesBox" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
         <div id="pfColors" style="margin-top:10px"></div>
     <button type="button" class="full-btn" onclick="addColorRow()">+ ADD COLOR</button>
-    <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px"><input type="checkbox" id="pfSoldOut" style="width:auto;margin:0"> PRODUCT SOLD OUT</label>
+    <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfSoldOut" style="width:auto;margin:0"> PRODUCT SOLD OUT</label>
+<label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfUnlimited" style="width:auto;margin:0"> UNLIMITED STOCK</label>
     <textarea id="pfDesc" rows="3" placeholder="Description"></textarea>
     <button class="full-btn" onclick="saveProduct()">SAVE PRODUCT</button>
     <p class="message" id="pfMsg"></p>
@@ -506,14 +510,10 @@ function renderDrawer(){
     a.onclick = () => { setCat(c); toggleDrawer(); };
     d.appendChild(a);
   });
-  const a2 = document.createElement("a");
     const a1 = document.createElement("a");
   a1.textContent = "TRACK ORDER";
   a1.onclick = () => { openTrack(); toggleDrawer(); };
   d.appendChild(a1);
-  a2.textContent = "ADMIN";
-  a2.onclick = () => { openAdminLogin(); toggleDrawer(); };
-  d.appendChild(a2);
 }window.addEventListener("load", () => {
   const l = document.getElementById("loader");
   if (l) l.style.display = "none";
@@ -536,7 +536,14 @@ setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.d
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
     d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
-    (p.soldOut ? '<span class="sold-badge">SOLD OUT</span>' : '')
+    productSoldOut(p) ? '<span class="sold-badge">SOLD OUT</span>' : ''
+    const wb = document.createElement("button");
+wb.className = "wish-btn";
+wb.dataset.id = p.id;
+wb.textContent = wishlist.some(w => w.id === p.id) ? "❤️" : "🤍";
+wb.style.cssText = "position:absolute;top:10px;left:10px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;z-index:2";
+wb.onclick = (e) => { e.stopPropagation(); toggleWish(p.id); };
+d.appendChild(wb);
     grid.appendChild(d);
   });
   renderFocus();
@@ -604,9 +611,9 @@ function openPDP(p){
   colors.forEach(c => {
     const b = document.createElement("button");
     b.className = "color-btn" + (c === currentColor ? " sel" : "") + (c.soldOut ? " disabled" : "");
-    b.textContent = c.soldOut ? c.name + " (SOLD OUT)" : c.name;
+    b.textContent = (c.soldOut || colorSoldOut(p, c.name)) ? c.name + " (SOLD OUT)" : c.name;
     b.onclick = () => {
-      if (c.soldOut) return;
+      if (c.soldOut || colorSoldOut(p, c.name)) return;
       currentColor = c;
       cBox.querySelectorAll(".color-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
@@ -615,7 +622,7 @@ function openPDP(p){
     cBox.appendChild(b);
   });
   buildGallery(currentColor);
-  document.getElementById("pdpSold").style.display = p.soldOut ? "inline-block" : "none";
+  document.getElementById("pdpSold").style.display = productSoldOut(p) ? "inline-block" : "none";
   document.getElementById("pdpName").textContent = p.name;
   document.getElementById("pdpCat").textContent = p.category;
   let priceHtml = fmt(p.price);
@@ -634,14 +641,19 @@ function openPDP(p){
     document.getElementById("stickyPrice").textContent = fmt(p.price);
   document.getElementById("pdpSticky").classList.add("show");
     const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.category] || ["One Size"]);
-  currentSize = sizes.length === 1 ? sizes[0] : null;
+  const stockMap = getStockForColor(p, currentColor.name) || {};
+  const hasStock = Object.keys(stockMap).length > 0;
+  currentSize = sizes.length === 1 && (!hasStock || (stockMap[sizes[0]] || 0) > 0) ? sizes[0] : null;
   const sz = document.getElementById("pdpSizes");
   sz.innerHTML = "<strong style='font-size:13px'>SIZE:</strong>";
   sizes.forEach(s => {
+    const st = hasStock ? (stockMap[s] || 0) : Infinity;
     const b = document.createElement("button");
-    b.className = "size-btn" + (s === currentSize ? " sel" : "");
-    b.textContent = s;
+    b.className = "size-btn" + (s === currentSize ? " sel" : "") + (st <= 0 ? " disabled" : "");
+    b.textContent = hasStock ? s + " (" + st + ")" : s;
+    if (st <= 5 && st > 0) b.style.color = "#c0392b";
     b.onclick = () => {
+      if (st <= 0) return;
       currentSize = s;
       sz.querySelectorAll(".size-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
@@ -739,6 +751,8 @@ function addFromPDP(){
   if (currentProduct.soldOut) { alert("This product is sold out"); return; }
   if (!currentSize) { alert("Please select a size"); return; }
   if (!currentColor || currentColor.soldOut) { alert("Please select a color"); return; }
+    const sm = getStockForColor(currentProduct, currentColor.name) || {};
+  if (Object.keys(sm).length && (sm[currentSize] || 0) <= 0) { alert("Yeh size sold out hai"); return; }
   const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name;
   const existing = cart.find(c => c.key === key);
   if (existing) existing.qty++;
@@ -751,6 +765,58 @@ function saveCart(){
   localStorage.setItem("cd_cart", JSON.stringify(cart));
   const n = cart.reduce((a, c) => a + c.qty, 0);
   document.getElementById("cartCount").textContent = n;
+}
+  let wishlist = getWishlist();
+function getWishlist(){
+  try { return JSON.parse(localStorage.getItem("cd_wish")) || []; }
+  catch(e){ return []; }
+}
+function saveWishlist(){
+  localStorage.setItem("cd_wish", JSON.stringify(wishlist));
+}
+function toggleWish(id){
+  const i = wishlist.findIndex(w => w.id === id);
+  if (i > -1) wishlist.splice(i, 1);
+  else {
+    const p = products.find(x => x.id === id);
+    if (p) wishlist.push({ id: p.id, name: p.name, price: p.price, image: p.image });
+  }
+  saveWishlist();
+  document.querySelectorAll(".wish-btn").forEach(b => {
+    b.textContent = wishlist.some(w => w.id === b.dataset.id) ? "❤️" : "🤍";
+  });
+  if (document.getElementById("wishModal").classList.contains("show")) openWishlist();
+  toast(i > -1 ? "Removed from wishlist" : "Added to wishlist ❤️");
+}
+function sgRecommend(){
+  const c = Number(document.getElementById("sgChest").value);
+  const r = document.getElementById("sgResult");
+  if (!c || c < 30 || c > 55) { r.textContent = "Enter chest size (30-55 inch)"; r.style.color = "red"; return; }
+  let s = "";
+  if (c <= 40) s = "S";
+  else if (c <= 42) s = "M";
+  else if (c <= 44) s = "L";
+  else if (c <= 46) s = "XL";
+  else s = "XXL";
+  r.textContent = "Your size: " + s;
+  r.style.color = "green";
+}
+function openWishlist(){
+  const items = document.getElementById("wishItems");
+  if (!wishlist.length){
+    items.innerHTML = '<p class="empty">Your wishlist is empty</p>';
+  } else {
+    items.innerHTML = "";
+    wishlist.forEach(w => {
+      const d = document.createElement("div");
+      d.className = "cart-item";
+      d.style.cursor = "pointer";
+d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
+      d.innerHTML = '<img src="' + w.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><h4 style="margin:0;font-size:14px">' + w.name + '</h4><p style="margin:4px 0;font-weight:700">' + fmt(w.price) + '</p></div><button onclick="event.stopPropagation(); toggleWish(\'' + w.id + '\')" style="border:none;background:none;font-size:16px">✕</button>';
+      items.appendChild(d);
+    });
+  }
+  document.getElementById("wishModal").classList.add("show");
 }
   function openCart(){
   const items = document.getElementById("cartItems");
@@ -837,7 +903,10 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
     couponDiscount = 0;
   document.getElementById("coCoupon").value = "";
   document.getElementById("couponMsg").textContent = "";
-  async function placeOrder(){
+let isPlacing = false;
+
+async function placeOrder(){
+  if (isPlacing) return;
   const name = document.getElementById("coName").value.trim();
   const phone = document.getElementById("coPhone").value.trim();
   const email = document.getElementById("coEmail").value.trim();
@@ -846,32 +915,47 @@ function closeCheckout(){ document.getElementById("checkoutModal").classList.rem
   const notes = document.getElementById("coNotes").value.trim();
   if (!name || !phone || !email || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields (email required)"; return; }
   const btn = document.getElementById("placeOrderBtn");
+  isPlacing = true;
   btn.disabled = true;
   btn.textContent = "PLACING...";
   let total = 0;
-  const items = cart.map(c => { total += c.price * c.qty; return { name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
-      const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
-    const grandTotal = total + delivery - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
-  const order = { customer: name, phone, email, address, city, notes, items, total, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  const items = cart.map(c => { total += c.price * c.qty; return { id: c.id, name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
+  const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
+  const grandTotal = total + delivery - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
+  const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   try {
-      const docId = "JZB" + Date.now().toString().slice(-6);
-  order.orderId = docId;
+    const docId = "JZB" + Date.now().toString().slice(-6);
+    order.orderId = docId;
     await db.collection("orders").add(order);
+for (const it of items) {
+  const p = products.find(x => x.id === it.id);
+  if (p && p.stock && !p.unlimited && it.color) {
+    const cs = getStockForColor(p, it.color) || {};
+    if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
+      cs[it.size] = cs[it.size] - (it.qty || 1);
+      const newStock = { ...p.stock, [it.color]: cs };
+      await db.collection("products").doc(it.id).update({ stock: newStock });
+    }
+  }
+}
     cart = [];
     saveCart();
+    couponDiscount = 0;
     closeCheckout();
     toast("Order Placed! ID: " + docId + " 🎉");
-        const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total), orderId: docId };
+    const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
+    const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId };
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
-        const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(total) + "\n\nWe will contact you shortly.";
-    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(total), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
+    const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
+    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
+  } finally {
+    isPlacing = false;
     btn.disabled = false;
     btn.textContent = "PLACE ORDER";
   }
-  }
+}
   function openAdminLogin(){ document.getElementById("adminLoginModal").classList.add("show"); }
 function closeAdminLogin(){ document.getElementById("adminLoginModal").classList.remove("show"); }
 function adminLogin(){
@@ -914,21 +998,107 @@ function loadAdminProducts(){
     list.appendChild(d);
   });
 }
-  function renderSizeButtons(cat, selected){
+function renderSizeButtons(cat, selected, stocks){
   const box = document.getElementById("pfSizesBox");
   const sizes = DEFAULT_SIZES[cat] || ["One Size"];
   box.innerHTML = "";
   sizes.forEach(s => {
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px";
     const b = document.createElement("button");
     b.type = "button";
     b.className = "size-btn" + (selected && selected.includes(s) ? " sel" : "");
+    b.style.width = "auto";
     b.textContent = s;
     b.onclick = () => b.classList.toggle("sel");
-    box.appendChild(b);
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.min = "0";
+    inp.placeholder = "Stock";
+    inp.style.cssText = "width:70px;margin:0";
+    inp.className = "stock-inp";
+    inp.dataset.size = s;
+    if (stocks && stocks[s] != null) inp.value = stocks[s];
+    row.appendChild(b);
+    row.appendChild(inp);
+    box.appendChild(row);
   });
 }
+  refreshColorStocks();
 function getSelectedSizes(){
   return Array.from(document.querySelectorAll("#pfSizesBox .size-btn.sel")).map(b => b.textContent);
+}
+function getStockForColor(p, colorName){
+  if (p.unlimited) return null;
+  const s = p.stock || {};
+  if (s[colorName] && typeof s[colorName] === "object") return s[colorName];
+  if (s.S !== undefined || s.M !== undefined || s.L !== undefined || s.XL !== undefined || s.XXL !== undefined) return s;
+  return {};
+}
+function colorSoldOut(p, colorName){
+  const s = getStockForColor(p, colorName);
+  if (!s) return false;
+  const keys = Object.keys(s);
+  return keys.length > 0 && keys.every(k => Number(s[k]) <= 0);
+}
+function productSoldOut(p){
+  if (p.soldOut) return true;
+  if (p.unlimited) return false;
+  const s = p.stock || {};
+  const colorKeys = Object.keys(s).filter(k => typeof s[k] === "object");
+  if (colorKeys.length) return colorKeys.every(k => colorSoldOut(p, k));
+  const keys = Object.keys(s);
+  return keys.length > 0 && keys.every(k => Number(s[k]) <= 0);
+}
+function getStocksFromForm(){
+  const rows = document.querySelectorAll("#pfColors > div");
+  const stocks = {};
+  if (rows.length){
+    rows.forEach(d => {
+      const name = d.querySelector(".cr-name").value.trim();
+      if (!name) return;
+      const row = {};
+      d.querySelectorAll(".stock-inp").forEach(i => {
+        if (i.value !== "") row[i.dataset.size] = Number(i.value) || 0;
+      });
+      stocks[name] = row;
+    });
+    return stocks;
+  }
+  document.querySelectorAll("#pfSizesBox .stock-inp").forEach(i => {
+    if (i.value !== "") stocks[i.dataset.size] = Number(i.value) || 0;
+  });
+  return stocks;
+}
+function fillColorStocks(d, colorStocks){
+  const box = d.querySelector(".cr-stocks");
+  if (!box) return;
+  box.innerHTML = "";
+  getSelectedSizes().forEach(s => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = s;
+    b.style.cssText = "font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#fff";
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.min = "0";
+    inp.placeholder = "Stock";
+    inp.style.cssText = "width:70px;margin:0";
+    inp.className = "stock-inp";
+    inp.dataset.size = s;
+    if (colorStocks && colorStocks[s] !== null && colorStocks[s] !== undefined) inp.value = colorStocks[s];
+    box.appendChild(b);
+    box.appendChild(inp);
+  });
+}
+function refreshColorStocks(){
+  const rows = document.querySelectorAll("#pfColors > div");
+  document.querySelectorAll("#pfSizesBox .stock-inp").forEach(i => { i.style.display = rows.length ? "none" : ""; });
+  rows.forEach(d => {
+    const cur = {};
+    d.querySelectorAll(".stock-inp").forEach(i => { if (i.value !== "") cur[i.dataset.size] = i.value; });
+    fillColorStocks(d, cur);
+  });
 }
   function addColorRow(c){
   if (document.querySelectorAll("#pfColors > div").length >= 5) { alert("Maximum 5 colors"); return; }
@@ -944,6 +1114,11 @@ function getSelectedSizes(){
     + '<label style="display:flex;align-items:center;gap:8px;font-size:12px"><input type="checkbox" class="cr-so" style="width:auto;margin:0"> SOLD OUT</label>'
     + '<button type="button" onclick="this.parentNode.remove()" style="margin-top:8px;font-size:11px;border:1px solid #c0392b;color:#c0392b;padding:6px 10px">REMOVE COLOR</button>';
   box.appendChild(d);
+const sBox = document.createElement("div");
+sBox.className = "cr-stocks";
+sBox.style.cssText = "margin-top:8px";
+d.appendChild(sBox);
+fillColorStocks(d, c && c.stock ? c.stock : {});
   if (c) {
     d.querySelector(".cr-name").value = c.name;
     for (let i = 0; i < 5; i++) d.querySelector(".cr-i" + i).value = (c.images && c.images[i]) || "";
@@ -972,18 +1147,25 @@ function getColorsFromForm(){
     document.getElementById("pfImg1").value = p.image;
     document.getElementById("pfImg2").value = p.image2 || "";
     document.getElementById("pfImg3").value = p.image3 || "";
-    renderSizeButtons(p.category, p.sizes || []);
+    renderSizeButtons(p.category, p.sizes || [], p.stock || {});
         const cb = document.getElementById("pfColors");
     cb.innerHTML = "";
     (p.colors || []).forEach(c => addColorRow(c));
+    document.querySelectorAll("#pfColors > div").forEach(d => {
+  const nm = d.querySelector(".cr-name").value.trim();
+  const cs = (p.stock && p.stock[nm] && typeof p.stock[nm] === "object") ? p.stock[nm] : (p.stock || {});
+  fillColorStocks(d, cs);
+});
     document.getElementById("pfSoldOut").checked = !!p.soldOut;
+    document.getElementById("pfUnlimited").checked = !!p.unlimited;
     document.getElementById("pfDesc").value = p.description || "";
   } else {
     document.getElementById("pfTitle").textContent = "ADD PRODUCT";
     ["pfId","pfName","pfPrice","pfOldPrice","pfImg1","pfImg2","pfImg3","pfDesc"].forEach(x => document.getElementById(x).value = "");
-renderSizeButtons("T-SHIRTS", []);
+renderSizeButtons("T-SHIRTS", [], {});
         document.getElementById("pfColors").innerHTML = "";
     document.getElementById("pfSoldOut").checked = false;
+    document.getElementById("pfUnlimited").checked = false;
   }
   document.getElementById("pfMsg").textContent = "";
   document.getElementById("productFormModal").classList.add("show");
@@ -999,11 +1181,13 @@ async function saveProduct(){
   const image2 = document.getElementById("pfImg2").value.trim();
   const image3 = document.getElementById("pfImg3").value.trim();
   const sizes = getSelectedSizes();
+    const unlimited = document.getElementById("pfUnlimited").checked;
+const stocks = unlimited ? {} : getStocksFromForm();
   const description = document.getElementById("pfDesc").value.trim();
     const colors = getColorsFromForm();
   const soldOut = document.getElementById("pfSoldOut").checked;
   if (!name || !price || !image) { document.getElementById("pfMsg").textContent = "Name, price and image URL are required"; return; }
-    const data = { name, category, price, oldPrice, image, image2, image3, sizes, description, colors, soldOut };
+    const data = { name, category, price, oldPrice, image, image2, image3, sizes, description, colors, soldOut, unlimited, stock: stocks };
   try {
     if (id) await db.collection("products").doc(id).update(data);
     else await db.collection("products").add(data);
@@ -1054,9 +1238,30 @@ function loadOrders(){
       list.appendChild(d);
     });
   });
+}async function restockOrder(o){
+  for (const it of (o.items || [])) {
+    const p = products.find(x => x.id === it.id);
+    if (p && p.stock && Object.keys(p.stock).length && (p.stock[it.size] || 0) > 0) {
+      await db.collection("products").doc(it.id).update({ ["stock." + it.size]: firebase.firestore.FieldValue.increment(it.qty) });
+    }
+  }
 }
-  async function updateStatus(id, status){
-  try { await db.collection("orders").doc(id).update({ status }); }
+async function updateStatus(id, status){
+  if(!isAdmin) return;
+  try {
+    const od = await db.collection("orders").doc(id).get();
+    if (status === "Cancelled" && od.exists) await restockOrder(od.data());
+    await db.collection("orders").doc(id).update({ status });
+    if (od.exists) {
+      const d = od.data();
+      const phone = String(d.phone || "").replace(/[^0-9]/g, "");
+      if (phone.startsWith("0")) phone = "92" + phone.slice(1);
+      if (phone) {
+        const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\n\nShukriya, JAZB";
+        window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg), "_blank");
+      }
+    }
+  }
   catch(e) { alert(e.message); }
 }
 async function replyToOrder(id){
@@ -1086,13 +1291,16 @@ async function replyToOrder(id){
     }
   } catch(e) { alert(e.message); }
 }
-  async function deleteOrder(id){
+    async function deleteOrder(id){
+  if(!isAdmin) return;
   if (!confirm("Delete this order?")) return;
   try {
+    const od = await db.collection("orders").doc(id).get();
     await db.collection("orders").doc(id).delete();
+    if (od.exists && od.data().status !== "Cancelled") await restockOrder(od.data());
     alert("Order deleted");
   } catch(e) { alert(e.message); }
-  }
+    }
   function openTrack(){
   document.getElementById("trackResult").innerHTML = "";
   document.getElementById("trackModal").classList.add("show");
@@ -1207,6 +1415,7 @@ function toggleSearch(){
 function closeAll(){
   document.getElementById("drawer").classList.remove("open");
   document.getElementById("overlay").classList.remove("show");
+  document.querySelectorAll(".modal").forEach(m => m.classList.remove("show"));
 }
 function joinNewsletter(){
   const e = document.getElementById("nlEmail").value.trim();
@@ -1230,5 +1439,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
   <a id="waFloat" href="https://wa.me/923358134489" target="_blank"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
-</body>
+    <div id="wishModal" class="modal">
+  <div class="modal-card">
+    <div class="modal-head"><h2>WISHLIST</h2><button onclick="closeAll()">✕</button></div>
+    <div id="wishItems" style="max-height:60vh;overflow-y:auto;padding:10px 0"></div>
+  </div>
+    </div>
+
+  <script>
+if (location.search.includes("admin")) { openAdminLogin(); }
+</script>
+  </body>
+  
 </html>
