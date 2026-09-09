@@ -1254,7 +1254,7 @@ async function updateStatus(id, status){
     await db.collection("orders").doc(id).update({ status });
     if (od.exists) {
       const d = od.data();
-      const phone = String(d.phone || "").replace(/[^0-9]/g, "");
+      let phone = String(d.phone || "").replace(/[^0-9]/g, "");
       if (phone.startsWith("0")) phone = "92" + phone.slice(1);
       if (phone) {
         const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\n\nShukriya, JAZB";
