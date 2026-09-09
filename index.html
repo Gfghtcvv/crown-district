@@ -22,16 +22,17 @@ input,textarea,select{font-family:'Inter',sans-serif;width:100%;padding:12px;bor
 img{display:block}
 .header{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:100}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 16px}
-.logo{height:34px;max-width:160px;object-fit:contain}
+.logo{height:60px;max-width:200px;object-fit:contain}
 .icon-btn{font-size:20px;padding:6px 10px;position:relative}
 .badge{position:absolute;top:0;right:0;background:#111;color:#fff;font-size:10px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
 .search-bar{display:none;padding:0 16px 12px}
 .search-bar.show{display:block}
 .tabs{display:flex;gap:10px;overflow-x:auto;padding:0 16px 10px;white-space:nowrap}
-.tab{flex:0 0 90px;position:relative;border:2px solid transparent;background:#f5f5f5;cursor:pointer;padding:0}
+.tab{flex:0 0 110px;position:relative;border:2px solid transparent;background:#f5f5f5;cursor:pointer;padding:0}
 .tab.active{border-color:#111}
-.tab img{width:100%;height:70px;object-fit:cover;display:block}
-.tab span{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;text-align:center;font-size:11px;letter-spacing:1px;padding:4px 2px}
+.tab img{width:100%;height:130px;object-fit:cover;display:block}
+.tab span{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);background:none;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.6);text-align:center;font-size:13px;letter-spacing:1px}
+.tab.all-tab span{background:none;color:#111;text-shadow:none;font-size:11px}
 .drawer{position:fixed;top:0;left:-280px;width:280px;height:100%;background:#fff;z-index:300;transition:left .25s;padding:20px;overflow-y:auto}
 .drawer.open{left:0}
 .drawer-head{display:flex;justify-content:space-between;font-size:20px;margin-bottom:20px}
@@ -407,22 +408,43 @@ img{display:block}
     <button class="full-btn" onclick="saveSetting('hero')">SAVE HERO IMAGE</button>
     <input id="setPhone" placeholder="Support phone (03358134489)" style="margin-top:16px">
     <button class="full-btn" onclick="saveSetting('phone')">SAVE PHONE</button>
-        <h3 style="margin:20px 0 10px">CATALOG IMAGES</h3>
-    <input id="setCatT" placeholder="T-Shirts catalog image URL">
+        
           <h3 style="margin:20px 0 10px">WHATSAPP NUMBER</h3>
     <input id="setWaNumber" placeholder="923358134489 (country code ke saath)">
     <button class="full-btn" onclick="saveSetting('waNumber')">SAVE WHATSAPP NUMBER</button>
           <h3 style="margin:20px 0 10px">INSTAGRAM HANDLE</h3>
     <input id="setInsta" placeholder="jazb.wear">
     <button class="full-btn" onclick="saveSetting('insta')">SAVE INSTAGRAM</button>
+              <h3 style="margin:20px 0 10px">FOCUS IMAGES (Categories in Focus)</h3>
+    <input id="setFocusT" placeholder="T-Shirts focus image URL">
+    <button class="full-btn" onclick="saveSetting('focusT')">SAVE T-SHIRTS FOCUS</button>
+    <input id="setFocusTrousers" placeholder="Trousers focus image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('focusTrousers')">SAVE TROUSERS FOCUS</button>
+    <input id="setFocusShorts" placeholder="Shorts focus image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('focusShorts')">SAVE SHORTS FOCUS</button>
+        <h3 style="margin:20px 0 10px">CATALOG IMAGES (Tabs)</h3>
+    <input id="setCatT" placeholder="T-Shirts tab image URL">
+    <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS TAB</button>
+    <input id="setCatTrackSuit" placeholder="Track Suit tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catTrackSuit')">SAVE TRACK SUIT TAB</button>
+    <input id="setCatShirts" placeholder="Shirts tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catShirts')">SAVE SHIRTS TAB</button>
+    <input id="setCatTrousers" placeholder="Trousers tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catTrousers')">SAVE TROUSERS TAB</button>
+    <input id="setCatShorts" placeholder="Shorts tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catShorts')">SAVE SHORTS TAB</button>
+    <input id="setCatHoodies" placeholder="Hoodies tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catHoodies')">SAVE HOODIES TAB</button>
+    <input id="setCatJackets" placeholder="Jackets tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catJackets')">SAVE JACKETS TAB</button>
+    <input id="setCatJeans" placeholder="Jeans tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
+    <input id="setCatCaps" placeholder="Caps tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catCaps')">SAVE CAPS TAB</button>
+    <input id="setCatAccessories" placeholder="Accessories tab image URL" style="margin-top:16px">
+    <button class="full-btn" onclick="saveSetting('catAccessories')">SAVE ACCESSORIES TAB</button>
     <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS IMAGE</button>
-          <input id="setCatTrackSuit" placeholder="Track Suit catalog image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catTrackSuit')">SAVE TRACK SUIT IMAGE</button>
-    <input id="setCatTrousers" placeholder="Trousers catalog image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catTrousers')">SAVE TROUSERS IMAGE</button>
-    <input id="setCatShorts" placeholder="Shorts catalog image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catShorts')">SAVE SHORTS IMAGE</button>
-    <p class="message" id="settingsMsg"></p>
+          
   </div>
 </div>
 <div id="trackModal" class="modal">
@@ -501,7 +523,8 @@ function renderTabs(){
     const b = document.createElement("button");
     b.className = "tab" + (c === currentCat ? " active" : "");
     if (c === "ALL") {
-      b.innerHTML = '<span style="position:static;background:none;color:#111;padding:28px 0">ALL</span>';
+            b.classList.add("all-tab");
+      b.innerHTML = '<span>ALL</span>';
     } else {
       const img = catImages[c] || "https://via.placeholder.com/200x140?text=" + c;
       b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/200x140?text=' + c + '\'"><span>' + c + '</span>';
@@ -558,7 +581,8 @@ d.appendChild(wb);
   });
   renderFocus();
 }
-let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "TROUSERS":"", "SHORTS":"" };
+let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "SHIRTS":"", "TROUSERS":"", "SHORTS":"", "HOODIES":"", "JACKETS":"", "JEANS":"", "CAPS":"", "ACCESSORIES":"" };
+let focusImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
 function renderFocus(){
   const g = document.getElementById("focusGrid");
   g.innerHTML = "";
@@ -1382,14 +1406,12 @@ function applySettings(s){
   if (s.hero) document.getElementById("heroImg").src = s.hero;
     if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
     if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
-     if (s.catT) catImages["T-SHIRTS"] = s.catT;
-  if (s.catTrackSuit) catImages["TRACK SUIT"] = s.catTrackSuit;
-  if (s.catTrousers) catImages["TROUSERS"] = s.catTrousers;
-  if (s.catShorts) catImages["SHORTS"] = s.catShorts;
-    if (s.catT || s.catTrackSuit || s.catTrousers || s.catShorts) { renderFocus(); renderTabs(); }
-  if (s.catT) document.getElementById("setCatT").value = s.catT;
-  if (s.catTrousers) document.getElementById("setCatTrousers").value = s.catTrousers;
-  if (s.catShorts) document.getElementById("setCatShorts").value = s.catShorts;
+  const catMap = {catT:"T-SHIRTS",catTrackSuit:"TRACK SUIT",catShirts:"SHIRTS",catTrousers:"TROUSERS",catShorts:"SHORTS",catHoodies:"HOODIES",catJackets:"JACKETS",catJeans:"JEANS",catCaps:"CAPS",catAccessories:"ACCESSORIES"};
+  const focusMap = {focusT:"T-SHIRTS",focusTrousers:"TROUSERS",focusShorts:"SHORTS"};
+  for (const k in catMap) { if (s[k]) { catImages[catMap[k]] = s[k]; const el = document.getElementById("set" + k[0].toUpperCase() + k.slice(1)); if (el) el.value = s[k]; } }
+  for (const k in focusMap) { if (s[k]) { focusImages[focusMap[k]] = s[k]; const el = document.getElementById("set" + k[0].toUpperCase() + k.slice(1)); if (el) el.value = s[k]; } }
+  if (Object.keys(catMap).some(k => s[k])) renderTabs();
+  if (Object.keys(focusMap).some(k => s[k])) renderFocus();
   if (s.phone) {
     document.getElementById("supportPhone").textContent = s.phone;
     const clean = s.phone.replace(/[^0-9]/g, "");
@@ -1407,10 +1429,6 @@ async function loadSettings(){
       if (s.logo) document.getElementById("setLogo").value = s.logo;
       if (s.hero) document.getElementById("setHero").value = s.hero;
       if (s.phone) document.getElementById("setPhone").value = s.phone;
-                  if (s.catT) document.getElementById("setCatT").value = s.catT;
-      if (s.catTrackSuit) document.getElementById("setCatTrackSuit").value = s.catTrackSuit;
-      if (s.catTrousers) document.getElementById("setCatTrousers").value = s.catTrousers;
-      if (s.catShorts) document.getElementById("setCatShorts").value = s.catShorts;
             if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
             if (s.insta) document.getElementById("setInsta").value = s.insta;
     }
