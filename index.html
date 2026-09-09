@@ -439,10 +439,7 @@ img{display:block}
     <button class="full-btn" onclick="saveSetting('catJackets')">SAVE JACKETS TAB</button>
     <input id="setCatJeans" placeholder="Jeans tab image URL" style="margin-top:16px">
     <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
-    <input id="setCatCaps" placeholder="Caps tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catCaps')">SAVE CAPS TAB</button>
-    <input id="setCatAccessories" placeholder="Accessories tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catAccessories')">SAVE ACCESSORIES TAB</button>
+    
     <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS IMAGE</button>
           
   </div>
@@ -494,7 +491,7 @@ const firebaseConfig = {
   messagingSenderId: "206237211893",
   appId: "1:206237211893:web:56b74db12ce91829dc39bc"
 };
-const CATEGORIES = ["T-SHIRTS","TRACK SUIT","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS","CAPS","ACCESSORIES"];
+const CATEGORIES = ["T-SHIRTS","TRACK SUIT","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS"];
 const DEFAULT_SIZES = {
   "T-SHIRTS":["S","M","L","XL","XXL"],
   "SHIRTS":["S","M","L","XL","XXL"],
