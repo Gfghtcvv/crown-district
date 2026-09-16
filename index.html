@@ -8,9 +8,15 @@
  <link rel="icon" type="image/png" href="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
 <meta property="og:title" content="JAZB - Premium Streetwear">
 <meta property="og:description" content="Premium streetwear from Pakistan. T-shirts, trousers, shorts. Order online with easy tracking.">
-<meta property="og:type" content="website">
-  <meta name="description" content="JAZB is a premium streetwear brand for men. Shop oversized T-shirts, track suits, trousers and shorts in bold original designs. Pakistan-wide delivery.">
 <meta property="og:site_name" content="JAZB">
+<meta property="og:image" content="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
+<meta property="og:url" content="https://jazbwear.pk/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JAZB - Premium Streetwear">
+<meta name="twitter:description" content="Premium streetwear from Pakistan. T-shirts, track suits, shorts. Order online with easy tracking.">
+<meta name="twitter:image" content="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
+<link rel="canonical" href="https://jazbwear.pk/">
+  <meta name="description" content="JAZB is a premium streetwear brand for men. Shop oversized T-shirts, track suits, trousers and shorts in bold original designs. Pakistan-wide delivery.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -18,8 +24,31 @@
   "name": "JAZB",
   "alternateName": ["JAZB Streetwear", "JAZB Mens Wear", "JAZB Men's Wear"],
   "logo": "https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/40737094-64b8-48fa-8716-0838c61f8ed7.png",
-  "url": "https://jazb-mens-wear.jazbmenswear.workers.dev/"
+  "url": "https://jazbwear.pk/"
 }
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "JAZB",
+  "url": "https://jazbwear.pk/",
+  "logo": "https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/40737094-64b8-48fa-8716-0838c61f8ed7.png",
+  "sameAs": ["https://instagram.com/jazb.wear"],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+92-335-8134489",
+    "contactType": "customer service",
+    "areaServed": "PK"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2P6KXSXH0T"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-2P6KXSXH0T');
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -61,7 +90,10 @@ img{display:block}
 .focus-card img{width:100%;height:100%;object-fit:cover}
 .focus-card span{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.9);text-align:center;padding:10px;font-size:13px;letter-spacing:2px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px 30px}
-.p-card{cursor:pointer;position:relative}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.p-card{cursor:pointer;position:relative;animation:fadeUp .4s ease}
+.p-card:active{transform:scale(.97)}
+.focus-card:active{transform:scale(.97)}
 .p-img{aspect-ratio:4/5;object-fit:cover;width:100%;background:#f5f5f5}
 .p-name{font-size:14px;padding:10px 4px 2px;letter-spacing:.5px}
 .p-cat{font-size:11px;color:#999;padding:0 4px}
@@ -243,6 +275,123 @@ img{display:block}
 #waFloat svg{width:30px;height:30px;fill:#fff}
   #announceBar{background:#000;color:#fff;text-align:center;padding:8px 12px;font-size:13px;font-weight:600;letter-spacing:.5px}
 .empty{text-align:center;color:#999;padding:30px;font-size:14px}
+.about-box{display:grid;grid-template-columns:1fr;gap:16px;max-width:700px;margin:0 auto;padding:0 16px}
+@media(min-width:700px){.about-box{grid-template-columns:1fr 1fr}}
+.about-box img{width:100%;aspect-ratio:3/4;object-fit:cover;background:#f5f5f5}
+.about-box p{font-size:14px;color:#444;line-height:1.7;margin-bottom:12px}
+.lb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px;max-width:700px;margin:0 auto}
+.lb-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;background:#f5f5f5}
+.insta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 16px;max-width:600px;margin:0 auto}
+.insta-grid img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f5f5f5}
+.insta-follow{display:block;text-align:center;margin:20px auto;font-weight:700;letter-spacing:2px;color:#000;text-decoration:none}
+#recentlyViewed{display:none}
+.sg-steps{max-width:600px;margin:0 auto;padding:0 16px}
+.sg-step{display:flex;gap:14px;align-items:flex-start;background:#f8f8f8;border-radius:8px;padding:16px;margin-bottom:10px}
+.sg-step .num{width:32px;height:32px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.sg-step p{font-size:13px;color:#555;line-height:1.5}
+.sg-step strong{display:block;font-size:14px;color:#000;margin-bottom:2px}
+.conf-icon{font-size:50px;text-align:center;margin-bottom:10px}
+.info-page{position:fixed;inset:0;background:#fff;z-index:270;overflow-y:auto;display:none}
+.info-page.show{display:block}
+.info-inner{padding:16px 16px 60px;max-width:640px;margin:0 auto}
+.info-top{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;margin-bottom:20px}
+.info-top h2{font-size:18px;letter-spacing:2px}
+.info-top button{font-size:20px}
+.info-body h3{font-size:16px;letter-spacing:1px;margin:20px 0 8px}
+.info-body p{font-size:14px;color:#555;line-height:1.7;margin-bottom:10px}
+.info-body .info-step{display:flex;gap:12px;align-items:flex-start;background:#f8f8f8;border-radius:8px;padding:14px;margin-bottom:10px}
+.info-body .info-step .num{width:30px;height:30px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.info-body .info-step p{margin:0;font-size:13px;color:#555;line-height:1.5}
+.info-body .info-step strong{display:block;font-size:14px;color:#000;margin-bottom:2px}
+.info-contact{display:flex;gap:10px;margin-top:16px}
+.info-contact button{flex:1;padding:14px;font-size:13px;letter-spacing:1px}
+body.dark{background:#0d0d0d;color:#eee}
+body.dark .header{background:#111;border-bottom-color:#222}
+body.dark .pdp{background:#0d0d0d}
+body.dark .modal-card{background:#1a1a1a;color:#eee}
+body.dark .p-img{background:#1a1a1a}
+body.dark .pdp-images{background:#1a1a1a}
+body.dark .size-btn{border-color:#444;color:#eee}
+body.dark .size-btn.sel{background:#fff;color:#000;border-color:#fff}
+body.dark .color-btn{border-color:#444;color:#eee}
+body.dark .color-btn.sel{background:#fff;color:#000;border-color:#fff}
+body.dark input,body.dark textarea,body.dark select{background:#1a1a1a;color:#eee;border-color:#333}
+body.dark .pdp-bar{background:#111;border-top-color:#222}
+body.dark .add-btn{background:#fff;color:#000}
+body.dark .full-btn{background:#fff;color:#000}
+body.dark .p-name{color:#eee}
+body.dark .pdp-name{color:#fff}
+body.dark .pdp-price{color:#fff}
+body.dark .pdp-desc{color:#aaa}
+body.dark .sec-title{color:#fff}
+body.dark .newsletter{background:#111}
+body.dark .newsletter p{color:#aaa}
+body.dark .faq-item{border-color:#222}
+body.dark .faq-item .q{color:#eee}
+body.dark .faq-item .a{color:#aaa}
+body.dark .testi-card{background:#1a1a1a}
+body.dark .testi-card p{color:#aaa}
+body.dark .testi-card .name{color:#fff}
+body.dark .drawer{background:#111}
+body.dark .drawer a{border-color:#222;color:#eee}
+body.dark .drawer-head{color:#fff}
+body.dark .tab{background:#1a1a1a}
+body.dark .tab.active{border-color:#fff}
+body.dark .tab.all-tab span{color:#fff}
+body.dark #pdpSticky{background:#111}
+body.dark #pdpSticky .sticky-price{color:#fff}
+body.dark #pdpSticky button{background:#fff;color:#000}
+body.dark .acc-item{border-color:#222}
+body.dark .acc-item>button{color:#eee}
+body.dark .acc-body{color:#aaa}
+body.dark .cart-item{border-color:#222}
+body.dark .ci-name{color:#eee}
+body.dark .ci-price{color:#eee}
+body.dark .sum-row{color:#eee}
+body.dark .info-page{background:#0d0d0d}
+body.dark .info-top{border-color:#222}
+body.dark .info-top h2{color:#fff}
+body.dark .info-body p{color:#aaa}
+body.dark .info-body h3{color:#fff}
+body.dark .info-body .info-step{background:#1a1a1a}
+body.dark .info-body .info-step strong{color:#fff}
+body.dark .info-body .info-step p{color:#aaa}
+body.dark .info-top button{color:#fff !important;font-size:24px}
+body.dark .info-body p[style*="000"]{color:#fff !important}
+body.dark .info-body strong[style*="000"]{color:#fff !important}
+body.dark .sg-box{background:#1a1a1a;color:#eee}
+body.dark .sg-box th{background:#222}
+body.dark .sg-box th,body.dark .sg-box td{border-color:#333}
+body.dark .sg-close{background:#fff;color:#000}
+body.dark .trust-item{color:#ccc}
+body.dark .copy{color:#666}
+body.dark .f-brand{color:#fff}
+body.dark .logo{filter:brightness(0) invert(1)}
+body.dark #confirmModal .modal-card>div[style*="f8f8f8"]{background:#f8f8f8 !important;color:#111 !important}
+body.dark #confirmModal .modal-card>div[style*="f8f8f8"] p{color:#111 !important}
+body.dark #confirmModal .modal-card>div[style*="f8f8f8"] strong{color:#111 !important}
+body.dark .modal-head button{color:#fff}
+body.dark .pdp-close{color:#fff}
+body.dark .pdp-cat{color:#999}
+body.dark .pdp-counter{background:rgba(255,255,255,.3);color:#fff}
+body.dark .ci-qty button{border-color:#555 !important;color:#eee !important;background:#1a1a1a !important}
+body.dark .ci-qty button[onclick*="rmItem"]{color:#c0392b !important;border-color:#c0392b !important;font-size:10px !important;padding:4px 8px !important}
+body.dark .ci-name{color:#eee !important}
+body.dark .ci-size{color:#999 !important}
+body.dark .ci-price{color:#eee !important}
+body.dark .cart-item{border-color:#333 !important}
+body.dark .cart-item img{background:#1a1a1a}
+body.dark .ci-qty{flex-wrap:wrap}
+body.dark .header{border-bottom-color:#444}
+body.dark .icon-btn{color:#fff}
+body.dark section[style*="f8f8f8"]{background:#1a1a1a !important}
+body.dark section[style*="f8f8f8"] p{color:#ccc !important}
+body.dark .focus-card span{background:rgba(0,0,0,.7) !important;color:#fff !important}
+body.dark .insta-follow{color:#fff !important}
+body.dark .f-support a{color:#ccc !important}
+body.dark .btn-outline{border-color:#fff !important;color:#fff !important}
+body.dark section[style*="f8f8f8"] h2{color:#eee !important}
+body.dark section[style*="f8f8f8"] button{color:#eee !important}
 </style>
 </head>
 <body>
@@ -251,16 +400,17 @@ img{display:block}
   <div id="loader"><div class="spinner"></div><p>JAZB</p></div>
   <div id="toast"></div>
   <button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-  <div id="sizeGuide"><div class="sg-box"><h3>SIZE GUIDE</h3><table><tr><th>Size</th><th>Chest</th><th>Length</th></tr><tr><td>S</td><td>96 cm</td><td>68 cm</td></tr><tr><td>M</td><td>102 cm</td><td>70 cm</td></tr><tr><td>L</td><td>108 cm</td><td>72 cm</td></tr><tr><td>XL</td><td>114 cm</td><td>74 cm</td></tr><tr><td>XXL</td><td>120 cm</td><td>76 cm</td></tr></table><p style="font-size:11px;color:#999;margin-top:10px">Measurements in cm. For a relaxed fit, size up.</p><button class="sg-close" onclick="document.getElementById('sizeGuide').classList.remove('show')">CLOSE</button></div></div>
+  <div id="sizeGuide"><div class="sg-box"><h3>SIZE GUIDE</h3><table><tr><th>Size</th><th>Chest</th><th>Length</th></tr><tr><td>S</td><td>96 cm</td><td>68 cm</td></tr><tr><td>M</td><td>102 cm</td><td>70 cm</td></tr><tr><td>L</td><td>108 cm</td><td>72 cm</td></tr><tr><td>XL</td><td>114 cm</td><td>74 cm</td></tr><tr><td>XXL</td><td>120 cm</td><td>76 cm</td></tr></table><p style="font-size:11px;color:#999;margin-top:10px">T-Shirts: measurements in cm. For a relaxed fit, size up.</p><h3 style="margin-top:16px">TROUSERS &amp; SHORTS</h3><table><tr><th>Size</th><th>Waist (inch)</th></tr><tr><td>30</td><td>30</td></tr><tr><td>32</td><td>32</td></tr><tr><td>34</td><td>34</td></tr><tr><td>36</td><td>36</td></tr><tr><td>38</td><td>38</td></tr></table><p style="font-size:11px;color:#999;margin-top:10px">Size = waist size in inches. Apni natural waist measure karo.</p><button class="sg-close" onclick="document.getElementById('sizeGuide').classList.remove('show')">CLOSE</button></div></div>
 
   
   <div id="pdpSticky"><span class="sticky-price" id="stickyPrice"></span><button onclick="addFromPDP()">ADD TO CART</button></div>
 <header class="header">
   <div class="header-inner">
     <button class="icon-btn" onclick="toggleDrawer()">&#9776;</button>
-    <img id="logoImg" class="logo" src="https://via.placeholder.com/160x40?text=JAZB" alt="JAZB">
+    <img id="logoImg" class="logo" src="https://placehold.co/160x40?text=JAZB" alt="JAZB">
     <div>
-      <button class="icon-btn" onclick="toggleSearch()">&#128269;</button>
+      <button class="icon-btn" onclick="toggleDark()">&#127769;</button>
+<button class="icon-btn" onclick="toggleSearch()">&#128269;</button>
       <button class="icon-btn" onclick="openWishlist()">❤️</button>
       <button class="icon-btn" onclick="openCart()">&#128717;<span id="cartCount" class="badge">0</span></button>
     </div>
@@ -276,18 +426,41 @@ img{display:block}
 </div>
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
 <section class="hero">
-  <img id="heroImg" src="https://via.placeholder.com/800x400?text=JAZB" alt="JAZB">
-  <div class="hero-cta"><button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></div>
+  <img id="heroImg" src="https://placehold.co/800x400?text=JAZB" alt="JAZB">
+    <div class="hero-cta"><button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></div>
 </section>
+<section style="background:#111;color:#fff;padding:34px 16px;text-align:center">
+  <h2 style="font-size:26px;letter-spacing:2px;margin-bottom:8px">MEGA SALE</h2>
+  <p style="font-size:14px;color:#ccc;margin-bottom:14px">Limited stock — ends soon!</p>
+  <div style="font-size:32px;font-weight:700;letter-spacing:3px" id="megaTimer">23:59:59</div>
+  <div id="flashSale" style="margin-top:16px;background:#fff;color:#000;padding:14px;border-radius:8px;max-width:300px;margin-left:auto;margin-right:auto;display:none"></div>
+  <button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" style="margin-top:16px;background:#fff;color:#000;padding:14px 40px;letter-spacing:2px">SHOP THE SALE</button>
+</section>
+
+
 
 <section>
   <h2 class="sec-title">Categories in Focus</h2>
   <div class="focus-grid" id="focusGrid"></div>
 </section>
+<section>
+  <h2 class="sec-title">NEW ARRIVALS</h2>
+  <div class="grid" id="newArrivals"></div>
+</section>
+<section style="background:#f8f8f8;padding:24px 16px;text-align:center">
+  <h2 style="font-size:20px;letter-spacing:2px;margin-bottom:8px">🔥 BUNDLE DEAL</h2>
+  <p style="font-size:14px;color:#555;margin-bottom:4px">Koi bhi <strong>2 T-shirts</strong> lo</p>
+  <p style="font-size:22px;font-weight:700;color:#c0392b;margin-bottom:12px">Sirf Rs. 3,500</p>
+  <button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" style="background:#000;color:#fff;padding:12px 36px;letter-spacing:2px">PICK YOURS</button>
+</section>
 <section id="shop">
   <h2 class="sec-title">On The List</h2>
   <div class="grid" id="productGrid"></div>
   <div class="social-proof"><strong>500+</strong> Happy Customers Across Pakistan</div>
+<section id="recentlyViewed">
+  <h2 class="sec-title">RECENTLY VIEWED</h2>
+  <div class="grid" id="recentlyGrid"></div>
+</section>
 <div class="testi-section">
   <h2>WHAT OUR CUSTOMERS SAY</h2>
   <div class="testi-grid">
@@ -303,7 +476,8 @@ img{display:block}
   <div class="trust-item"><span>🔒</span> 100% Secure</div>
   </div>
 </section>
-  <div class="faq-section">
+
+<div class="faq-section" id="faq">
   <h2>FAQ</h2>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How long does delivery take?</div><div class="a">2-5 working days within Pakistan. You will get a tracking update via WhatsApp.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the return policy?</div><div class="a">Size exchange within 7 days of delivery. Item must be unworn with tags. Contact us on WhatsApp for exchange.</div></div>
@@ -311,21 +485,35 @@ img{display:block}
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the delivery charge?</div><div class="a">Rs. 200 for orders under Rs. 3,000. FREE delivery on orders above Rs. 3,000.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I pay?</div><div class="a">Cash on delivery (COD) available across Pakistan. We will confirm your order via WhatsApp before shipping.</div></div>
   </div>
+<section>
+  <h2 class="sec-title">@JAZB.WEAR ON INSTAGRAM</h2>
+  <div class="insta-grid">
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=1" alt="JAZB Instagram"></a>
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=2" alt="JAZB Instagram"></a>
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=3" alt="JAZB Instagram"></a>
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=4" alt="JAZB Instagram"></a>
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=5" alt="JAZB Instagram"></a>
+    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=6" alt="JAZB Instagram"></a>
+  </div>
+  <a href="https://instagram.com/jazb.wear" target="_blank" class="insta-follow">FOLLOW @JAZB.WEAR</a>
+</section>
 <section class="newsletter">
   <p>Get updates on our latest collections, drops &amp; features coming up.</p>
+  <p style="font-size:13px;color:#c0392b;font-weight:700;margin-bottom:10px">🎁 Dost ko code do: <strong>JAZB10</strong> — unhein 10% off (Rs. 3,000+ order pe)</p>
   <input id="nlEmail" type="email" placeholder="ENTER YOUR EMAIL">
   <button class="full-btn" onclick="joinNewsletter()">SIGN ME UP</button>
 </section>
 <footer class="footer">
   <div class="f-brand">JAZB</div>
   <div class="f-links">
-    <a>Shopping Guide</a><a>About Us</a>
-    <a>Exchange &amp; Returns</a><a>Retail Stores</a>
-    <a>Shipping &amp; Delivery</a><a>Contact Us</a>
-    <a>How To Buy</a>
+    <a onclick="openInfoPage('about')" style="cursor:pointer">About Us</a>
+    <a onclick="openInfoPage('guide')" style="cursor:pointer">Shopping Guide</a>
+    <a onclick="openInfoPage('returns')" style="cursor:pointer">Exchange &amp; Returns</a>
+    <a onclick="openInfoPage('shipping')" style="cursor:pointer">Shipping &amp; Delivery</a>
+    <a onclick="openInfoPage('contact')" style="cursor:pointer">Contact Us</a>
     <a onclick="openTrack()" style="cursor:pointer">Track Order</a>
   </div>
-  <div class="f-support">
+  <div class="f-support" id="support">
     <h3>CUSTOMER SUPPORT</h3>
     <div class="f-phone" id="supportPhone">0335-8134489</div>
         <a href="https://instagram.com/jazb.wear" target="_blank" style="display:block;margin-top:12px;color:#000;text-decoration:none;font-size:14px">Instagram: @jazb.wear</a>
@@ -333,6 +521,7 @@ img{display:block}
       <button class="btn-dark" id="callBtn" onclick="location.href='tel:03358134489'">CALL NOW</button>
       <button class="btn-outline" id="waBtn" onclick="location.href='https://wa.me/923358134489'">WHATSAPP</button>
     </div>
+    <button class="full-btn" style="margin-top:12px;background:#25D366" onclick="location.href='https://wa.me/923358134489?text=JAZB%20pe%20naya%20drop%20chahta%20hoon%20🔥'">🔔 NOTIFY ME ABOUT NEW DROPS</button>
   </div>
   <p class="copy">&copy; 2026 JAZB. All rights reserved.</p>
 </footer>
@@ -405,6 +594,7 @@ img{display:block}
   <div class="admin-tabs">
     <button class="atab active" id="tabProducts" onclick="adminTab('products')">PRODUCTS</button>
     <button class="atab" id="tabOrders" onclick="adminTab('orders')">ORDERS</button>
+    <button class="atab" id="tabStats" onclick="adminTab('stats')">STATS</button>
     <button class="atab" id="tabSettings" onclick="adminTab('settings')">SETTINGS</button>
   </div>
   <div id="adminProducts" class="atab-body">
@@ -412,6 +602,7 @@ img{display:block}
     <div id="adminProductList" style="margin-top:14px"></div>
   </div>
   <div id="adminOrders" class="atab-body" style="display:none"><div id="orderList"></div></div>
+  <div id="adminStats" class="atab-body" style="display:none"><div id="statsList"></div></div>
     <div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
     <input id="setLogo" placeholder="Logo image URL (Imgur / Drive)">
@@ -453,7 +644,30 @@ img{display:block}
     <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
     
     <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS IMAGE</button>
+          <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
+    <select id="setFlash" style="margin-bottom:8px"></select>
+    <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
           
+  </div>
+</div>
+<div id="confirmModal" class="modal">
+  <div class="modal-card" style="text-align:center">
+    <div class="conf-icon">✅</div>
+    <h2 style="font-size:20px;letter-spacing:1px">ORDER PLACED</h2>
+    <p style="font-size:14px;color:#555;margin:12px 0">Shukriya! Your order has been received.</p>
+    <div style="background:#f8f8f8;padding:14px;border-radius:8px;font-size:14px">
+      <p style="margin:0 0 6px"><strong>Order ID:</strong> <span id="confOrderId"></span></p>
+      <p style="margin:0"><strong>Total:</strong> <span id="confTotal"></span></p>
+    </div>
+    <p style="font-size:13px;color:#777;margin:14px 0">We will confirm your order via WhatsApp shortly. Track it anytime with your phone number.</p>
+    <button class="full-btn" style="background:#25D366;margin-bottom:8px" onclick="sendReceipt()">📄 SEND RECEIPT ON WHATSAPP</button>
+    <button class="full-btn" onclick="document.getElementById('confirmModal').classList.remove('show')">CONTINUE SHOPPING</button>
+  </div>
+</div>
+<div id="infoPage" class="info-page">
+  <div class="info-inner">
+    <div class="info-top"><h2 id="infoTitle"></h2><button onclick="closeInfoPage()">&#10005;</button></div>
+    <div class="info-body" id="infoBody"></div>
   </div>
 </div>
 <div id="trackModal" class="modal">
@@ -492,6 +706,7 @@ const ADMIN_PASSWORD = "1127shehroz";
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
 const DELIVERY_CHARGE = 200;
+const BUNDLE_PRICE = 3500;
 const EMAILJS_SERVICE_ID = "service_g55ha9n";
 const EMAILJS_TEMPLATE_ID = "template_5p2fqnz";
 const EMAILJS_REPLY_TEMPLATE_ID = "template_4303qye";
@@ -535,8 +750,8 @@ function renderTabs(){
             b.classList.add("all-tab");
       b.innerHTML = '<span>ALL</span>';
     } else {
-            let img = (catImages[c] || "https://via.placeholder.com/200x140?text=" + c).replace(/"/g, "");
-      b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/200x140?text=' + c + '\'"><span>' + c + '</span>';
+            let img = (catImages[c] || "https://placehold.co/200x140?text=" + c).replace(/"/g, "");
+      b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/200x140?text=' + c + '\'"><span>' + c + '</span>';
     }
     b.onclick = () => setCat(c);
     t.appendChild(b);
@@ -556,12 +771,31 @@ function renderDrawer(){
   a1.textContent = "TRACK ORDER";
   a1.onclick = () => { openTrack(); toggleDrawer(); };
   d.appendChild(a1);
+  [["ABOUT US","about"],["SHOPPING GUIDE","guide"],["EXCHANGE & RETURNS","returns"],["SHIPPING & DELIVERY","shipping"],["CONTACT US","contact"]].forEach(x => {
+    const a = document.createElement("a");
+    a.textContent = x[0];
+    a.onclick = () => { openInfoPage(x[1]); toggleDrawer(); };
+    d.appendChild(a);
+  });
 }window.addEventListener("load", () => {
   const l = document.getElementById("loader");
   if (l) l.style.display = "none";
 });
 setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.display = "none"; }, 3000);
-  function renderProducts(){
+  function renderNewArrivals(){
+  const g = document.getElementById("newArrivals");
+  if (!g) return;
+  const list = [...products].filter(p => p.createdAt).sort((a,b) => b.createdAt.toDate() - a.createdAt.toDate()).slice(0,4);
+  g.innerHTML = list.length ? "" : '<p class="empty">New drops coming soon.</p>';
+  list.forEach(p => {
+    const d = document.createElement("div");
+    d.className = "p-card";
+    d.onclick = () => openPDP(p);
+    d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://placehold.co/300x400?text=JAZB\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + fmt(p.price) + '</div>';
+    g.appendChild(d);
+  });
+}
+function renderProducts(){
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const grid = document.getElementById("productGrid");
   const list = products.filter(p => (currentCat === "ALL" || p.category === currentCat) && (!q || p.name.toLowerCase().includes(q)));
@@ -577,7 +811,7 @@ setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.d
       const disc = Math.round((1 - p.price / p.oldPrice) * 100);
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
-    d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
+    d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
     productSoldOut(p) ? '<span class="sold-badge">SOLD OUT</span>' : ''
     const wb = document.createElement("button");
 wb.className = "wish-btn";
@@ -596,11 +830,11 @@ function renderFocus(){
   const g = document.getElementById("focusGrid");
   g.innerHTML = "";
   ["T-SHIRTS","TROUSERS","SHORTS"].forEach(c => {
-        let img = (focusImages[c] || "https://via.placeholder.com/300x400?text=" + c).replace(/"/g, "");
+        let img = (focusImages[c] || "https://placehold.co/300x400?text=" + c).replace(/"/g, "");
     const d = document.createElement("div");
     d.className = "focus-card";
     d.onclick = () => { setCat(c); document.getElementById("shop").scrollIntoView({behavior:"smooth"}); };
-    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://via.placeholder.com/300x400?text=' + c + '\'"><span>' + c + '</span>';
+    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/300x400?text=' + c + '\'"><span>' + c + '</span>';
     g.appendChild(d);
   });
 }
@@ -611,7 +845,7 @@ function getColors(p){
 }
 function buildGallery(c){
   let imgs = (c.images || []).filter(Boolean);
-  if (!imgs.length) imgs = ["https://via.placeholder.com/600x660?text=" + c.name];
+  if (!imgs.length) imgs = ["https://placehold.co/600x660?text=" + c.name];
   const track = document.getElementById("pdpTrack");
   track.innerHTML = "";
   imgs.forEach(u => {
@@ -643,7 +877,42 @@ function buildGallery(c){
     if (e.clientX < r.left + r.width / 2) go(idx - 1); else go(idx + 1);
   };
 }
+
+  function renderFlashSale(){
+  const el=document.getElementById("flashSale");
+  if(!el) return;
+  if(!products.length){ el.style.display="none"; return; }
+  const flashId=localStorage.getItem("cd_flash")||"";
+  const p=products.find(x=>x.id===flashId)||products[0];
+  const flashPrice=Math.round(p.price/2);
+  el.style.display="block";
+  el.innerHTML='<div style="font-size:11px;color:#c0392b;font-weight:700;letter-spacing:1px">⚡ FLASH SALE — 50% OFF</div><div style="font-size:14px;font-weight:700;margin:4px 0">'+p.name+'</div><div style="font-size:13px"><span style="text-decoration:line-through;color:#999">'+fmt(p.price)+'</span> <strong style="color:#c0392b">'+fmt(flashPrice)+'</strong></div><button onclick="openPDP(products.find(x=>x.id===\''+p.id+'\'))" style="margin-top:8px;background:#c0392b;color:#fff;padding:8px 20px;font-size:12px;letter-spacing:1px">GRAB IT</button>';
+}
+function renderRecentlyViewed(){
+  const g=document.getElementById("recentlyGrid");
+  if(!g) return;
+  const ids=JSON.parse(localStorage.getItem("cd_recent")||"[]");
+  const list=ids.map(id=>products.find(x=>x.id===id)).filter(Boolean);
+  if(!list.length){ document.getElementById("recentlyViewed").style.display="none"; return; }
+  document.getElementById("recentlyViewed").style.display="block";
+  g.innerHTML="";
+  list.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="p-card";
+    d.onclick=()=>openPDP(p);
+    d.innerHTML='<img class="p-img" src="'+p.image+'"><div class="p-name">'+p.name+'</div><div class="p-price">'+fmt(p.price)+'</div>';
+    g.appendChild(d);
+  });
+}
 function openPDP(p){
+  (function(){
+    let rv=JSON.parse(localStorage.getItem("cd_recent")||"[]");
+    rv=rv.filter(x=>x!==p.id);
+    rv.unshift(p.id);
+    rv=rv.slice(0,4);
+    localStorage.setItem("cd_recent",JSON.stringify(rv));
+    renderRecentlyViewed();
+  })();
   currentProduct = p;
   const colors = getColors(p);
   let ci = 0;
@@ -676,7 +945,7 @@ function openPDP(p){
   document.getElementById("pdpPrice").innerHTML = priceHtml;
     const revBox = document.getElementById("pdpReviews");
   if (revBox) {
-    revBox.innerHTML = '<div class="reviews-section"><h4>REVIEWS</h4><div id="reviewsList"></div><div class="review-form"><strong style="font-size:13px">Write a Review:</strong><div class="r-stars-input" id="rStarsInput">' + [1,2,3,4,5].map(n => '<span data-v="'+n+'" onclick="setRating('+n+')">★</span>').join('') + '</div><input id="rName" placeholder="Your name"><textarea id="rText" placeholder="Your review..."></textarea><button onclick="submitReview()">SUBMIT REVIEW</button></div></div>';
+    revBox.innerHTML = '<div class="reviews-section"><h4>REVIEWS</h4><div id="reviewsList"></div><div class="review-form"><strong style="font-size:13px">Write a Review:</strong><div class="r-stars-input" id="rStarsInput">' + [1,2,3,4,5].map(n => '<span data-v="'+n+'" onclick="setRating('+n+')">★</span>').join('') + '</div><input id="rName" placeholder="Your name"><input id="rImg" placeholder="Photo URL (optional)"><textarea id="rText" placeholder="Your review..."></textarea><button onclick="submitReview()">SUBMIT REVIEW</button></div></div>';
     loadReviews(p.id);
   }
     document.getElementById("pdpSizes").innerHTML += '<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span>';
@@ -703,6 +972,16 @@ function openPDP(p){
     };
     sz.appendChild(b);
   });
+  if(!p.unlimited){
+    const sm2 = getStockForColor(p, currentColor.name) || {};
+    const totalStock = Object.values(sm2).reduce((a,b)=>a+Number(b),0);
+    if(Object.keys(sm2).length && totalStock>0 && totalStock<=5){
+      const urg=document.createElement("span");
+      urg.style.cssText="color:#c0392b;font-weight:700;font-size:13px;margin-left:10px";
+      urg.textContent="🔥 Only "+totalStock+" left!";
+      sz.appendChild(urg);
+    }
+  }
   document.getElementById("pdpDesc").textContent = p.description || "";
   const rel = document.getElementById("pdpRelated");
   const relList = products.filter(x => x.category === p.category && x.id !== p.id).slice(0, 4);
@@ -714,6 +993,23 @@ function openPDP(p){
     d.innerHTML = '<img class="p-img" src="' + x.image + '"><div class="p-name">' + x.name + '</div><div class="p-price">' + fmt(x.price) + '</div>';
     rel.appendChild(d);
   });
+  (function(){
+    let sc = document.getElementById("pdpSchema");
+    if (sc) sc.remove();
+    sc = document.createElement("script");
+    sc.type = "application/ld+json";
+    sc.id = "pdpSchema";
+    sc.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": p.name,
+      "image": [p.image, p.image2, p.image3].filter(Boolean),
+      "description": p.description || "",
+      "brand": { "@type": "Brand", "name": "JAZB" },
+      "offers": { "@type": "Offer", "priceCurrency": "PKR", "price": p.price, "availability": productSoldOut(p) ? "https://schema.org/OutOfStock" : "https://schema.org/InStock" }
+    });
+    document.head.appendChild(sc);
+  })();
   document.getElementById("pdp").classList.add("show");
   document.body.style.overflow = "hidden";
 }
@@ -754,7 +1050,7 @@ function loadReviews(productId){
       const r = doc.data();
       const d = document.createElement("div");
       d.className = "review-item";
-      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-text">' + r.text + '</div><div class="r-name">' + r.name + '</div>';
+            d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-text">' + r.text + '</div>' + (r.image ? '<img src="' + r.image + '" style="max-width:120px;border-radius:6px;margin-top:6px">' : '') + '<div class="r-name">' + r.name + '</div>';
       list.appendChild(d);
     });
   });
@@ -765,11 +1061,13 @@ function submitReview(){
   const name = document.getElementById("rName").value.trim();
   const text = document.getElementById("rText").value.trim();
   if (!name || !text) { alert("Fill in name and review"); return; }
-  db.collection("reviews").add({ productId: currentProduct.id, name, text, rating: currentRating, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
+  const rImg = document.getElementById("rImg").value.trim();
+  db.collection("reviews").add({ productId: currentProduct.id, name, text, rating: currentRating, image: rImg, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
     toast("Review submitted ✅");
     loadReviews(currentProduct.id);
     document.getElementById("rName").value = "";
     document.getElementById("rText").value = "";
+    document.getElementById("rImg").value = "";
     currentRating = 0;
     document.querySelectorAll("#rStarsInput span").forEach(s => s.classList.remove("active"));
   }).catch(e => alert("Error: " + e.message));
@@ -917,6 +1215,10 @@ function openCheckout(){
   if (!cart.length) return;
   closeCart();
   let total = 0;
+  let bundleSaved = 0;
+  let tCount = 0, tTotal = 0;
+  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tCount += c.qty; tTotal += c.price * c.qty; } });
+  if (tCount >= 2) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } }
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
@@ -929,8 +1231,8 @@ function openCheckout(){
     const discAmt = Math.round(total * couponDiscount / 100);
     s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>DISCOUNT (' + couponDiscount + '%)</span><span>-' + fmt(discAmt) + '</span></div>';
     }
+  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. 3,500)</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
-    s.innerHTML += '<div class="sum-row" style="font-weight:700;border-top:1px solid #eee;margin-top:6px;padding-top:6px"><span>TOTAL</span><span>' + fmt(grandTotal) + '</span></div>';
   if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
     if (couponDiscount > 0) { grandTotal -= Math.round(total * couponDiscount / 100); }
   s.innerHTML += '<div class="sum-row" style="font-weight:700;border-top:1px solid #eee;margin-top:6px;padding-top:6px"><span>TOTAL</span><span>' + fmt(grandTotal) + '</span></div>';
@@ -964,7 +1266,10 @@ async function placeOrder(){
   let total = 0;
   const items = cart.map(c => { total += c.price * c.qty; return { id: c.id, name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
   const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
-  const grandTotal = total + delivery - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
+  let bSaved = 0, tC = 0, tT = 0;
+  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tC += c.qty; tT += c.price * c.qty; } });
+  if (tC >= 2) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
+  const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
   const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   try {
     const docId = "JZB" + Date.now().toString().slice(-6);
@@ -985,10 +1290,13 @@ for (const it of items) {
     saveCart();
     couponDiscount = 0;
     closeCheckout();
-    toast("Order Placed! ID: " + docId + " 🎉");
+    document.getElementById("confOrderId").textContent = docId;
+    document.getElementById("confTotal").textContent = fmt(grandTotal);
+    document.getElementById("confirmModal").classList.add("show");
     const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
     const emailData = { to_email: ADMIN_EMAIL, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId };
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
+    lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
   } catch(e) {
@@ -1025,11 +1333,34 @@ function closeAdmin(){
   document.getElementById("adminPanel").classList.remove("show");
 }
 function adminTab(t){
-  ["products","orders","settings"].forEach(x => {
+  ["products","orders","stats","settings"].forEach(x => {
     document.getElementById("admin" + x[0].toUpperCase() + x.slice(1)).style.display = x === t ? "block" : "none";
     document.getElementById("tab" + x[0].toUpperCase() + x.slice(1)).classList.toggle("active", x === t);
   });
   if (t === "orders") loadOrders();
+  if (t === "stats") loadStats();
+}
+function loadStats(){
+  const list=document.getElementById("statsList");
+  db.collection("orders").get().then(snap=>{
+    const orders=snap.docs.map(d=>d.data());
+    const total=orders.length;
+    const revenue=orders.reduce((a,o)=>a+Number(o.total||0),0);
+    const delivered=orders.filter(o=>o.status==="Delivered").length;
+    const pending=orders.filter(o=>o.status==="Pending").length;
+    const counts={};
+    orders.forEach(o=>(o.items||[]).forEach(i=>{counts[i.name]=(counts[i.name]||0)+i.qty;}));
+    const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    list.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">'
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="font-size:12px;color:#888">TOTAL ORDERS</div><div style="font-size:24px;font-weight:700">'+total+'</div></div>'
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="font-size:12px;color:#888">TOTAL REVENUE</div><div style="font-size:24px;font-weight:700">'+fmt(revenue)+'</div></div>'
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="font-size:12px;color:#888">DELIVERED</div><div style="font-size:24px;font-weight:700">'+delivered+'</div></div>'
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="font-size:12px;color:#888">PENDING</div><div style="font-size:24px;font-weight:700">'+pending+'</div></div></div>'
+      +'<h3 style="font-size:14px;letter-spacing:1px;margin-bottom:10px">TOP PRODUCTS</h3>'
+      +(top.length?top.map(t=>'<div style="background:#fff;border:1px solid #eee;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between"><span style="font-size:13px">'+t[0]+'</span><strong style="font-size:13px">'+t[1]+'</strong></div>').join(""):'<p class="empty">No sales yet</p>')
+      +'<h3 style="font-size:14px;letter-spacing:1px;margin:16px 0 10px">THIS MONTH</h3>'
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Orders</span><strong>'+orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Revenue</span><strong>'+fmt(orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).reduce((a,o)=>a+Number(o.total||0),0))+'</strong></div></div>';
+  });
 }
 function loadAdminProducts(){
   const list = document.getElementById("adminProductList");
@@ -1037,7 +1368,14 @@ function loadAdminProducts(){
   products.forEach(p => {
     const d = document.createElement("div");
     d.className = "ap-item";
-    d.innerHTML = '<img src="' + p.image + '"><div class="ap-info"><div class="ap-name">' + p.name + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
+    let lowStock = false;
+    if (!p.unlimited && p.stock) {
+      const s = p.stock;
+      const colorKeys = Object.keys(s).filter(k => typeof s[k] === "object");
+      if (colorKeys.length) lowStock = colorKeys.some(k => Object.values(s[k]).some(v => Number(v) > 0 && Number(v) <= 5));
+      else lowStock = Object.values(s).some(v => typeof v === "number" && v > 0 && v <= 5);
+    }
+    d.innerHTML = '<img src="' + p.image + '"><div class="ap-info"><div class="ap-name">' + p.name + (lowStock ? ' <span style="color:#c0392b;font-size:10px;font-weight:700">⚠ LOW STOCK</span>' : '') + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
     list.appendChild(d);
   });
 }
@@ -1300,7 +1638,7 @@ async function updateStatus(id, status){
       let phone = String(d.phone || "").replace(/[^0-9]/g, "");
       if (phone.startsWith("0")) phone = "92" + phone.slice(1);
       if (phone) {
-        const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\n\nShukriya, JAZB";
+        const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\nItems: " + (d.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ") + "\nTotal: Rs. " + Number(d.total || 0).toLocaleString() + "\n\nShukriya, JAZB";
         window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg), "_blank");
       }
     }
@@ -1344,7 +1682,47 @@ async function replyToOrder(id){
     alert("Order deleted");
   } catch(e) { alert(e.message); }
     }
-  function openTrack(){
+  const INFO_PAGES = {
+  about: {
+    title: "ABOUT JAZB",
+    body: '<p>JAZB is a premium streetwear brand from Pakistan. We design bold, original pieces — oversized tees, track suits, trousers and shorts — built for the streets. Every drop is limited. Every design is ours.</p><p>Premium quality fabric, clean fits, made in Pakistan. Delivered to your door, anywhere in the country.</p><h3>OUR PROMISE</h3><p>Original designs — no copies. Quality fabric you can feel. Fair prices. Fast delivery with easy tracking.</p><p style="font-weight:700;color:#000">Follow the movement: @jazb.wear</p>'
+  },
+  guide: {
+    title: "SHOPPING GUIDE",
+    body: '<div class="info-step"><div class="num">1</div><div><strong>Choose Your Product</strong>Pick a style, select your size and color. Size guide check karo agar unsure ho.</div></div><div class="info-step"><div class="num">2</div><div><strong>Add to Cart</strong>Tap "Add to Cart". Ek order mein multiple items add kar sakte ho.</div></div><div class="info-step"><div class="num">3</div><div><strong>Checkout</strong>Apna name, phone, email aur full delivery address daalo.</div></div><div class="info-step"><div class="num">4</div><div><strong>We Confirm on WhatsApp</strong>Hamari team aapko WhatsApp pe call/message kar ke order confirm karegi.</div></div><div class="info-step"><div class="num">5</div><div><strong>Delivery in 2-5 Days</strong>Cash on delivery. Apne phone number se order track karo jab bhi.</div></div>'
+  },
+  returns: {
+    title: "EXCHANGE & RETURNS",
+    body: '<h3>EXCHANGE POLICY</h3><p>Size exchange available within <strong>7 days</strong> of delivery. Item must be unworn, unwashed, with original tags.</p><h3>HOW TO EXCHANGE</h3><p>1. WhatsApp karo apne order ID ke saath.<br>2. Hum confirm karein ge aur courier bhejein ge.<br>3. Item wapas bhejo, naya size 3-5 din mein milega.</p><h3>NOT ELIGIBLE</h3><p>Items worn, washed, or damaged. Items returned after 7 days.</p>'
+  },
+  shipping: {
+    title: "SHIPPING & DELIVERY",
+    body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 200 for orders under Rs. 3,000.<br><strong>FREE delivery</strong> on orders above Rs. 3,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne phone number se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
+  },
+  contact: {
+    title: "CONTACT US",
+    body: '<h3>CUSTOMER SUPPORT</h3><p>For orders, exchanges or any question:</p><p style="font-size:18px;font-weight:700;color:#000">0335-8134489</p><h3>INSTAGRAM</h3><p>@jazb.wear — DM for inquiries.</p><div class="info-contact"><button class="btn-dark" onclick="location.href=\'tel:03358134489\'">CALL NOW</button><button class="btn-outline" onclick="location.href=\'https://wa.me/923358134489\'">WHATSAPP</button></div>'
+  }
+};
+function openInfoPage(key){
+  const p = INFO_PAGES[key];
+  if (!p) return;
+  document.getElementById("infoTitle").textContent = p.title;
+  document.getElementById("infoBody").innerHTML = p.body;
+  document.getElementById("infoPage").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+let lastOrder = null;
+function sendReceipt(){
+  if (!lastOrder) return;
+  const msg = "JAZB Order Receipt\n\nOrder ID: " + lastOrder.id + "\nItems: " + lastOrder.items + "\nTotal: " + lastOrder.total + "\n\nShukriya, JAZB";
+  location.href = "https://wa.me/923358134489?text=" + encodeURIComponent(msg);
+}
+function closeInfoPage(){
+  document.getElementById("infoPage").classList.remove("show");
+  document.body.style.overflow = "";
+}
+function openTrack(){
   document.getElementById("trackResult").innerHTML = "";
   document.getElementById("trackModal").classList.add("show");
 }
@@ -1410,6 +1788,13 @@ function whatsappOrder(id){
     const settingsMsgEl=document.getElementById("settingsMsg");if(settingsMsgEl)settingsMsgEl.textContent
   } catch(e) { alert(e.message); }
 }
+function setFlashProduct(){
+  const sel=document.getElementById("setFlash");
+  if(!sel.value){ alert("Select a product"); return; }
+  localStorage.setItem("cd_flash", sel.value);
+  renderFlashSale();
+  toast("Flash sale set ✅");
+}
 function applySettings(s){
   if (s.logo) document.getElementById("logoImg").src = s.logo;
   if (s.hero) document.getElementById("heroImg").src = s.hero;
@@ -1447,6 +1832,10 @@ async function loadSettings(){
   document.getElementById("drawer").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("show");
 }
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
+}
 function toggleSearch(){
   document.getElementById("searchBar").classList.toggle("show");
   if (document.getElementById("searchBar").classList.contains("show")) document.getElementById("searchInput").focus();
@@ -1465,6 +1854,37 @@ function joinNewsletter(){
   }).catch(err => alert("Already subscribed or error"));
 }
 document.addEventListener("DOMContentLoaded", () => {
+  (function(){
+    const el=document.getElementById("megaTimer");
+    if(!el) return;
+    let end=new Date(); end.setHours(23,59,59,999);
+    setInterval(()=>{
+      let d=end-new Date();
+      if(d<0){end=new Date();end.setHours(23,59,59,999);d=end-new Date();}
+      const h=String(Math.floor(d/3600000)).padStart(2,"0");
+      const m=String(Math.floor(d%3600000/60000)).padStart(2,"0");
+      const s=String(Math.floor(d%60000/1000)).padStart(2,"0");
+      el.textContent=h+":"+m+":"+s;
+    },1000);
+    })();
+  (function(){
+    const shop = document.getElementById("shop");
+    const about = document.getElementById("about");
+    if (about && shop) {
+      const lb = about.nextElementSibling;
+      shop.appendChild(about);
+      if (lb && lb.querySelector && lb.querySelector(".lb-grid")) shop.appendChild(lb);
+    }
+  })();
+  const pp = new URLSearchParams(location.search).get("p");
+  if (pp) {
+    const checkP = setInterval(() => {
+      const prod = products.find(x => x.id === pp);
+      if (prod) { clearInterval(checkP); openPDP(prod); history.replaceState(null, "", location.pathname); }
+    }, 500);
+    setTimeout(() => clearInterval(checkP), 15000);
+  }
+  if (localStorage.getItem("cd_dark") === "1") document.body.classList.add("dark");
   renderTabs();
   renderDrawer();
   saveCart();
@@ -1472,9 +1892,16 @@ document.addEventListener("DOMContentLoaded", () => {
   db.collection("products").onSnapshot(snap => {
     products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderProducts();
+    renderNewArrivals();
+    renderRecentlyViewed();
+    renderFlashSale();
     if (isAdmin) loadAdminProducts();
   });
-  if (isAdmin) openAdmin();
+  if (isAdmin) {
+    openAdmin();
+    const fs=document.getElementById("setFlash");
+    if(fs) fs.innerHTML=products.map(p=>'<option value="'+p.id+'">'+p.name+'</option>').join("");
+  }
 });
 </script>
   <a id="waFloat" href="https://wa.me/923358134489" target="_blank"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
