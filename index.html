@@ -1197,7 +1197,7 @@ function applyCoupon(){
   if (code === "JAZB10") {
     if (total >= 3000) {
       couponDiscount = 10;
-      msg.textContent = "10% discount applied! ✅";
+      msg.textContent = "10% discount applied! ✅ (Bundle deal nahi lagegi)";
       msg.className = "coupon-msg ok";
       openCheckout();
     } else {
@@ -1218,7 +1218,7 @@ function openCheckout(){
   let bundleSaved = 0;
   let tCount = 0, tTotal = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tCount += c.qty; tTotal += c.price * c.qty; } });
-  if (tCount >= 2) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } }
+  if (tCount >= 2 && couponDiscount === 0) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
@@ -1268,7 +1268,7 @@ async function placeOrder(){
   const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
   let bSaved = 0, tC = 0, tT = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tC += c.qty; tT += c.price * c.qty; } });
-  if (tC >= 2) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
+   if (tC >= 2 && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
   const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
   const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   try {
@@ -1788,6 +1788,13 @@ function whatsappOrder(id){
     const settingsMsgEl=document.getElementById("settingsMsg");if(settingsMsgEl)settingsMsgEl.textContent
   } catch(e) { alert(e.message); }
 }
+function fillFlashDropdown(){
+  const fs=document.getElementById("setFlash");
+  if(!fs) return;
+  const cur=fs.value;
+  fs.innerHTML='<option value="">Select a product</option>'+products.map(p=>'<option value="'+p.id+'">'+p.name+'</option>').join("");
+  if(cur) fs.value=cur;
+}
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
   if(!sel.value){ alert("Select a product"); return; }
@@ -1895,7 +1902,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderNewArrivals();
     renderRecentlyViewed();
     renderFlashSale();
-    if (isAdmin) loadAdminProducts();
+    if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
   });
   if (isAdmin) {
     openAdmin();
