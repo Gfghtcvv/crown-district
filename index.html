@@ -595,6 +595,7 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
     <button class="atab active" id="tabProducts" onclick="adminTab('products')">PRODUCTS</button>
     <button class="atab" id="tabOrders" onclick="adminTab('orders')">ORDERS</button>
     <button class="atab" id="tabStats" onclick="adminTab('stats')">STATS</button>
+    <button class="atab" id="tabCustomers" onclick="adminTab('customers')">CUSTOMERS</button>
     <button class="atab" id="tabSettings" onclick="adminTab('settings')">SETTINGS</button>
   </div>
   <div id="adminProducts" class="atab-body">
@@ -602,8 +603,9 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
     <div id="adminProductList" style="margin-top:14px"></div>
   </div>
   <div id="adminOrders" class="atab-body" style="display:none"><div id="orderList"></div></div>
-  <div id="adminStats" class="atab-body" style="display:none"><div id="statsList"></div></div>
-    <div id="adminSettings" class="atab-body" style="display:none">
+  <div id="adminStats" class="atab-body" style="display:none"><button class="full-btn" onclick="exportCSV()">⬇ DOWNLOAD ORDERS (CSV)</button><div id="statsList" style="margin-top:14px"></div></div>
+    <div id="adminCustomers" class="atab-body" style="display:none"><div id="customerList"></div></div>
+<div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
     <input id="setLogo" placeholder="Logo image URL (Imgur / Drive)">
     <button class="full-btn" onclick="saveSetting('logo')">SAVE LOGO</button>
@@ -707,6 +709,8 @@ const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
 const DELIVERY_CHARGE = 200;
 const BUNDLE_PRICE = 3500;
+function isFlashItem(id){ return id === (localStorage.getItem("cd_flash") || ""); }
+function flashPrice(p){ return Math.round(p.price / 2); }
 const EMAILJS_SERVICE_ID = "service_g55ha9n";
 const EMAILJS_TEMPLATE_ID = "template_5p2fqnz";
 const EMAILJS_REPLY_TEMPLATE_ID = "template_4303qye";
@@ -1170,10 +1174,12 @@ d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
     items.innerHTML = "";
     let total = 0;
     cart.forEach((c, i) => {
-      total += c.price * c.qty;
+      const p = products.find(x => x.id === c.id);
+      const fp = (isFlashItem(c.id) && p) ? flashPrice(p) : c.price;
+      total += fp * c.qty;
       const d = document.createElement("div");
       d.className = "cart-item";
-      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(c.price * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
+      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ FLASH</span>' : '') + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(c.price * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
       items.appendChild(d);
     });
     document.getElementById("cartTotal").textContent = fmt(total);
@@ -1192,6 +1198,12 @@ function rmItem(i){ cart.splice(i, 1); saveCart(); openCart(); }
 function applyCoupon(){
   const code = document.getElementById("coCoupon").value.trim().toUpperCase();
   const msg = document.getElementById("couponMsg");
+  if (cart.some(c => isFlashItem(c.id))) {
+    couponDiscount = 0;
+    msg.textContent = "Flash sale item pe voucher nahi lagta";
+    msg.className = "coupon-msg err";
+    return;
+  }
   let total = 0;
   cart.forEach(c => { total += c.price * c.qty; });
   if (code === "JAZB10") {
@@ -1217,15 +1229,19 @@ function openCheckout(){
   let total = 0;
   let bundleSaved = 0;
   let tCount = 0, tTotal = 0;
-  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tCount += c.qty; tTotal += c.price * c.qty; } });
+  const hasFlash = cart.some(c => isFlashItem(c.id));
+  if (hasFlash) couponDiscount = 0;
+  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tCount += c.qty; tTotal += c.price * c.qty; } });
   if (tCount >= 2 && couponDiscount === 0) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
-    total += c.price * c.qty;
-    s.innerHTML += '<div class="sum-row"><span>' + c.name + ' (' + c.size + ') x' + c.qty + '</span><span>' + fmt(c.price * c.qty) + '</span></div>';
+    const p = products.find(x => x.id === c.id);
+    const fp = (isFlashItem(c.id) && p) ? flashPrice(p) : c.price;
+    total += fp * c.qty;
+    s.innerHTML += '<div class="sum-row"><span>' + c.name + ' (' + c.size + ') x' + c.qty + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ 50% OFF</span>' : '') + '</span><span>' + fmt(fp * c.qty) + '</span></div>';
   });
-    const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
+    const delivery = (hasFlash || total < DELIVERY_FREE_ABOVE) ? DELIVERY_CHARGE : 0;
   let grandTotal = total + delivery;
     if (couponDiscount > 0) {
     const discAmt = Math.round(total * couponDiscount / 100);
@@ -1233,12 +1249,14 @@ function openCheckout(){
     }
   if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. 3,500)</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
+  if (total >= 5000 && !hasFlash) { s.innerHTML += '<div style="font-size:13px;color:#c0392b;font-weight:700;margin-top:6px">🎁 Rs. 5,000+ order pe FREE CAP milega!</div>'; }
   if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
     if (couponDiscount > 0) { grandTotal -= Math.round(total * couponDiscount / 100); }
   s.innerHTML += '<div class="sum-row" style="font-weight:700;border-top:1px solid #eee;margin-top:6px;padding-top:6px"><span>TOTAL</span><span>' + fmt(grandTotal) + '</span></div>';
     const cm = document.getElementById("couponMsg");
   if (cm) {
-    if (couponDiscount > 0) { cm.textContent = couponDiscount + "% discount applied! ✅"; cm.className = "coupon-msg ok"; }
+    if (hasFlash) { cm.textContent = "⚡ Flash sale item pe voucher, bundle aur free delivery nahi lagti"; cm.className = "coupon-msg err"; }
+    else if (couponDiscount > 0) { cm.textContent = couponDiscount + "% discount applied! ✅"; cm.className = "coupon-msg ok"; }
     else { cm.textContent = ""; cm.className = "coupon-msg"; }
   }
   document.getElementById("coMessage").textContent = "";
@@ -1264,10 +1282,12 @@ async function placeOrder(){
   btn.disabled = true;
   btn.textContent = "PLACING...";
   let total = 0;
-  const items = cart.map(c => { total += c.price * c.qty; return { id: c.id, name: c.name, size: c.size, color: c.color, qty: c.qty, price: c.price }; });
-  const delivery = total >= DELIVERY_FREE_ABOVE ? 0 : DELIVERY_CHARGE;
+  const hasFlash = cart.some(c => isFlashItem(c.id));
+  if (hasFlash) couponDiscount = 0;
+  const items = cart.map(c => { const p = products.find(x => x.id === c.id); const fp = (isFlashItem(c.id) && p) ? flashPrice(p) : c.price; total += fp * c.qty; return { id: c.id, name: c.name, size: c.size, color: c.color, qty: c.qty, price: fp }; });
+  const delivery = (hasFlash || total < DELIVERY_FREE_ABOVE) ? DELIVERY_CHARGE : 0;
   let bSaved = 0, tC = 0, tT = 0;
-  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS") { tC += c.qty; tT += c.price * c.qty; } });
+  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tC += c.qty; tT += c.price * c.qty; } });
    if (tC >= 2 && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
   const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
   const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
@@ -1324,6 +1344,7 @@ function adminLogin(){
 function openAdmin(){
   document.getElementById("adminPanel").classList.add("show");
   adminTab("products");
+  fillFlashDropdown();
   loadAdminProducts();
   loadOrders();
 }
@@ -1333,12 +1354,51 @@ function closeAdmin(){
   document.getElementById("adminPanel").classList.remove("show");
 }
 function adminTab(t){
-  ["products","orders","stats","settings"].forEach(x => {
+  ["products","orders","stats","customers","settings"].forEach(x => {
     document.getElementById("admin" + x[0].toUpperCase() + x.slice(1)).style.display = x === t ? "block" : "none";
     document.getElementById("tab" + x[0].toUpperCase() + x.slice(1)).classList.toggle("active", x === t);
   });
   if (t === "orders") loadOrders();
   if (t === "stats") loadStats();
+  if (t === "customers") loadCustomers();
+  if (t === "settings") fillFlashDropdown();
+}
+function loadCustomers(){
+  const list = document.getElementById("customerList");
+  db.collection("orders").get().then(snap => {
+    const map = {};
+    snap.forEach(d => {
+      const o = d.data();
+      const key = String(o.phone || "").replace(/[^0-9]/g, "");
+      if (!key) return;
+      if (!map[key]) map[key] = { name: o.customer, phone: o.phone, orders: 0, spent: 0 };
+      map[key].orders++;
+      map[key].spent += Number(o.total || 0);
+    });
+    const arr = Object.values(map).sort((a, b) => b.spent - a.spent);
+    list.innerHTML = arr.length ? "" : '<p class="empty">No customers yet</p>';
+    arr.forEach(c => {
+      const d = document.createElement("div");
+      d.className = "ap-item";
+      const num = c.phone.replace(/[^0-9]/g, "").replace(/^0/, "");
+      d.innerHTML = '<div class="ap-info"><div class="ap-name">' + c.name + '</div><div class="ap-meta">' + c.phone + ' | ' + c.orders + ' order(s) | ' + fmt(c.spent) + '</div></div><button onclick="location.href=\'https://wa.me/92' + num + '?text=Hello ' + c.name + ', JAZB se hai. Kya haal hai?\'">WHATSAPP</button>';
+      list.appendChild(d);
+    });
+  });
+}
+function exportCSV(){
+  db.collection("orders").get().then(snap => {
+    const rows = [["Order ID","Name","Phone","City","Items","Total","Status","Date"]];
+    snap.forEach(d => {
+      const o = d.data();
+      rows.push([o.orderId || d.id, o.customer, o.phone, o.city, (o.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join("; "), o.total, o.status, o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : ""]);
+    });
+    const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "jazb-orders.csv";
+    a.click();
+  });
 }
 function loadStats(){
   const list=document.getElementById("statsList");
@@ -1892,6 +1952,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => clearInterval(checkP), 15000);
   }
   if (localStorage.getItem("cd_dark") === "1") document.body.classList.add("dark");
+  else if (!localStorage.getItem("cd_dark") && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) document.body.classList.add("dark");
   renderTabs();
   renderDrawer();
   saveCart();
