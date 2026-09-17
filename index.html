@@ -127,7 +127,7 @@ img{display:block}
 .acc-item>button{width:100%;text-align:left;padding:12px;font-size:13px;letter-spacing:1px}
 .acc-body{display:none;padding:12px;font-size:13px;color:#444}
 .acc-item.open .acc-body{display:block}
-.pdp-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:12px 16px;z-index:260}
+.pdp-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:12px 16px;z-index:260;display:flex;gap:10px}
 .add-btn{width:100%;background:#111;color:#fff;padding:16px;font-size:15px;letter-spacing:2px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:280;display:none;align-items:flex-end;justify-content:center}
 .modal.show{display:flex}
@@ -189,9 +189,25 @@ img{display:block}
 .oc-actions button{padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #111}
 .oc-reply-box{width:100%;margin-top:8px}
 .message{font-size:13px;margin-top:8px}
-.color-btn{border:1px solid #ccc;padding:8px 14px;font-size:13px}
-.color-btn.sel{background:#111;color:#fff;border-color:#111}
+.color-btn{display:flex;flex-direction:column;align-items:center;gap:5px;border:2px solid #ddd;border-radius:12px;padding:10px 14px;background:#fff;min-width:72px;cursor:pointer;font-family:inherit}
+.color-btn .cball{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,.15);display:block}
+.color-btn .cname{font-size:11px;font-weight:700;color:#222}
+.color-btn.sel{border-color:#000;background:#f5f5f5}
 .color-btn.disabled{opacity:.45}
+.color-btn.disabled .cname{text-decoration:line-through}
+  .buy-btn{flex:1;padding:14px;border:none;border-radius:10px;background:#c0392b;color:#fff;font-size:14px;font-weight:800;letter-spacing:1px;cursor:pointer;font-family:inherit}
+.buy-btn:active{transform:scale(.97)}
+  .trust-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:22px 0}
+.trust-box{background:#f7f7f7;border:1px solid #e5e5e5;border-radius:12px;padding:14px 12px;text-align:center}
+.trust-box .ti{font-size:22px;display:block;margin-bottom:6px}
+.trust-box .tt{display:block;font-size:12px;font-weight:700;color:#222}
+.trust-box .tt{display:block}.trust-box .ts{display:block;font-size:11px;color:#777;margin-top:4px}
+.brand-strip{background:#111;color:#fff;border-radius:14px;padding:20px 18px;margin:18px 0;text-align:center}
+.brand-strip .bt{font-size:15px;font-weight:800;letter-spacing:2px;margin-bottom:8px}
+.brand-strip .bs{font-size:12px;color:#bbb;line-height:1.6}
+body.dark .trust-box{background:#1a1a1a;border-color:#333}
+body.dark .trust-box .tt{color:#eee}
+body.dark .trust-box .ts{color:#999}
 .sold-badge{background:#c0392b;color:#fff;font-size:11px;padding:4px 12px;letter-spacing:1px;display:inline-block;margin-bottom:10px}
 .track-item{background:#fff;border:1px solid #eee;padding:16px;margin-bottom:12px;border-left:4px solid #111}
 .track-status{display:inline-block;padding:4px 14px;font-size:11px;letter-spacing:1px;font-weight:600}
@@ -313,8 +329,9 @@ body.dark .p-img{background:#1a1a1a}
 body.dark .pdp-images{background:#1a1a1a}
 body.dark .size-btn{border-color:#444;color:#eee}
 body.dark .size-btn.sel{background:#fff;color:#000;border-color:#fff}
-body.dark .color-btn{border-color:#444;color:#eee}
-body.dark .color-btn.sel{background:#fff;color:#000;border-color:#fff}
+body.dark .color-btn{border-color:#444;background:#1a1a1a}
+body.dark .color-btn .cname{color:#eee}
+body.dark .color-btn.sel{background:#2a2a2a;border-color:#fff}
 body.dark input,body.dark textarea,body.dark select{background:#1a1a1a;color:#eee;border-color:#333}
 body.dark .pdp-bar{background:#111;border-top-color:#222}
 body.dark .add-btn{background:#fff;color:#000}
@@ -395,7 +412,7 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
 </style>
 </head>
 <body>
-  <div id="announceBar">FREE DELIVERY on orders above Rs. 3,000 🚚</div>
+  <div id="announceBar">FREE DELIVERY on Rs. 3,000+ 🚚 &nbsp;|&nbsp; FREE CAP on Rs. 5,000+ 🧢 🚚</div>
   <div id="saleBar" style="background:#c0392b;color:#fff;text-align:center;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.5px">🔥 SALE ENDS IN <span id="saleTimer">23:59:59</span></div>
   <div id="loader"><div class="spinner"></div><p>JAZB</p></div>
   <div id="toast"></div>
@@ -549,9 +566,19 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
       <div id="pdpReviews"></div>
       <h2 class="sec-title" style="padding-top:10px">You May Also Like</h2>
       <div class="grid" id="pdpRelated"></div>
+<div class="trust-row">
+<div class="trust-box"><span class="ti">💵</span><span class="tt">CASH ON DELIVERY</span><span class="ts">Pay at your door</span></div>
+<div class="trust-box"><span class="ti">🚚</span><span class="tt">FAST DELIVERY</span><span class="ts">2-5 days Pakistan</span></div>
+<div class="trust-box"><span class="ti">🔄</span><span class="tt">EASY EXCHANGE</span><span class="ts">7-day exchange</span></div>
+<div class="trust-box"><span class="ti">🔒</span><span class="tt">SECURE ORDER</span><span class="ts">Your data is safe</span></div>
+</div>
+<div class="brand-strip">
+<div class="bt">JAZB</div>
+<div class="bs">Streetwear made in Pakistan. Limited drops, bold designs, no restocks. Once it's gone, it's gone.</div>
+</div>
     </div>
   </div>
-  <div class="pdp-bar"><button class="add-btn" onclick="addFromPDP()">ADD TO CART</button></div>
+  <div class="pdp-bar"><button class="add-btn" onclick="addFromPDP()">ADD TO CART</button><button class="buy-btn" onclick="buyNow()">BUY NOW</button></div>
 </div>
 <div id="cartModal" class="modal">
   <div class="modal-card">
@@ -743,6 +770,7 @@ let currentProduct = null;
 let currentSize = null;
 let cart = JSON.parse(localStorage.getItem("cd_cart") || "[]");
 let isAdmin = sessionStorage.getItem("cd_admin") === "1";
+  function colorHex(n){n=(n||'').toLowerCase();if(n.includes('black'))return'#111';if(n.includes('white'))return'#fff';if(n.includes('red'))return'#d32f2f';if(n.includes('blue'))return'#1565c0';if(n.includes('green'))return'#2e7d32';if(n.includes('grey')||n.includes('gray'))return'#9e9e9e';if(n.includes('navy'))return'#1a237e';if(n.includes('brown'))return'#6d4c41';if(n.includes('yellow'))return'#fbc02d';if(n.includes('orange'))return'#ef6c00';if(n.includes('pink'))return'#ec407a';if(n.includes('purple'))return'#7b1fa2';if(n.includes('beige')||n.includes('khaki'))return'#d7ccc8';if(n.includes('default'))return'#888';return'#bbb';}
 function fmt(n){ return "Rs. " + Number(n).toLocaleString(); }
 function renderTabs(){
   const t = document.getElementById("catTabs");
@@ -927,7 +955,7 @@ function openPDP(p){
   colors.forEach(c => {
     const b = document.createElement("button");
     b.className = "color-btn" + (c === currentColor ? " sel" : "") + (c.soldOut ? " disabled" : "");
-    b.textContent = (c.soldOut || colorSoldOut(p, c.name)) ? c.name + " (SOLD OUT)" : c.name;
+    b.innerHTML = '<span class="cball" style="background:' + colorHex(c.name) + '"></span><span class="cname">' + c.name + ((c.soldOut || colorSoldOut(p, c.name)) ? ' (SOLD OUT)' : '') + '</span>';
     b.onclick = () => {
       if (c.soldOut || colorSoldOut(p, c.name)) return;
       currentColor = c;
@@ -1092,6 +1120,7 @@ function submitReview(){
   setTimeout(() => t.classList.remove("show"), 2500);
   }
 function addFromPDP(){
+
   if (!currentProduct) return;
   if (currentProduct.soldOut) { alert("This product is sold out"); return; }
   if (!currentSize) { alert("Please select a size"); return; }
@@ -1106,6 +1135,22 @@ function addFromPDP(){
   closePDP();
   toast("Added to cart ✅");
 }
+  function buyNow(){
+try{
+  if(!currentProduct) return;
+  if(!currentSize){ alert("Please select a size"); return; }
+  if(!currentColor || currentColor.soldOut){ alert("Please select a color"); return; }
+  const sm = getStockForColor(currentProduct, currentColor.name);
+  if(Object.keys(sm).length && (sm[currentSize]||0) <= 0){ alert("Out of stock"); return; }
+  const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name;
+  const existing = cart.find(c => c.key === key);
+  if(existing) existing.qty++;
+  else cart.push({key, id:currentProduct.id, name:currentProduct.name, price:currentProduct.price, size:currentSize, color:currentColor.name, qty:1, img:currentProduct.img});
+  saveCart();
+  closePDP();
+  }catch(e){ alert("Error: " + e.message); }
+  openCheckout();
+  }
 function saveCart(){
   localStorage.setItem("cd_cart", JSON.stringify(cart));
   const n = cart.reduce((a, c) => a + c.qty, 0);
