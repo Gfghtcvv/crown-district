@@ -208,6 +208,22 @@ body.dark .track-card .track-info{color:#999!important}
   body.dark .track-reply{background:#222!important;border-left:3px solid #555!important;padding:10px;margin-top:10px;border-radius:8px}
 body.dark .track-reply p{color:#aaa!important;font-size:13px}
 body.dark .track-reply strong{color:#eee!important}
+  body.dark .admin-panel [style*="background:#fff"]{background:#1a1a1a!important;border-color:#333!important}
+body.dark .admin-panel [style*="background:#fff"] div{color:#eee!important}
+body.dark .admin-panel [style*="background:#fff"] strong{color:#fff!important}
+body.dark .admin-panel [style*="background:#fff"] span{color:#aaa!important}
+body.dark .admin-panel [style*="background:#fff"] h3{color:#fff!important}
+body.dark .ap-item{background:#1a1a1a!important;border-color:#333!important}
+body.dark .ap-item *{color:#eee!important}
+body.dark .ap-item img{border-radius:8px}
+body.dark .admin-panel [style*="background:#f9f9f9"]{background:#1a1a1a!important;border-color:#333!important}
+body.dark .admin-panel [style*="background:#f9f9f9"] *{color:#eee!important}
+body.dark .admin-panel [style*="background:#f8f8f8"]{background:#1a1a1a!important;border-color:#333!important}
+body.dark .admin-panel [style*="background:#f8f8f8"] *{color:#eee!important}
+body.dark .admin-panel .full-btn{background:#222!important;color:#fff!important;border:1px solid #444!important}
+body.dark .admin-panel button[style*="background:#fff"]{background:#222!important;color:#fff!important;border:1px solid #444!important}
+body.dark .admin-panel select{background:#1a1a1a!important;color:#fff!important;border-color:#444!important}
+body.dark .admin-panel .oc-item{background:#222!important;color:#eee!important}
 body.dark .track-card .oc-reply{background:#222!important;border-left:3px solid #555!important;padding:10px;margin-top:10px}
 body.dark .track-card .oc-reply p{color:#aaa!important;font-size:13px}
 body.dark .track-card .oc-head{font-weight:700;color:#fff!important}
@@ -758,6 +774,7 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
           <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
     <select id="setFlash" style="margin-bottom:8px"></select>
     <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
+  <button onclick="localStorage.removeItem('cd_flash');renderFlashSale();alert('Flash sale removed')" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
           
   </div>
 </div>
@@ -1234,7 +1251,7 @@ function buyNow(){
   const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
   if(existing) existing.qty++;
-  else cart.push({key, id:currentProduct.id, name:currentProduct.name, price:currentProduct.price, size:currentSize, color:currentColor.name, qty:1, image:(currentColor.images && currentColor.images[0]) || currentProduct.img, flash:isFlash});
+  else cart.push({key, id:currentProduct.id, name:currentProduct.name, price:currentProduct.price, size:currentSize, color:currentColor.name, qty:1, image:(currentColor.images && currentColor.images[0]) || currentProduct.image, flash:isFlash});
   buyNowItem = key;
   saveCart();
   closePDP();
@@ -1404,11 +1421,6 @@ function closeCheckout(){
   document.getElementById("couponMsg").textContent = "";
   ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
 }
-    if(buyNowItem){ cart = cart.filter(c => c.key !== buyNowItem); buyNowItem = null; saveCart(); }
-    couponDiscount = 0;
-  document.getElementById("coCoupon").value = "";
-  document.getElementById("couponMsg").textContent = "";
-    ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
 let isPlacing = false;
 
 async function placeOrder(){
@@ -1870,24 +1882,19 @@ async function replyToOrder(id){
           reply: msg
         }, EMAILJS_PUBLIC_KEY);
         alert("Reply saved and emailed to customer");
-      } catch(e) {
-        alert("Reply saved. Email failed: " + (e.text || e.message));
-      }
-    } else {
-      alert("Reply saved. Customer ne email nahi di, is liye email nahi bheja.");
+      } catch(e) { alert(e.message); }
     }
   } catch(e) { alert(e.message); }
 }
-    async function deleteOrder(id){
-  if(!isAdmin) return;
-  if (!confirm("Delete this order?")) return;
+async function deleteOrder(id){
+  if(!confirm("Delete this order?")) return;
   try {
     const od = await db.collection("orders").doc(id).get();
-    await db.collection("orders").doc(id).delete();
     if (od.exists && od.data().status !== "Cancelled") await restockOrder(od.data());
+    await db.collection("orders").doc(id).delete();
     alert("Order deleted");
   } catch(e) { alert(e.message); }
-    }
+}    
   const INFO_PAGES = {
   about: {
     title: "ABOUT JAZB",
@@ -2132,8 +2139,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500);
     setTimeout(() => clearInterval(checkP), 15000);
   }
-  if (localStorage.getItem("cd_dark") === "1") document.body.classList.add("dark");
-  else if (!localStorage.getItem("cd_dark") && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) document.body.classList.add("dark");
   renderTabs();
   renderDrawer();
   saveCart();
@@ -2145,7 +2150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderRecentlyViewed();
     renderFlashSale();
     if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
-  });
+      });
   if (isAdmin) {
     openAdmin();
     const fs=document.getElementById("setFlash");
@@ -2161,9 +2166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
     </div>
 
-  <script>
-if (location.search.includes("admin")) { openAdminLogin(); }
-</script>
+
   </body>
   
 </html>
