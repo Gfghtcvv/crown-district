@@ -2151,8 +2151,12 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFlashSale();
     if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
       });
-  if (isAdmin) {
-    openAdmin();
+  if (location.search.includes("admin")) {
+    if (isAdmin) {
+      openAdmin();
+    } else {
+      openAdminLogin();
+    }
     const fs=document.getElementById("setFlash");
     if(fs) fs.innerHTML=products.map(p=>'<option value="'+p.id+'">'+p.name+'</option>').join("");
   }
