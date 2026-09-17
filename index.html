@@ -1333,7 +1333,14 @@ function openCheckout(){
   document.getElementById("coMessage").textContent = "";
   document.getElementById("checkoutModal").classList.add("show");
 }
-function closeCheckout(){ document.getElementById("checkoutModal").classList.remove("show"); }
+function closeCheckout(){
+  document.getElementById("checkoutModal").classList.remove("show");
+  if(buyNowItem){ cart = cart.filter(c => c.key !== buyNowItem); buyNowItem = null; saveCart(); }
+  couponDiscount = 0;
+  document.getElementById("coCoupon").value = "";
+  document.getElementById("couponMsg").textContent = "";
+  ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+}
     if(buyNowItem){ cart = cart.filter(c => c.key !== buyNowItem); buyNowItem = null; saveCart(); }
     couponDiscount = 0;
   document.getElementById("coCoupon").value = "";
