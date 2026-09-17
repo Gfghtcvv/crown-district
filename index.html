@@ -202,6 +202,67 @@ body.dark .fp-top{background:#111;border-color:#333}
 body.dark .fp-top h2{color:#fff}
 body.dark .fp-top .fp-back{color:#fff}
 body.dark .fp-body input{background:#1a1a1a;color:#fff;border-color:#444}
+  body.dark .track-card{background:#1a1a1a!important;border:1px solid #333!important;border-radius:12px;padding:16px;margin-bottom:12px}
+body.dark .track-card *{color:#eee!important}
+body.dark .track-card .track-info{color:#999!important}
+  body.dark .track-reply{background:#222!important;border-left:3px solid #555!important;padding:10px;margin-top:10px;border-radius:8px}
+body.dark .track-reply p{color:#aaa!important;font-size:13px}
+body.dark .track-reply strong{color:#eee!important}
+body.dark .track-card .oc-reply{background:#222!important;border-left:3px solid #555!important;padding:10px;margin-top:10px}
+body.dark .track-card .oc-reply p{color:#aaa!important;font-size:13px}
+body.dark .track-card .oc-head{font-weight:700;color:#fff!important}
+body.dark .track-card .status-badge{background:#2a2a2a!important;color:#eee!important;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700}
+body.dark .track-card .status-badge.pending{background:#3d3520!important;color:#f0c040!important}
+body.dark .track-card .status-badge.cancelled{background:#3d2020!important;color:#f08080!important}
+body.dark .track-card .status-badge.delivered{background:#1d3d20!important;color:#80f0a0!important}
+body.dark .track-card .status-badge.shipped{background:#1d2d3d!important;color:#80c0f0!important}
+body.dark .track-card .status-badge.confirmed{background:#1d3d3d!important;color:#80f0f0!important}
+body.dark .track-card .step{color:#666!important}
+body.dark .track-card .step.active{color:#80f0a0!important}
+body.dark .track-card .step.done{color:#80c0f0!important}
+body.dark .track-card .step-dot{background:#444!important}
+body.dark .track-card .step-dot.active{background:#80f0a0!important}
+body.dark .track-card .step-dot.done{background:#80c0f0!important}
+body.dark #trackResult{color:#eee}
+body.dark #trackResult p{color:#aaa}
+  body.dark .admin-panel{background:#111}
+body.dark .admin-panel h2,body.dark .admin-panel h3{color:#fff}
+body.dark .admin-panel .tab-btn{background:#1a1a1a;color:#eee;border-color:#333}
+body.dark .admin-panel .tab-btn.active{background:#fff;color:#111}
+body.dark .stat-box{background:#1a1a1a;border-color:#333}
+body.dark .stat-box .stat-val{color:#fff}
+body.dark .stat-box .stat-label{color:#aaa}
+body.dark .admin-panel .section-title{color:#aaa}
+body.dark .admin-panel input,body.dark .admin-panel select,body.dark .admin-panel textarea{background:#1a1a1a;color:#fff;border-color:#444}
+body.dark .admin-panel input::placeholder,body.dark .admin-panel textarea::placeholder{color:#666}
+body.dark .admin-panel .field-label{color:#aaa}
+body.dark .admin-panel .save-btn{background:#fff;color:#111}
+body.dark .admin-panel .order-card,body.dark .admin-panel .cust-card{background:#1a1a1a;border-color:#333}
+body.dark .admin-panel .order-card *,body.dark .admin-panel .cust-card *{color:#eee}
+body.dark .admin-panel .order-card .oc-reply{background:#222;border-color:#444}
+body.dark .admin-panel .order-card .oc-reply p{color:#aaa}
+body.dark .admin-panel .status-badge{background:#222;color:#eee}
+body.dark .admin-panel .status-badge.pending{background:#3d3520;color:#f0c040}
+body.dark .admin-panel .status-badge.cancelled{background:#3d2020;color:#f08080}
+body.dark .admin-panel .status-badge.delivered{background:#1d3d20;color:#80f0a0}
+body.dark .admin-panel .status-badge.shipped{background:#1d2d3d;color:#80c0f0}
+body.dark .admin-panel .status-badge.confirmed{background:#1d3d3d;color:#80f0f0}
+body.dark .admin-panel .reply-btn,body.dark .admin-panel .wa-btn,body.dark .admin-panel .del-btn{background:#222;color:#eee;border-color:#444}
+body.dark .admin-panel .del-btn{color:#f08080;border-color:#f08080}
+body.dark .admin-panel .top-prod-item{background:#1a1a1a;border-color:#333;color:#eee}
+body.dark .admin-panel .month-report{background:#1a1a1a;border-color:#333;color:#eee}
+body.dark .track-card{background:#1a1a1a!important;border-color:#333!important}
+body.dark .track-card *{color:#eee!important}
+body.dark .track-card .track-info{color:#999!important}
+body.dark .track-card .oc-reply{background:#222!important;border-color:#444!important}
+body.dark .track-card .oc-reply p{color:#aaa!important}
+body.dark .track-card .oc-head strong{color:#fff!important}
+body.dark .track-card .status-badge{background:#222!important;color:#eee!important}
+body.dark .track-card .status-badge.pending{background:#3d3520!important;color:#f0c040!important}
+body.dark .track-card .status-badge.cancelled{background:#3d2020!important;color:#f08080!important}
+body.dark .track-card .status-badge.delivered{background:#1d3d20!important;color:#80f0a0!important}
+body.dark .track-card .status-badge.shipped{background:#1d2d3d!important;color:#80c0f0!important}
+body.dark .track-card .status-badge.confirmed{background:#1d3d3d!important;color:#80f0f0!important}
   body.dark .track-card{background:#1a1a1a!important;border-color:#333!important}
 body.dark .track-card *{color:#eee!important}
 body.dark .track-card .track-info{color:#999!important}
@@ -1887,7 +1948,7 @@ function trackOrder(){
       const o = doc.data();
       const curIdx = steps.indexOf(o.status);
       const d = document.createElement("div");
-      d.className = "track-item";
+      d.className = "track-item track-card";
       let timeline = '<div class="track-timeline">';
       steps.forEach((s, i) => {
         timeline += '<div class="track-step' + (i <= curIdx ? ' done' : '') + '"><span>' + s + '</span></div>';
@@ -2007,6 +2068,18 @@ function toggleDark(){
   document.body.classList.toggle("dark");
   localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
 }
+  (function(){
+  const saved = localStorage.getItem("cd_dark");
+  if(saved === null){
+    if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+      document.body.classList.add("dark");
+    }
+  } else if(saved === "1"){
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+})();
 function toggleSearch(){
   document.getElementById("searchBar").classList.toggle("show");
   if (document.getElementById("searchBar").classList.contains("show")) document.getElementById("searchInput").focus();
