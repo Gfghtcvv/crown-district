@@ -599,10 +599,10 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <h2 class="sec-title">NEW ARRIVALS</h2>
   <div class="grid" id="newArrivals"></div>
 </section>
-<section style="background:#111;padding:28px 16px;text-align:center">
+<section id="bundleSection" style="background:#111;padding:28px 16px;text-align:center">
   <h2 style="font-size:20px;letter-spacing:3px;margin-bottom:8px;color:#fff">🔥 BUNDLE DEAL</h2>
   <p style="font-size:14px;color:#bbb;margin-bottom:4px">Koi bhi <strong style="color:#fff">2 T-shirts</strong> lo</p>
-  <p style="font-size:24px;font-weight:800;color:#e74c3c;margin-bottom:16px">Sirf Rs. 3,500</p>
+  <p style="font-size:24px;font-weight:800;color:#e74c3c;margin-bottom:16px"><span id="bundlePriceText">Sirf Rs. 3,500</span></p>
   <button onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" style="background:#fff;color:#111;padding:13px 40px;font-weight:800;letter-spacing:2px;border:none;border-radius:8px;font-size:13px;cursor:pointer">PICK YOURS</button>
 </section>
 <section id="shop">
@@ -813,6 +813,10 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <input id="setInsta5" placeholder="Instagram image 5 URL" style="margin-top:8px">
     <input id="setInsta6" placeholder="Instagram image 6 URL" style="margin-top:8px">
     <button class="full-btn" onclick="saveInstaImages()">SAVE INSTAGRAM IMAGES</button>
+      <h3 style="margin:20px 0 10px">BUNDLE DEAL</h3>
+    <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="setBundleOn" style="width:auto;margin:0" checked> BUNDLE DEAL ON</label>
+    <input id="setBundlePrice" type="number" placeholder="Bundle price (Rs. 3500)">
+    <button class="full-btn" onclick="saveBundle()">SAVE BUNDLE DEAL</button>
           
   </div>
 </div>
@@ -875,7 +879,7 @@ const ADMIN_PASSWORD = "1127shehroz";
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
 const DELIVERY_CHARGE = 200;
-const BUNDLE_PRICE = 3500;
+let BUNDLE_PRICE = 3500;
 function isFlashItem(id){ return id === (localStorage.getItem("cd_flash") || ""); }
 function flashPrice(p){ return Math.round(p.price / 2); }
 const EMAILJS_SERVICE_ID = "service_g55ha9n";
@@ -2089,6 +2093,32 @@ function saveInstaImages(){
     toast("Instagram images saved ✅");
   }).catch(e=>alert("Error: "+e.message));
 }
+  function saveBundle(){
+  const on=document.getElementById("setBundleOn").checked;
+  const price=Number(document.getElementById("setBundlePrice").value)||0;
+  if(on && !price){ alert("Enter bundle price"); return; }
+  const data={ bundleOn:on, bundlePrice:on?price:0 };
+  db.collection("settings").doc("site").get().then(doc=>{
+    if(doc.exists) return db.collection("settings").doc("site").update(data);
+    return db.collection("settings").doc("site").set(data);
+  }).then(()=>{
+    applySettings(data);
+    toast("Bundle deal saved ✅");
+  }).catch(e=>alert("Error: "+e.message));
+}
+function applyBundle(s){
+  const sec=document.getElementById("bundleSection");
+  if(!sec) return;
+  const on=s.bundleOn!==false;
+  sec.style.display=on?"block":"none";
+  if(s.bundlePrice){
+    BUNDLE_PRICE=Number(s.bundlePrice);
+    const t=document.getElementById("bundlePriceText");
+    if(t) t.textContent="Sirf Rs. "+Number(s.bundlePrice).toLocaleString();
+  }
+  const cb=document.getElementById("setBundleOn"); if(cb) cb.checked=on;
+  const pi=document.getElementById("setBundlePrice"); if(pi && s.bundlePrice) pi.value=s.bundlePrice;
+}
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
   if(!sel.value){ alert("Select a product"); return; }
@@ -2114,6 +2144,7 @@ function applySettings(s){
     document.getElementById("callBtn").onclick = () => location.href = "tel:" + s.phone;
     document.getElementById("waBtn").onclick = () => location.href = "https://wa.me/" + num;
   }
+    applyBundle(s);
   for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
   renderInstaGrid();
 }
