@@ -995,12 +995,14 @@ function buildGallery(c){
   };
 }
 
-  function renderFlashSale(){
+function renderFlashSale(){
   const el=document.getElementById("flashSale");
   if(!el) return;
   if(!products.length){ el.style.display="none"; return; }
-  const flashId=localStorage.getItem("cd_flash")||"";
-  const p=products.find(x=>x.id===flashId)||products[0];
+  const flashId=localStorage.getItem("cd_flash");
+  if(!flashId){ el.style.display="none"; return; }
+  const p=products.find(x=>x.id===flashId);
+  if(!p){ el.style.display="none"; return; }
   const flashPrice=Math.round(p.price/2);
   el.style.display="block";
   el.innerHTML='<div style="background:#111;border-radius:14px;padding:18px 16px;text-align:center"><div style="font-size:11px;color:#e74c3c;font-weight:800;letter-spacing:2px">⚡ FLASH SALE — 50% OFF</div><div style="font-size:15px;font-weight:700;margin:8px 0;color:#fff">'+p.name+'</div><div style="font-size:14px"><span style="text-decoration:line-through;color:#888">'+fmt(p.price)+'</span> <strong style="color:#e74c3c;font-size:16px">'+fmt(flashPrice)+'</strong></div><button onclick="openPDP(products.find(x=>x.id===\''+p.id+'\'))" style="margin-top:12px;background:#e74c3c;color:#fff;padding:10px 28px;font-size:12px;font-weight:800;letter-spacing:2px;border:none;border-radius:8px;cursor:pointer">GRAB IT</button></div>';
@@ -2068,7 +2070,7 @@ function toggleDark(){
   document.body.classList.toggle("dark");
   localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
 }
-  (function(){
+function applyAutoDark(){
   const saved = localStorage.getItem("cd_dark");
   if(saved === null){
     if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
@@ -2079,7 +2081,9 @@ function toggleDark(){
   } else {
     document.body.classList.remove("dark");
   }
-})();
+}
+if(document.body){ applyAutoDark(); }
+else { document.addEventListener("DOMContentLoaded", applyAutoDark); }
 function toggleSearch(){
   document.getElementById("searchBar").classList.toggle("show");
   if (document.getElementById("searchBar").classList.contains("show")) document.getElementById("searchInput").focus();
