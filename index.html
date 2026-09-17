@@ -238,6 +238,38 @@ body.dark .admin-panel .oc-reply{background:#222;color:#eee}
 body.dark .admin-panel .oc-reply-box{background:#1a1a1a;color:#eee;border-color:#444}
 body.dark .admin-panel .oc-actions select{background:#1a1a1a;color:#eee;border-color:#444}
 body.dark .admin-panel .oc-actions button{background:#222;color:#eee;border-color:#444}
+  body.dark .admin-head{background:#111!important;border-bottom:1px solid #333}
+  body.dark .fp-top{background:#111!important;border-bottom:1px solid #333!important}
+body.dark .fp-top .fp-back{color:#fff!important;font-size:26px!important;opacity:1!important}
+body.dark .fp-top h2{color:#fff!important}
+body.dark .track-item{background:#1a1a1a!important;border:1px solid #333!important;border-left:4px solid #555!important}
+body.dark .track-item *{color:#eee!important}
+body.dark .track-item strong{color:#fff!important}
+body.dark .track-item .track-info{color:#aaa!important}
+body.dark .track-item .track-status{background:#3d3520!important;color:#f0c040!important}
+body.dark .track-item .track-status.Confirmed{background:#1d3d20!important;color:#80f0a0!important}
+body.dark .track-item .track-status.Shipped{background:#1d2d3d!important;color:#80c0f0!important}
+body.dark .track-item .track-status.Delivered{background:#1d3d3d!important;color:#80f0f0!important}
+body.dark .track-item .track-status.Cancelled{background:#3d2020!important;color:#f08080!important}
+body.dark .track-item .track-step span{color:#999!important}
+body.dark .track-item .track-step.done span{color:#80f0a0!important}
+body.dark .track-item .track-step::before{background:#444!important}
+body.dark .track-item .track-step.done::before{background:#80f0a0!important}
+body.dark .track-item .track-step::after{background:#333!important}
+body.dark .track-item img{background:#1a1a1a}
+body.dark .track-item .track-reply{background:#222!important;border-left:3px solid #555!important}
+body.dark .track-item .track-reply strong{color:#eee!important}
+body.dark .track-item .track-reply br+*{color:#aaa!important}
+body.dark #trackResult{color:#eee}
+body.dark #trackResult p{color:#aaa}
+body.dark #trackResult .empty{color:#999}
+body.dark .admin-head h2{color:#fff!important}
+body.dark .admin-head button{color:#fff!important}
+body.dark .fp-top .fp-back{color:#fff!important;font-size:24px}
+body.dark .fp-top h2{color:#fff!important}
+body.dark .fp-top{border-bottom-color:#333!important}
+body.dark .admin-tabs .atab{background:#1a1a1a!important;color:#eee!important;border-color:#444!important}
+body.dark .admin-tabs .atab.active{background:#fff!important;color:#111!important;border-color:#fff!important}
   body.dark .admin-panel .atab{background:#1a1a1a;color:#eee;border-color:#444}
 body.dark .admin-panel .atab.active{background:#fff;color:#111;border-color:#fff}
 body.dark .admin-head{background:#111}
@@ -2035,7 +2067,14 @@ function trackOrder(){
         + timeline
         + '<div class="track-info">Order ID: ' + (o.orderId || doc.id) + '</div>'
         + '<div class="track-info">Total: ' + fmt(o.total) + '</div>'
-        + '<div class="track-info">Items: ' + o.items.map(i => i.name + ' (' + (i.color || "") + ', ' + i.size + ') x' + i.qty).join(', ') + '</div>'
+        + '<div style="margin:10px 0">' + (o.items||[]).map(i => {
+        const pp = products.find(x => x.id === i.id);
+        const im = pp ? (pp.image || "") : "";
+        return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">'
+          + (im ? '<img src="'+im+'" style="width:56px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;background:#f5f5f5" onclick="viewImg(\''+im+'\')">' : '')
+          + '<div><div style="font-size:13px;font-weight:600">'+i.name+'</div><div style="font-size:12px;color:#888">'+(i.color||'-')+' | Size: '+i.size+' | x'+i.qty+'</div></div>'
+          + '</div>';
+      }).join("") + '</div>'
         + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
         + '<div class="track-info" style="margin-top:10px;font-size:12px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : "N/A") + '</div>'
               + (o.status === "Pending" || o.status === "Confirmed" ? '<button onclick="cancelOrder(\'' + o.orderId + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
