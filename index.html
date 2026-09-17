@@ -224,6 +224,11 @@ body.dark .admin-panel .full-btn{background:#222!important;color:#fff!important;
 body.dark .admin-panel button[style*="background:#fff"]{background:#222!important;color:#fff!important;border:1px solid #444!important}
 body.dark .admin-panel select{background:#1a1a1a!important;color:#fff!important;border-color:#444!important}
 body.dark .admin-panel .oc-item{background:#222!important;color:#eee!important}
+  body.dark .admin-panel .atab{background:#1a1a1a;color:#eee;border-color:#444}
+body.dark .admin-panel .atab.active{background:#fff;color:#111;border-color:#fff}
+body.dark .admin-head{background:#111}
+body.dark .admin-head h2{color:#fff}
+body.dark .admin-head button{color:#fff}
 body.dark .track-card .oc-reply{background:#222!important;border-left:3px solid #555!important;padding:10px;margin-top:10px}
 body.dark .track-card .oc-reply p{color:#aaa!important;font-size:13px}
 body.dark .track-card .oc-head{font-weight:700;color:#fff!important}
@@ -505,6 +510,38 @@ body.dark .f-support a{color:#ccc !important}
 body.dark .btn-outline{border-color:#fff !important;color:#fff !important}
 body.dark section[style*="f8f8f8"] h2{color:#eee !important}
 body.dark section[style*="f8f8f8"] button{color:#eee !important}
+  /* ===== PREMIUM POLISH ===== */
+.p-card{transition:transform .25s ease,box-shadow .25s ease}
+.p-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.14)}
+.p-img{border-radius:10px}
+.focus-card{border-radius:12px}
+.focus-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.sec-title{font-weight:700;letter-spacing:3px}
+.hero{position:relative}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.55) 100%)}
+.hero img{position:relative;z-index:1}
+.hero-cta{position:relative;z-index:2}
+.hero-cta button{border-radius:6px;transition:transform .2s ease,box-shadow .2s ease}
+.hero-cta button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.full-btn{border-radius:6px;transition:transform .2s ease,opacity .2s ease}
+.full-btn:active{transform:scale(.98)}
+.add-btn,.buy-btn{transition:transform .2s ease,opacity .2s ease}
+.add-btn:hover,.buy-btn:hover{opacity:.9}
+button:focus{outline:none}
+input:focus,textarea:focus,select:focus{border-color:#111;outline:none}
+body.dark input:focus,body.dark textarea:focus,body.dark select:focus{border-color:#fff}
+.grid{gap:14px}
+.trust-box{transition:transform .2s ease}
+.trust-box:hover{transform:translateY(-3px)}
+.testi-card{transition:transform .2s ease}
+.testi-card:hover{transform:translateY(-3px)}
+a{transition:opacity .2s ease}
+a:hover{opacity:.75}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#f0f0f0}
+::-webkit-scrollbar-thumb{background:#111;border-radius:4px}
+body.dark ::-webkit-scrollbar-track{background:#1a1a1a}
+body.dark ::-webkit-scrollbar-thumb{background:#444}
 </style>
 </head>
 <body>
@@ -602,14 +639,7 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
   </div>
 <section>
   <h2 class="sec-title">@JAZB.WEAR ON INSTAGRAM</h2>
-  <div class="insta-grid">
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=1" alt="JAZB Instagram"></a>
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=2" alt="JAZB Instagram"></a>
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=3" alt="JAZB Instagram"></a>
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=4" alt="JAZB Instagram"></a>
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=5" alt="JAZB Instagram"></a>
-    <a href="https://instagram.com/jazb.wear" target="_blank"><img src="https://placehold.co/300x300?text=6" alt="JAZB Instagram"></a>
-  </div>
+  <div class="insta-grid" id="instaGrid"></div>
   <a href="https://instagram.com/jazb.wear" target="_blank" class="insta-follow">FOLLOW @JAZB.WEAR</a>
 </section>
 <section class="newsletter">
@@ -775,6 +805,14 @@ body.dark section[style*="f8f8f8"] button{color:#eee !important}
     <select id="setFlash" style="margin-bottom:8px"></select>
     <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
   <button onclick="localStorage.removeItem('cd_flash');renderFlashSale();alert('Flash sale removed')" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
+      <h3 style="margin:20px 0 10px">INSTAGRAM IMAGES (6 posts)</h3>
+    <input id="setInsta1" placeholder="Instagram image 1 URL">
+    <input id="setInsta2" placeholder="Instagram image 2 URL" style="margin-top:8px">
+    <input id="setInsta3" placeholder="Instagram image 3 URL" style="margin-top:8px">
+    <input id="setInsta4" placeholder="Instagram image 4 URL" style="margin-top:8px">
+    <input id="setInsta5" placeholder="Instagram image 5 URL" style="margin-top:8px">
+    <input id="setInsta6" placeholder="Instagram image 6 URL" style="margin-top:8px">
+    <button class="full-btn" onclick="saveInstaImages()">SAVE INSTAGRAM IMAGES</button>
           
   </div>
 </div>
@@ -2029,6 +2067,28 @@ function fillFlashDropdown(){
   fs.innerHTML='<option value="">Select a product</option>'+products.map(p=>'<option value="'+p.id+'">'+p.name+'</option>').join("");
   if(cur) fs.value=cur;
 }
+  let instaImgs={};
+function renderInstaGrid(){
+  const g=document.getElementById("instaGrid");
+  if(!g) return;
+  const urls=[1,2,3,4,5,6].map(i=>instaImgs["insta"+i]).filter(Boolean);
+  g.innerHTML=urls.length?urls.map(u=>'<a href="https://instagram.com/jazb.wear" target="_blank"><img src="'+u+'" onerror="this.src=\'https://placehold.co/300x300?text=JAZB\'"></a>').join("") : '<p class="empty">Follow @jazb.wear</p>';
+}
+function saveInstaImages(){
+  const data={};
+  for(let i=1;i<=6;i++){
+    const v=document.getElementById("setInsta"+i).value.trim();
+    if(v) data["insta"+i]=v;
+  }
+  if(!Object.keys(data).length){ alert("Enter at least one image URL"); return; }
+  db.collection("settings").doc("site").get().then(doc=>{
+    if(doc.exists) return db.collection("settings").doc("site").update(data);
+    return db.collection("settings").doc("site").set(data);
+  }).then(()=>{
+    applySettings(data);
+    toast("Instagram images saved ✅");
+  }).catch(e=>alert("Error: "+e.message));
+}
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
   if(!sel.value){ alert("Select a product"); return; }
@@ -2054,6 +2114,8 @@ function applySettings(s){
     document.getElementById("callBtn").onclick = () => location.href = "tel:" + s.phone;
     document.getElementById("waBtn").onclick = () => location.href = "https://wa.me/" + num;
   }
+  for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
+  renderInstaGrid();
 }
 async function loadSettings(){
   try {
@@ -2137,6 +2199,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   renderTabs();
   renderDrawer();
+  renderInstaGrid();
   saveCart();
   loadSettings();
   db.collection("products").onSnapshot(snap => {
