@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>JAZB | Premium Streetwear — Men's T-Shirts, Track Suits & More</title>
- <link rel="icon" type="image/png" href="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
+ <link rel="icon" type="image/png" href="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9a49d8eb-cffe-43f5-8d8a-da54d1c85554.png">
 <meta property="og:title" content="JAZB - Premium Streetwear">
 <meta property="og:description" content="Premium streetwear from Pakistan. T-shirts, trousers, shorts. Order online with easy tracking.">
 <meta property="og:site_name" content="JAZB">
@@ -2078,6 +2078,7 @@ function trackOrder(){
         + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
         + '<div class="track-info" style="margin-top:10px;font-size:12px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : "N/A") + '</div>'
               + (o.status === "Pending" || o.status === "Confirmed" ? '<button onclick="cancelOrder(\'' + o.orderId + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
++ (o.status === "Cancelled" ? '<button onclick="removeCancelled(\'' + o.orderId + '\')" style="margin-top:12px;background:#555;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE CANCELLED ORDER</button>' : '')
       res.appendChild(d);
     });
   }).catch(e => { res.innerHTML = "Error: " + e.message; });
@@ -2109,6 +2110,19 @@ function cancelOrder(orderId){
   ov.innerHTML='<img src="'+url+'" style="max-width:100%;max-height:88vh;border-radius:10px">';
   ov.onclick=()=>ov.remove();
   document.body.appendChild(ov);
+  }
+  function removeCancelled(orderId){
+  if(!confirm("Is cancelled order ko hata dein?")) return;
+  db.collection("orders").where("orderId","==",orderId).get().then(snap=>{
+    snap.forEach(doc=>{
+      if(doc.data().status==="Cancelled"){
+        doc.ref.delete().then(()=>{
+          toast("Cancelled order removed ✅");
+          trackOrder();
+        }).catch(e=>alert("Error: "+e.message));
+      }
+    });
+  });
   }
 function whatsappOrder(id){
   const o = products; // not used, get from order list
