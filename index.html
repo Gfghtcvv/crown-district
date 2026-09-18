@@ -797,6 +797,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <button class="atab" id="tabOrders" onclick="adminTab('orders')">ORDERS</button>
     <button class="atab" id="tabStats" onclick="adminTab('stats')">STATS</button>
     <button class="atab" id="tabCustomers" onclick="adminTab('customers')">CUSTOMERS</button>
+          <button class="atab" id="tabSubscribers" onclick="adminTab('subscribers')">SUBSCRIBERS</button>
     <button class="atab" id="tabSettings" onclick="adminTab('settings')">SETTINGS</button>
   </div>
   <div id="adminProducts" class="atab-body">
@@ -806,6 +807,10 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div id="adminOrders" class="atab-body" style="display:none"><div id="orderList"></div></div>
   <div id="adminStats" class="atab-body" style="display:none"><button class="full-btn" onclick="exportCSV()">⬇ DOWNLOAD ORDERS (CSV)</button><div id="statsList" style="margin-top:14px"></div></div>
     <div id="adminCustomers" class="atab-body" style="display:none"><div id="customerList"></div></div>
+      <div id="adminSubscribers" class="atab-body" style="display:none">
+      <h3 style="margin-bottom:12px">SUBSCRIBED EMAILS</h3>
+      <div id="subList"></div>
+      </div>
 <div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
     <input id="setLogo" placeholder="Logo image URL (Imgur / Drive)">
@@ -1608,6 +1613,7 @@ function adminTab(t){
   if (t === "stats") loadStats();
   if (t === "customers") loadCustomers();
   if (t === "settings") fillFlashDropdown();
+    if (t === "subscribers") renderSubscribers();
 }
 function loadCustomers(){
   const list = document.getElementById("customerList");
@@ -2201,6 +2207,24 @@ function applyBundle(s){
   }
   const cb=document.getElementById("setBundleOn"); if(cb) cb.checked=on;
   const pi=document.getElementById("setBundlePrice"); if(pi && s.bundlePrice) pi.value=s.bundlePrice;
+}
+  function renderSubscribers(){
+  db.collection("subscribers").get().then(snap=>{
+    const el=document.getElementById("subList");
+    if(!el) return;
+    if(snap.empty){ el.innerHTML='<p class="empty">No subscribers yet</p>'; return; }
+    const arr=[];
+    snap.forEach(d=>arr.push(d.data()));
+    arr.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+    el.innerHTML=arr.map((s,i)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px;background:#fafafa"><div><div style="font-size:13px;font-weight:600">'+(i+1)+'. '+(s.email||"")+'</div><div style="font-size:11px;color:#999">'+(s.date?new Date(s.date).toLocaleDateString():"")+'</div></div><button onclick="deleteSub(\''+(s.email||"")+'\')" style="background:#c0392b;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer">DELETE</button></div>').join("");
+  });
+}
+function deleteSub(email){
+  if(!confirm("Delete "+email+"?")) return;
+  db.collection("subscribers").where("email","==",email).get().then(snap=>{
+    snap.forEach(d=>d.ref.delete());
+    renderSubscribers();
+  });
 }
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
