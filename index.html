@@ -1605,7 +1605,7 @@ function closeAdmin(){
   document.getElementById("adminPanel").classList.remove("show");
 }
 function adminTab(t){
-  ["products","orders","stats","customers","settings"].forEach(x => {
+["products","orders","stats","customers","subscribers","settings"].forEach(x => {
     document.getElementById("admin" + x[0].toUpperCase() + x.slice(1)).style.display = x === t ? "block" : "none";
     document.getElementById("tab" + x[0].toUpperCase() + x.slice(1)).classList.toggle("active", x === t);
   });
