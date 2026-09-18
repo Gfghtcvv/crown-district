@@ -238,6 +238,11 @@ body.dark .admin-panel .oc-reply{background:#222;color:#eee}
 body.dark .admin-panel .oc-reply-box{background:#1a1a1a;color:#eee;border-color:#444}
 body.dark .admin-panel .oc-actions select{background:#1a1a1a;color:#eee;border-color:#444}
 body.dark .admin-panel .oc-actions button{background:#222;color:#eee;border-color:#444}
+  body.dark #allCatImg{filter:invert(1)}
+.cat-scroll .cat-btn:first-child{background:transparent!important}
+body.dark .cat-scroll .cat-btn:first-child{background:transparent!important}
+  .cat-scroll .cat-btn{height:180px!important}
+.cat-scroll .cat-btn img{max-height:160px;max-width:90%}
   body.dark #subList div{background:#1a1a1a!important;border-color:#444!important}
 body.dark #subList div div div:first-child{color:#fff!important}
 body.dark #subList div div div:last-child{color:#999!important}
@@ -251,7 +256,7 @@ body.dark .track-item strong{color:#fff!important}
 body.dark .track-item .track-info{color:#aaa!important}
 body.dark .track-item .track-status{background:#3d3520!important;color:#f0c040!important}
 body.dark .track-item .track-status.Confirmed{background:#1d3d20!important;color:#80f0a0!important}
-body.dark .track-item .track-status.Shipped{background:#1d2d3d!important;color:#80c0f0!important}
+body.dark .track-item .track-status.Shipped,body.dark .track-item .track-status.Shipping{background:#1d2d3d!important;color:#80c0f0!important}
 body.dark .track-item .track-status.Delivered{background:#1d3d3d!important;color:#80f0f0!important}
 body.dark .track-item .track-status.Cancelled{background:#3d2020!important;color:#f08080!important}
 body.dark .track-item .track-step span{color:#999!important}
@@ -363,7 +368,7 @@ body.dark .trust-box .ts{color:#999}
 .track-status{display:inline-block;padding:4px 14px;font-size:11px;letter-spacing:1px;font-weight:600}
 .track-status.Pending{background:#fff3cd;color:#856404}
 .track-status.Confirmed{background:#d4edda;color:#155724}
-.track-status.Shipped{background:#cce5ff;color:#004085}
+.track-status.Shipped,.track-status.Shipping{background:#cce5ff;color:#004085}
 .track-status.Delivered{background:#d1e7dd;color:#0f5132}
 .track-status.Cancelled{background:#f8d7da;color:#721c24}
 .track-timeline{display:flex;gap:0;margin:14px 0}
@@ -978,7 +983,7 @@ function renderTabs(){
     b.className = "tab" + (c === currentCat ? " active" : "");
     if (c === "ALL") {
             b.classList.add("all-tab");
-      b.innerHTML = '<img src="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9a49d8eb-cffe-43f5-8d8a-da54d1c85554.png" style="width:48px;height:48px;object-fit:contain;opacity:.8">';
+      b.innerHTML = '<img id="allCatImg" src="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9eaa081f-6e95-485d-9609-56ce253b2221.png" style="width:100%;height:100%;object-fit:contain">';
     } else {
             let img = (catImages[c] || "https://placehold.co/200x140?text=" + c).replace(/"/g, "");
       b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/200x140?text=' + c + '\'"><span>' + c + '</span>';
@@ -1180,8 +1185,6 @@ function openPDP(p){
     revBox.innerHTML = '<div class="reviews-section"><h4>REVIEWS</h4><div id="reviewsList"></div><div class="review-form"><strong style="font-size:13px">Write a Review:</strong><div class="r-stars-input" id="rStarsInput">' + [1,2,3,4,5].map(n => '<span data-v="'+n+'" onclick="setRating('+n+')">★</span>').join('') + '</div><input id="rName" placeholder="Your name"><input id="rImg" placeholder="Photo URL (optional)"><textarea id="rText" placeholder="Your review..."></textarea><button onclick="submitReview()">SUBMIT REVIEW</button></div></div>';
     loadReviews(p.id);
   }
-    document.getElementById("pdpSizes").innerHTML += '<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span>';
-    document.getElementById("pdpSizes").innerHTML += '<span class="sg-link" onclick="shareProduct()">Share</span>';
     document.getElementById("stickyPrice").textContent = fmt(p.price);
   document.getElementById("pdpSticky").classList.add("show");
     const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.category] || ["One Size"]);
@@ -1204,6 +1207,8 @@ function openPDP(p){
     };
     sz.appendChild(b);
   });
+  sz.innerHTML += '<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span>';
+  sz.innerHTML += '<span class="sg-link" onclick="shareProduct()">Share</span>';
   if(!p.unlimited){
     const sm2 = getStockForColor(p, currentColor.name) || {};
     const totalStock = Object.values(sm2).reduce((a,b)=>a+Number(b),0);
@@ -1250,20 +1255,8 @@ function closePDP(){
     document.getElementById("pdpSticky").classList.remove("show");
   document.body.style.overflow = "";
   currentProduct = null;
-  (function(){
-  const el = document.getElementById("saleTimer");
-  if (!el) return;
-  let end = new Date(); end.setHours(23,59,59,999);
-  setInterval(() => {
-    let d = end - new Date();
-    if (d < 0) { end = new Date(); end.setHours(23,59,59,999); d = end - new Date(); }
-    const h = String(Math.floor(d/3600000)).padStart(2,"0");
-    const m = String(Math.floor(d%3600000/60000)).padStart(2,"0");
-    const s = String(Math.floor(d%60000/1000)).padStart(2,"0");
-    el.textContent = h + ":" + m + ":" + s;
-  }, 1000);
-})();
-} window.addEventListener("scroll", () => {
+}
+  window.addEventListener("scroll", () => {
   const b = document.getElementById("backTop");
   if (b) b.classList.toggle("show", window.scrollY > 400);
 });
@@ -1574,12 +1567,10 @@ for (const it of items) {
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
-      cart = [];
-  saveCart();
     isPlacing = false;
     btn.disabled = false;
     btn.textContent = "PLACE ORDER";
-  }
+  }  
 }
   function openAdminLogin(){ document.getElementById("adminLoginModal").classList.add("show"); }
 function closeAdminLogin(){ document.getElementById("adminLoginModal").classList.remove("show"); }
@@ -1946,7 +1937,12 @@ function loadOrders(){
 }async function restockOrder(o){
   for (const it of (o.items || [])) {
     const p = products.find(x => x.id === it.id);
-    if (p && p.stock && Object.keys(p.stock).length && (p.stock[it.size] || 0) > 0) {
+    if (!p || p.unlimited || !p.stock) continue;
+    const cs = getStockForColor(p, it.color) || {};
+    if (Object.keys(cs).length > 0) {
+      cs[it.size] = (cs[it.size] || 0) + (it.qty || 1);
+      await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
+    } else if (p.stock[it.size] !== undefined) {
       await db.collection("products").doc(it.id).update({ ["stock." + it.size]: firebase.firestore.FieldValue.increment(it.qty) });
     }
   }
@@ -2058,7 +2054,7 @@ function trackOrder(){
   q.get().then(snap => {
     if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your phone number or Order ID.</p>'; return; }
     res.innerHTML = "";
-    const steps = ["Pending", "Confirmed", "Shipped", "Delivered"];
+    const steps = ["Pending", "Confirmed", "Shipping", "Delivered"];
     snap.forEach(doc => {
       const o = doc.data();
       const curIdx = steps.indexOf(o.status);
@@ -2281,7 +2277,10 @@ function toggleDark(){
   localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
 }
 function applyAutoDark(){
-  if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+  const manual = localStorage.getItem("cd_dark");
+  if (manual === "1") { document.body.classList.add("dark"); return; }
+  if (manual === "0") { document.body.classList.remove("dark"); return; }
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
     document.body.classList.add("dark");
   } else {
     document.body.classList.remove("dark");
@@ -2302,12 +2301,25 @@ function closeAll(){
 function joinNewsletter(){
   const e = document.getElementById("nlEmail").value.trim();
   if (!e) { alert("Enter your email"); return; }
-  db.collection("subscribers").add({ email: e, at: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
+  db.collection("subscribers").add({ email: e, date: new Date().toISOString() }).then(() => {
     alert("Thanks for subscribing!");
     document.getElementById("nlEmail").value = "";
   }).catch(err => alert("Already subscribed or error"));
 }
 document.addEventListener("DOMContentLoaded", () => {
+  (function(){
+    const el=document.getElementById("saleTimer");
+    if(!el) return;
+    let end=new Date(); end.setHours(23,59,59,999);
+    setInterval(()=>{
+      let d=end-new Date();
+      if(d<0){end=new Date();end.setHours(23,59,59,999);d=end-new Date();}
+      const h=String(Math.floor(d/3600000)).padStart(2,"0");
+      const m=String(Math.floor(d%3600000/60000)).padStart(2,"0");
+      const s=String(Math.floor(d%60000/1000)).padStart(2,"0");
+      el.textContent=h+":"+m+":"+s;
+    },1000);
+  })();
   (function(){
     const el=document.getElementById("megaTimer");
     if(!el) return;
