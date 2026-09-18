@@ -978,7 +978,7 @@ function renderTabs(){
     b.className = "tab" + (c === currentCat ? " active" : "");
     if (c === "ALL") {
             b.classList.add("all-tab");
-      b.innerHTML = '<span>ALL</span>';
+      b.innerHTML = '<img src="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9a49d8eb-cffe-43f5-8d8a-da54d1c85554.png" style="width:48px;height:48px;object-fit:contain;opacity:.8">';
     } else {
             let img = (catImages[c] || "https://placehold.co/200x140?text=" + c).replace(/"/g, "");
       b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/200x140?text=' + c + '\'"><span>' + c + '</span>';
