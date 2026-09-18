@@ -1146,6 +1146,29 @@ function renderRecentlyViewed(){
     g.appendChild(d);
   });
 }
+  function renderPdpSizes(p){
+  const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.cat] || ["One Size"]);
+  const stockMap = getStockForColor(p, currentColor) || {};
+  const hasStock = Object.keys(stockMap).length > 0;
+  currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
+  const sz = document.getElementById("pdpSizes");
+  if(!sz) return;
+  sz.innerHTML = "<strong style='font-size:13px'>SIZE</strong>";
+  sizes.forEach(s => {
+    const st = hasStock ? (stockMap[s] || 0) : Infinity;
+    const b = document.createElement("button");
+    b.className = "size-btn" + (s === currentSize ? " sel" : "");
+    b.textContent = hasStock ? s + " (" + st + ")" : s;
+    if (st <= 5 && st > 0) b.style.color = "#c0392b";
+    b.onclick = () => {
+      if (st <= 0) return;
+      currentSize = s;
+      sz.querySelectorAll(".size-btn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel");
+    };
+    sz.appendChild(b);
+  });
+  }
 function openPDP(p){
   (function(){
     let rv=JSON.parse(localStorage.getItem("cd_recent")||"[]");
@@ -1172,6 +1195,7 @@ function openPDP(p){
       cBox.querySelectorAll(".color-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
       buildGallery(c);
+        renderPdpSizes(p);
     };
     cBox.appendChild(b);
   });
@@ -1192,26 +1216,7 @@ function openPDP(p){
   }
     document.getElementById("stickyPrice").textContent = fmt(p.price);
   document.getElementById("pdpSticky").classList.add("show");
-    const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.category] || ["One Size"]);
-  const stockMap = getStockForColor(p, currentColor.name) || {};
-  const hasStock = Object.keys(stockMap).length > 0;
-  currentSize = sizes.length === 1 && (!hasStock || (stockMap[sizes[0]] || 0) > 0) ? sizes[0] : null;
-  const sz = document.getElementById("pdpSizes");
-  sz.innerHTML = "<strong style='font-size:13px'>SIZE:</strong>";
-  sizes.forEach(s => {
-    const st = hasStock ? (stockMap[s] || 0) : Infinity;
-    const b = document.createElement("button");
-    b.className = "size-btn" + (s === currentSize ? " sel" : "") + (st <= 0 ? " disabled" : "");
-    b.textContent = hasStock ? s + " (" + st + ")" : s;
-    if (st <= 5 && st > 0) b.style.color = "#c0392b";
-    b.onclick = () => {
-      if (st <= 0) return;
-      currentSize = s;
-      sz.querySelectorAll(".size-btn").forEach(x => x.classList.remove("sel"));
-      b.classList.add("sel");
-    };
-    sz.appendChild(b);
- });
+  renderPdpSizes(p);
 const curStock = getStockForColor(p, currentColor);
 const allSoldOut = !p.unlimited && colorSoldOut(p, currentColor);
 if (allSoldOut) {
