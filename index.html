@@ -1829,11 +1829,8 @@ function fillColorStocks(d, colorStocks){
   const box = d.querySelector(".cr-stocks");
   if (!box) return;
   box.innerHTML = "";
-    let sizes = getSelectedSizes();
-  if(!sizes.length){
     const cat = document.getElementById("pfCat").value;
-    sizes = DEFAULT_SIZES[cat] || ["One Size"];
-  }
+  const sizes = DEFAULT_SIZES[cat] || ["One Size"];
   sizes.forEach(s => {
     const b = document.createElement("button");
     b.type = "button";
