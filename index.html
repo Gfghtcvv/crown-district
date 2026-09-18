@@ -1858,7 +1858,7 @@ function refreshColorStocks(){
 function addColor(){
   const box = document.getElementById("pfColors");
   if(!box) return;
-  const first = box.querySelector(".cr-row");
+  const first = document.getElementById("cr_0");
   if(!first) return;
   let c = 0;
   while(document.getElementById("cr_" + c)) c++;
