@@ -1829,7 +1829,12 @@ function fillColorStocks(d, colorStocks){
   const box = d.querySelector(".cr-stocks");
   if (!box) return;
   box.innerHTML = "";
-  getSelectedSizes().forEach(s => {
+    let sizes = getSelectedSizes();
+  if(!sizes.length){
+    const cat = document.getElementById("pfCat").value;
+    sizes = DEFAULT_SIZES[cat] || ["One Size"];
+  }
+  sizes.forEach(s => {
     const b = document.createElement("button");
     b.type = "button";
     b.textContent = s;
@@ -1858,48 +1863,26 @@ function refreshColorStocks(){
 function addColor(){
   const box = document.getElementById("pfColors");
   if(!box) return;
-  const first = document.getElementById("cr_0");
-  if(!first) return;
   let c = 0;
   while(document.getElementById("cr_" + c)) c++;
-  const clone = first.cloneNode(true);
-  clone.id = "cr_" + c;
-  clone.querySelectorAll("input").forEach(inp => {
-    if(inp.type === "checkbox") inp.checked = false;
-    else inp.value = "";
-  });
-  const sg = clone.querySelector(".cr-sg, [id^='cr_sg_']");
-  if(sg){ sg.id = "cr_sg_" + c; sg.innerHTML = ""; }
-  box.appendChild(clone);
   addColorRow(c);
 }
-function addColorRow(c){
-  const row = document.getElementById("cr_" + c);
-  if (!row) return;
-  const sg = document.getElementById("cr_sg_" + c);
-  if (!sg) return;
-  const sizes = ["S", "M", "L", "XL", "XXL"];
-  const grid = document.createElement("div");
-  grid.style.cssText = "display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px;";
-  sizes.forEach(sz => {
-    const cell = document.createElement("div");
-    cell.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:4px;";
-    const lbl = document.createElement("span");
-    lbl.textContent = sz;
-    lbl.style.cssText = "font-weight:700;font-size:13px;color:#666;";
-    const inp = document.createElement("input");
-    inp.type = "number";
-    inp.value = "0";
-    inp.min = "0";
-    inp.placeholder = "0";
-    inp.style.cssText = "width:50px;padding:4px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:13px;";
-    inp.className = "stock-inp"; inp.dataset.sz = sz;
-    inp.oninput = () => { if(inp.value < 0) inp.value = 0; };
-    cell.appendChild(lbl);
-    cell.appendChild(inp);
-    grid.appendChild(cell);
-  });
-  sg.appendChild(grid);
+function addColorRow(idx){
+  const box = document.getElementById("pfColors");
+  if(!box) return;
+  const row = document.createElement("div");
+  row.id = "cr_" + idx;
+  row.style.cssText = "border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:10px";
+  row.innerHTML = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input class="cr-name" placeholder="Color name (e.g. Black)" style="flex:1;margin:0"><label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap"><input type="checkbox" class="cr-so" style="width:auto;margin:0">Sold Out</label></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><input class="cr-i0" placeholder="Image 1 URL"><input class="cr-i1" placeholder="Image 2 URL"><input class="cr-i2" placeholder="Image 3 URL"><input class="cr-i3" placeholder="Image 4 URL"><input class="cr-i4" placeholder="Image 5 URL"></div><div class="cr-stocks"></div>';
+  box.appendChild(row);
+}
+function fillColorRow(row, color, colorStocks){
+  if(!row) return;
+  row.querySelector(".cr-name").value = color.name || "";
+  row.querySelector(".cr-so").checked = !!color.soldOut;
+  const imgs = color.images || [];
+  [0,1,2,3,4].forEach(i => { row.querySelector(".cr-i" + i).value = imgs[i] || ""; });
+  fillColorStocks(row, colorStocks);
   }
 function getColorsFromForm(){
   return Array.from(document.querySelectorAll("#pfColors > div")).map(d => ({
@@ -1928,11 +1911,10 @@ document.getElementById("pfImg5").value = p.image5 || "";
     renderSizeButtons(p.category, p.sizes || [], p.stock || {});
         const cb = document.getElementById("pfColors");
     cb.innerHTML = "";
-    (p.colors || []).forEach(c => addColorRow(c));
-    document.querySelectorAll("#pfColors > div").forEach(d => {
-  const nm = d.querySelector(".cr-name").value.trim();
-  const cs = (p.stock && p.stock[nm] && typeof p.stock[nm] === "object") ? p.stock[nm] : (p.stock || {});
-  fillColorStocks(d, cs);
+(p.colors || []).forEach((c, i) => {
+  addColorRow(i);
+  const cs = (p.stock && p.stock[c.name] && typeof p.stock[c.name] === "object") ? p.stock[c.name] : {};
+  fillColorRow(document.getElementById("cr_" + i), c, cs);
 });
     document.getElementById("pfSoldOut").checked = !!p.soldOut;
     document.getElementById("pfUnlimited").checked = !!p.unlimited;
