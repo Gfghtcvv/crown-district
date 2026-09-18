@@ -1146,14 +1146,21 @@ function renderRecentlyViewed(){
     g.appendChild(d);
   });
 }
-  function renderPdpSizes(p){
-  const sizes = p.sizes && p.sizes.length ? p.sizes : (DEFAULT_SIZES[p.cat] || ["One Size"]);
-  const stockMap = getStockForColor(p, currentColor) || {};
+function renderPdpSizes(p){
+  const cat = (p.category || "").toUpperCase();
+  let sizes = DEFAULT_SIZES[cat];
+  if(!sizes){
+    if(cat.includes("CAP") || cat.includes("ACCESSORY")) sizes = ["One Size"];
+    else if(cat.includes("TROUSER") || cat.includes("JEAN") || cat.includes("SHORT")) sizes = ["30","32","34","36","38"];
+    else sizes = ["S","M","L","XL","XXL"];
+  }
+  const stockMap = getStockForColor(p, currentColor.name) || {};
   const hasStock = Object.keys(stockMap).length > 0;
   currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
   const sz = document.getElementById("pdpSizes");
   if(!sz) return;
-  sz.innerHTML = "<strong style='font-size:13px'>SIZE</strong>";
+  sz.querySelectorAll(".size-btn, .sg-link").forEach(x => x.remove());
+  const label = sz.querySelector("strong");
   sizes.forEach(s => {
     const st = hasStock ? (stockMap[s] || 0) : Infinity;
     const b = document.createElement("button");
@@ -1166,9 +1173,13 @@ function renderRecentlyViewed(){
       sz.querySelectorAll(".size-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
     };
-    sz.appendChild(b);
+    if(label) label.insertAdjacentElement("afterend", b);
+    else sz.appendChild(b);
   });
-  }
+  const _t=document.createElement("div");
+  _t.innerHTML='<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span><span class="sg-link" onclick="shareProduct()">Share</span>';
+  while(_t.firstChild) sz.appendChild(_t.firstChild);
+}
 function openPDP(p){
   (function(){
     let rv=JSON.parse(localStorage.getItem("cd_recent")||"[]");
@@ -1217,8 +1228,9 @@ function openPDP(p){
     document.getElementById("stickyPrice").textContent = fmt(p.price);
   document.getElementById("pdpSticky").classList.add("show");
   renderPdpSizes(p);
-const curStock = getStockForColor(p, currentColor);
-const allSoldOut = !p.unlimited && colorSoldOut(p, currentColor);
+    const sz = document.getElementById("pdpSizes");
+const curStock = getStockForColor(p, currentColor.name);
+const allSoldOut = !p.unlimited && colorSoldOut(p, currentColor.name);
 if (allSoldOut) {
   const imgWrap = document.querySelector(".pdp-img");
   if (imgWrap) {
@@ -1261,9 +1273,6 @@ if (allSoldOut) {
     if (atcBtn) atcBtn.textContent = "SOLD OUT";
   }
   }
-const _t=document.createElement("div");
-_t.innerHTML='<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span><span class="sg-link" onclick="shareProduct()">Share</span>';
-while(_t.firstChild) sz.appendChild(_t.firstChild);
   if(!p.unlimited){
     const sm2 = getStockForColor(p, currentColor.name) || {};
     const totalStock = Object.values(sm2).reduce((a,b)=>a+Number(b),0);
@@ -1793,7 +1802,7 @@ function getStockForColor(p, colorName){
   const s = p.stock || {};
   if (s[colorName] && typeof s[colorName] === "object") return s[colorName];
   if (s.S !== undefined || s.M !== undefined || s.L !== undefined || s.XL !== undefined || s.XXL !== undefined) return s;
-  return {};
+  return s;
 }
 function colorSoldOut(p, colorName){
   const s = getStockForColor(p, colorName);
