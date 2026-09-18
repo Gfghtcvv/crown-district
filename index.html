@@ -929,7 +929,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 <input id="pfImg5" placeholder="Image 5 URL (optional)">
     <div id="pfSizesBox" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
         <div id="pfColors" style="margin-top:10px"></div>
-    <button type="button" class="full-btn" onclick="addColorRow()">+ ADD COLOR</button>
+    <button type="button" class="full-btn" onclick="addColor()">+ ADD COLOR</button>
     <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfSoldOut" style="width:auto;margin:0"> PRODUCT SOLD OUT</label>
 <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfUnlimited" style="width:auto;margin:0"> UNLIMITED STOCK</label>
     <textarea id="pfDesc" rows="3" placeholder="Description"></textarea>
@@ -1855,6 +1855,24 @@ function refreshColorStocks(){
     fillColorStocks(d, cur);
   });
 }
+function addColor(){
+  const box = document.getElementById("pfColors");
+  if(!box) return;
+  const first = box.querySelector(".cr-row");
+  if(!first) return;
+  let c = 0;
+  while(document.getElementById("cr_" + c)) c++;
+  const clone = first.cloneNode(true);
+  clone.id = "cr_" + c;
+  clone.querySelectorAll("input").forEach(inp => {
+    if(inp.type === "checkbox") inp.checked = false;
+    else inp.value = "";
+  });
+  const sg = clone.querySelector(".cr-sg, [id^='cr_sg_']");
+  if(sg){ sg.id = "cr_sg_" + c; sg.innerHTML = ""; }
+  box.appendChild(clone);
+  addColorRow(c);
+}
 function addColorRow(c){
   const row = document.getElementById("cr_" + c);
   if (!row) return;
@@ -1875,7 +1893,7 @@ function addColorRow(c){
     inp.min = "0";
     inp.placeholder = "0";
     inp.style.cssText = "width:50px;padding:4px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:13px;";
-    inp.dataset.sz = sz;
+    inp.className = "stock-inp"; inp.dataset.sz = sz;
     inp.oninput = () => { if(inp.value < 0) inp.value = 0; };
     cell.appendChild(lbl);
     cell.appendChild(inp);
