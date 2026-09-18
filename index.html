@@ -390,6 +390,9 @@ body.dark .trust-box .ts{color:#999}
 #loader .spinner{width:40px;height:40px;border:4px solid #eee;border-top-color:#000;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #loader p{margin-top:12px;font-size:14px;font-weight:600;letter-spacing:1px}
+body.dark #loader{background:#0d0d0d}
+body.dark #loader .spinner{border-color:#333;border-top-color:#fff}
+body.dark #loader p{color:#fff}
   #sizeGuide{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
 #sizeGuide.show{display:flex}
 .sg-box{background:#fff;border-radius:8px;padding:24px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
@@ -922,6 +925,8 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <input id="pfImg1" placeholder="Image 1 URL (required)">
     <input id="pfImg2" placeholder="Image 2 URL (optional)">
     <input id="pfImg3" placeholder="Image 3 URL (optional)">
+    <input id="pfImg4" placeholder="Image 4 URL (optional)">
+<input id="pfImg5" placeholder="Image 5 URL (optional)">
     <div id="pfSizesBox" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
         <div id="pfColors" style="margin-top:10px"></div>
     <button type="button" class="full-btn" onclick="addColorRow()">+ ADD COLOR</button>
@@ -1075,7 +1080,7 @@ function renderFocus(){
 }
 function getColors(p){
   if (p.colors && p.colors.length) return p.colors;
-  const imgs = [p.image, p.image2, p.image3].filter(Boolean);
+  const imgs = [p.image, p.image2, p.image3, p.image4, p.image5].filter(Boolean);
   return [{ name: "Default", soldOut: false, images: imgs }];
 }
 function buildGallery(c){
@@ -1208,7 +1213,7 @@ function openPDP(p){
     sz.appendChild(b);
  });
 const curStock = getStockForColor(p, currentColor);
-const allSoldOut = !p.unlimited && Object.keys(curStock).length > 0 && Object.values(curStock).every(v => v <= 0);
+const allSoldOut = !p.unlimited && colorSoldOut(p, currentColor);
 if (allSoldOut) {
   const imgWrap = document.querySelector(".pdp-img");
   if (imgWrap) {
@@ -1230,8 +1235,29 @@ if (allSoldOut) {
     if (atcBtn) atcBtn.textContent = "SOLD OUT";
   }
 }
+  else if(p.soldOut) {
+  const imgWrap = document.querySelector(".pdp-img");
+  if (imgWrap) {
+    const wrap = imgWrap.parentElement || imgWrap;
+    wrap.style.position = "relative";
+    const badge = document.createElement("div");
+    badge.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.85);color:#fff;padding:14px 28px;font-size:18px;font-weight:800;letter-spacing:3px;z-index:10;border:2px solid #fff;text-align:center;";
+    badge.textContent = "SOLD OUT";
+    wrap.appendChild(badge);
+  }
+  sz.querySelectorAll(".size-btn").forEach(b => { b.style.opacity = ".35"; b.style.pointerEvents = "none"; });
+  const bar = document.querySelector(".pdp-bar");
+  if (bar) {
+    bar.querySelectorAll("button").forEach(btn => {
+      btn.style.opacity = ".4";
+      btn.style.pointerEvents = "none";
+    });
+    const atcBtn = bar.querySelector(".add-btn");
+    if (atcBtn) atcBtn.textContent = "SOLD OUT";
+  }
+  }
 const _t=document.createElement("div");
-_t.innerHTML='<span class="sg-link" onclick="...">Size Guide</span><span class="sg-link" onclick="...">Share</span>';
+_t.innerHTML='<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span><span class="sg-link" onclick="shareProduct()">Share</span>';
 while(_t.firstChild) sz.appendChild(_t.firstChild);
   if(!p.unlimited){
     const sm2 = getStockForColor(p, currentColor.name) || {};
@@ -1264,7 +1290,7 @@ while(_t.firstChild) sz.appendChild(_t.firstChild);
       "@context": "https://schema.org",
       "@type": "Product",
       "name": p.name,
-      "image": [p.image, p.image2, p.image3].filter(Boolean),
+      "image": [p.image, p.image2, p.image3, p.image4, p.image5].filter(Boolean),
       "description": p.description || "",
       "brand": { "@type": "Brand", "name": "JAZB" },
       "offers": { "@type": "Offer", "priceCurrency": "PKR", "price": p.price, "availability": productSoldOut(p) ? "https://schema.org/OutOfStock" : "https://schema.org/InStock" }
@@ -1279,6 +1305,14 @@ function closePDP(){
     document.getElementById("pdpSticky").classList.remove("show");
   document.body.style.overflow = "";
   currentProduct = null;
+  const bar = document.querySelector(".pdp-bar");
+  if (bar) {
+    bar.style.opacity = "";
+    bar.style.pointerEvents = "";
+    bar.querySelectorAll("button").forEach(b => { b.style.opacity = ""; b.style.pointerEvents = ""; });
+    const atc = bar.querySelector(".add-btn");
+    if (atc) atc.textContent = "ADD TO CART";
+  }
 }
   window.addEventListener("scroll", () => {
   const b = document.getElementById("backTop");
@@ -1323,7 +1357,7 @@ function submitReview(){
 }
   function shareProduct(){
   if (!currentProduct) return;
-  const url = window.location.href.split("?")[0] + "?p=" + currentProduct.id;
+  const url = "https://jazbwear.pk/?p=" + currentProduct.id;
   if (navigator.share) {
     navigator.share({ title: currentProduct.name, text: currentProduct.name + " - JAZB", url: url }).catch(() => {});
   } else {
@@ -1358,8 +1392,8 @@ function buyNow(){
   if(!currentProduct) return;
   if(!currentSize){ alert("Please select a size"); return; }
   if(!currentColor || currentColor.soldOut){ alert("Please select a color"); return; }
-  const sm = getStockForColor(currentProduct, currentColor.name);
-  if(Object.keys(sm).length && (sm[currentSize]||0) <= 0){ alert("Out of stock"); return; }
+  const sm = getStockForColor(currentProduct, currentColor.name) || {};
+  if(Object.keys(sm).length && (sm[currentSize]||0) <= 0){ alert("Out of stock"); return; } 
   const isFlash = isFlashItem(currentProduct.id);
   const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
@@ -1559,6 +1593,16 @@ async function placeOrder(){
    if (tC >= 2 && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
   const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
   const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+    for (const it of items) {
+    const p = products.find(x => x.id === it.id);
+    if (p && p.soldOut) {
+      alert("⚠️ " + p.name + " is SOLD OUT. Please remove it from cart.");
+      isPlacing = false;
+      btn.disabled = false;
+      btn.textContent = "PLACE ORDER";
+      return;
+    }
+    }
   try {
     const docId = "JZB" + Date.now().toString().slice(-6);
     order.orderId = docId;
@@ -1811,31 +1855,34 @@ function refreshColorStocks(){
     fillColorStocks(d, cur);
   });
 }
-  function addColorRow(c){
-  if (document.querySelectorAll("#pfColors > div").length >= 5) { alert("Maximum 5 colors"); return; }
-  const box = document.getElementById("pfColors");
-  const d = document.createElement("div");
-  d.style.cssText = "border:1px solid #eee;padding:10px;margin-bottom:10px";
-  d.innerHTML = '<input placeholder="Color name (e.g. Black)" class="cr-name" style="margin-bottom:8px">'
-    + '<input placeholder="Image 1 URL" class="cr-i0" style="margin-bottom:6px">'
-    + '<input placeholder="Image 2 URL" class="cr-i1" style="margin-bottom:6px">'
-    + '<input placeholder="Image 3 URL" class="cr-i2" style="margin-bottom:6px">'
-    + '<input placeholder="Image 4 URL" class="cr-i3" style="margin-bottom:6px">'
-    + '<input placeholder="Image 5 URL" class="cr-i4" style="margin-bottom:6px">'
-    + '<label style="display:flex;align-items:center;gap:8px;font-size:12px"><input type="checkbox" class="cr-so" style="width:auto;margin:0"> SOLD OUT</label>'
-    + '<button type="button" onclick="this.parentNode.remove()" style="margin-top:8px;font-size:11px;border:1px solid #c0392b;color:#c0392b;padding:6px 10px">REMOVE COLOR</button>';
-  box.appendChild(d);
-const sBox = document.createElement("div");
-sBox.className = "cr-stocks";
-sBox.style.cssText = "margin-top:8px";
-d.appendChild(sBox);
-fillColorStocks(d, c && c.stock ? c.stock : {});
-  if (c) {
-    d.querySelector(".cr-name").value = c.name;
-    for (let i = 0; i < 5; i++) d.querySelector(".cr-i" + i).value = (c.images && c.images[i]) || "";
-    d.querySelector(".cr-so").checked = !!c.soldOut;
+function addColorRow(c){
+  const row = document.getElementById("cr_" + c);
+  if (!row) return;
+  const sg = document.getElementById("cr_sg_" + c);
+  if (!sg) return;
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+  const grid = document.createElement("div");
+  grid.style.cssText = "display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px;";
+  sizes.forEach(sz => {
+    const cell = document.createElement("div");
+    cell.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:4px;";
+    const lbl = document.createElement("span");
+    lbl.textContent = sz;
+    lbl.style.cssText = "font-weight:700;font-size:13px;color:#666;";
+    const inp = document.createElement("input");
+    inp.type = "number";
+    inp.value = "0";
+    inp.min = "0";
+    inp.placeholder = "0";
+    inp.style.cssText = "width:50px;padding:4px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:13px;";
+    inp.dataset.sz = sz;
+    inp.oninput = () => { if(inp.value < 0) inp.value = 0; };
+    cell.appendChild(lbl);
+    cell.appendChild(inp);
+    grid.appendChild(cell);
+  });
+  sg.appendChild(grid);
   }
-}
 function getColorsFromForm(){
   return Array.from(document.querySelectorAll("#pfColors > div")).map(d => ({
     name: d.querySelector(".cr-name").value.trim(),
@@ -1858,6 +1905,8 @@ function getColorsFromForm(){
     document.getElementById("pfImg1").value = p.image;
     document.getElementById("pfImg2").value = p.image2 || "";
     document.getElementById("pfImg3").value = p.image3 || "";
+    document.getElementById("pfImg4").value = p.image4 || "";
+document.getElementById("pfImg5").value = p.image5 || "";
     renderSizeButtons(p.category, p.sizes || [], p.stock || {});
         const cb = document.getElementById("pfColors");
     cb.innerHTML = "";
@@ -1872,7 +1921,7 @@ function getColorsFromForm(){
     document.getElementById("pfDesc").value = p.description || "";
   } else {
     document.getElementById("pfTitle").textContent = "ADD PRODUCT";
-    ["pfId","pfName","pfPrice","pfOldPrice","pfImg1","pfImg2","pfImg3","pfDesc"].forEach(x => document.getElementById(x).value = "");
+    ["pfId","pfName","pfPrice","pfOldPrice","pfImg1","pfImg2","pfImg3","pfImg4","pfImg5","pfDesc"].forEach(x => document.getElementById(x).value = "");
 renderSizeButtons("T-SHIRTS", [], {});
         document.getElementById("pfColors").innerHTML = "";
     document.getElementById("pfSoldOut").checked = false;
@@ -1891,6 +1940,8 @@ async function saveProduct(){
   const image = document.getElementById("pfImg1").value.trim();
   const image2 = document.getElementById("pfImg2").value.trim();
   const image3 = document.getElementById("pfImg3").value.trim();
+  const image4 = document.getElementById("pfImg4").value.trim();
+const image5 = document.getElementById("pfImg5").value.trim();
   const sizes = getSelectedSizes();
     const unlimited = document.getElementById("pfUnlimited").checked;
 const stocks = unlimited ? {} : getStocksFromForm();
@@ -1898,7 +1949,7 @@ const stocks = unlimited ? {} : getStocksFromForm();
     const colors = getColorsFromForm();
   const soldOut = document.getElementById("pfSoldOut").checked;
   if (!name || !price || !image) { document.getElementById("pfMsg").textContent = "Name, price and image URL are required"; return; }
-    const data = { name, category, price, oldPrice, image, image2, image3, sizes, description, colors, soldOut, unlimited, stock: stocks };
+    const data = { name, category, price, oldPrice, image, image2, image3, image4, image5, sizes, description, colors, soldOut, unlimited, stock: stocks };
   try {
     if (id) await db.collection("products").doc(id).update(data);
     else await db.collection("products").add(data);
@@ -2301,7 +2352,6 @@ function toggleDark(){
   localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
 }
 function applyAutoDark(){
-  localStorage.removeItem("cd_dark");
   const manual = localStorage.getItem("cd_dark");
   if (manual === "1") { document.body.classList.add("dark"); return; }
   if (manual === "0") { document.body.classList.remove("dark"); return; }
