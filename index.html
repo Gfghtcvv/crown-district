@@ -1860,12 +1860,17 @@ function refreshColorStocks(){
     fillColorStocks(d, cur);
   });
 }
+  function removeColorRow(btn){
+  const row = btn.closest('[id^="cr_"]');
+  if(row) row.remove();
+  }
 function addColor(){
   const box = document.getElementById("pfColors");
   if(!box) return;
   let c = 0;
   while(document.getElementById("cr_" + c)) c++;
   addColorRow(c);
+  fillColorStocks(document.getElementById("cr_" + c), {});
 }
 function addColorRow(idx){
   const box = document.getElementById("pfColors");
@@ -1873,7 +1878,7 @@ function addColorRow(idx){
   const row = document.createElement("div");
   row.id = "cr_" + idx;
   row.style.cssText = "border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:10px";
-  row.innerHTML = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input class="cr-name" placeholder="Color name (e.g. Black)" style="flex:1;margin:0"><label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap"><input type="checkbox" class="cr-so" style="width:auto;margin:0">Sold Out</label></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><input class="cr-i0" placeholder="Image 1 URL"><input class="cr-i1" placeholder="Image 2 URL"><input class="cr-i2" placeholder="Image 3 URL"><input class="cr-i3" placeholder="Image 4 URL"><input class="cr-i4" placeholder="Image 5 URL"></div><div class="cr-stocks"></div>';
+    row.innerHTML = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input class="cr-name" placeholder="Color name (e.g. Black)" style="flex:1;margin:0"><label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap"><input type="checkbox" class="cr-so" style="width:auto;margin:0">Sold Out</label><button type="button" onclick="removeColorRow(this)" style="background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:14px;cursor:pointer">✕</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px"><input class="cr-i0" placeholder="Image 1 URL"><input class="cr-i1" placeholder="Image 2 URL"><input class="cr-i2" placeholder="Image 3 URL"><input class="cr-i3" placeholder="Image 4 URL"><input class="cr-i4" placeholder="Image 5 URL"></div><div class="cr-stocks"></div>';
   box.appendChild(row);
 }
 function fillColorRow(row, color, colorStocks){
