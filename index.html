@@ -1207,8 +1207,9 @@ function openPDP(p){
     };
     sz.appendChild(b);
   });
-  sz.innerHTML += '<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span>';
-  sz.innerHTML += '<span class="sg-link" onclick="shareProduct()">Share</span>';
+  const _t=document.createElement("div");
+_t.innerHTML='<span class="sg-link" onclick="...">Size Guide</span><span class="sg-link" onclick="...">Share</span>';
+while(_t.firstChild) sz.appendChild(_t.firstChild);
   if(!p.unlimited){
     const sm2 = getStockForColor(p, currentColor.name) || {};
     const totalStock = Object.values(sm2).reduce((a,b)=>a+Number(b),0);
