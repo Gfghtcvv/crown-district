@@ -2278,6 +2278,7 @@ function toggleDark(){
   localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
 }
 function applyAutoDark(){
+  localStorage.removeItem("cd_dark");
   const manual = localStorage.getItem("cd_dark");
   if (manual === "1") { document.body.classList.add("dark"); return; }
   if (manual === "0") { document.body.classList.remove("dark"); return; }
