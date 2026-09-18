@@ -1206,8 +1206,31 @@ function openPDP(p){
       b.classList.add("sel");
     };
     sz.appendChild(b);
-  });
-  const _t=document.createElement("div");
+ });
+const curStock = getStockForColor(p, currentColor);
+const allSoldOut = !p.unlimited && Object.keys(curStock).length > 0 && Object.values(curStock).every(v => v <= 0);
+if (allSoldOut) {
+  const imgWrap = document.querySelector(".pdp-img");
+  if (imgWrap) {
+    const wrap = imgWrap.parentElement || imgWrap;
+    wrap.style.position = "relative";
+    const badge = document.createElement("div");
+    badge.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.85);color:#fff;padding:14px 28px;font-size:18px;font-weight:800;letter-spacing:3px;z-index:10;border:2px solid #fff;text-align:center;";
+    badge.textContent = "SOLD OUT";
+    wrap.appendChild(badge);
+  }
+  sz.querySelectorAll(".size-btn").forEach(b => { b.style.opacity = ".35"; b.style.pointerEvents = "none"; });
+  const bar = document.querySelector(".pdp-bar");
+  if (bar) {
+    bar.querySelectorAll("button").forEach(btn => {
+      btn.style.opacity = ".4";
+      btn.style.pointerEvents = "none";
+    });
+    const atcBtn = bar.querySelector(".add-btn");
+    if (atcBtn) atcBtn.textContent = "SOLD OUT";
+  }
+}
+const _t=document.createElement("div");
 _t.innerHTML='<span class="sg-link" onclick="...">Size Guide</span><span class="sg-link" onclick="...">Share</span>';
 while(_t.firstChild) sz.appendChild(_t.firstChild);
   if(!p.unlimited){
@@ -1398,7 +1421,7 @@ function openWishlist(){
       d.className = "cart-item";
       d.style.cursor = "pointer";
 d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
-      d.innerHTML = '<img src="' + w.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><h4 style="margin:0;font-size:14px">' + w.name + '</h4><p style="margin:4px 0;font-weight:700">' + fmt(w.price) + '</p></div><button onclick="event.stopPropagation(); toggleWish(\'' + w.id + '\')" style="border:none;background:none;font-size:16px">✕</button>';
+      d.innerHTML = '<img src="' + w.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px"><div style="flex:1"><h4 style="margin:0;font-size:14px">' + w.name + '</h4><p style="margin:4px 0;font-weight:700">' + fmt(w.price) + '</p></div><button onclick="event.stopPropagation(); toggleWish(\'' + w.id + '\')" style="border:none;background:none;font-size:16px;color:#e74c3c">✕</button>';
       items.appendChild(d);
     });
   }
