@@ -1544,7 +1544,7 @@ function openCheckout(){
   const hasFlash = cart.some(c => isFlashItem(c.id));
   if (hasFlash) couponDiscount = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tCount += c.qty; tTotal += c.price * c.qty; } });
-  if (tCount >= 2 && couponDiscount === 0 && BUNDLE_ON) { const bundles = Math.floor(tCount / 2); const singles = tCount % 2; const bPrice = bundles * BUNDLE_PRICE + singles * (tTotal / tCount); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
+  if (tCount >= 2 && BUNDLE_ON) { const bundles = Math.floor(tCount / 2); const singles = tCount % 2; const bPrice = bundles * BUNDLE_PRICE + singles * (tTotal / tCount); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
