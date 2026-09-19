@@ -1560,7 +1560,7 @@ function openCheckout(){
     const discAmt = Math.round(total * couponDiscount / 100);
     s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>DISCOUNT (' + couponDiscount + '%)</span><span>-' + fmt(discAmt) + '</span></div>';
     }
-  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ${BUNDLE_PRICE.toLocaleString()})</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
+  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ' + BUNDLE_PRICE.toLocaleString() + ')</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
   if (total >= 5000 && !hasFlash) { s.innerHTML += '<div style="font-size:13px;color:#c0392b;font-weight:700;margin-top:6px">🎁 Rs. 5,000+ order pe FREE CAP milega!</div>'; }
   if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
