@@ -866,7 +866,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
           <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
     <select id="setFlash" style="margin-bottom:8px"></select>
     <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
-  <button onclick="localStorage.removeItem('cd_flash');renderFlashSale();alert('Flash sale removed')" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
+  <button onclick="localStorage.removeItem('cd_flash');renderFlashSale();toast('Flash sale removed')" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
       <h3 style="margin:20px 0 10px">INSTAGRAM IMAGES (6 posts)</h3>
     <input id="setInsta1" placeholder="Instagram image 1 URL">
     <input id="setInsta2" placeholder="Instagram image 2 URL" style="margin-top:8px">
@@ -1355,10 +1355,10 @@ function loadReviews(productId){
 }
 function submitReview(){
   if (!currentProduct) return;
-  if (!currentRating) { alert("Select a rating"); return; }
+  if (!currentRating) { toast("Select a rating"); return; }
   const name = document.getElementById("rName").value.trim();
   const text = document.getElementById("rText").value.trim();
-  if (!name || !text) { alert("Fill in name and review"); return; }
+  if (!name || !text) { toast("Fill in name and review"); return; }
   const rImg = document.getElementById("rImg").value.trim();
   db.collection("reviews").add({ productId: currentProduct.id, name, text, rating: currentRating, image: rImg, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
     toast("Review submitted ✅");
@@ -1368,7 +1368,7 @@ function submitReview(){
     document.getElementById("rImg").value = "";
     currentRating = 0;
     document.querySelectorAll("#rStarsInput span").forEach(s => s.classList.remove("active"));
-  }).catch(e => alert("Error: " + e.message));
+  }).catch(e => toast("Error: " + e.message));
 }
   function shareProduct(){
   if (!currentProduct) return;
@@ -1388,11 +1388,11 @@ function submitReview(){
 function addFromPDP(){
 
   if (!currentProduct) return;
-  if (currentProduct.soldOut) { alert("This product is sold out"); return; }
-  if (!currentSize) { alert("Please select a size"); return; }
-  if (!currentColor || currentColor.soldOut) { alert("Please select a color"); return; }
+  if (currentProduct.soldOut) { toast("This product is sold out"); return; }
+  if (!currentSize) { toast("Please select a size"); return; }
+  if (!currentColor || currentColor.soldOut) { toast("Please select a color"); return; }
     const sm = getStockForColor(currentProduct, currentColor.name) || {};
-  if (Object.keys(sm).length && (sm[currentSize] || 0) <= 0) { alert("Yeh size sold out hai"); return; }
+  if (Object.keys(sm).length && (sm[currentSize] || 0) <= 0) { toast("Yeh size sold out hai"); return; }
   const isFlash = isFlashItem(currentProduct.id);
 const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
@@ -1404,10 +1404,10 @@ const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (i
   let buyNowItem = null;
 function buyNow(){
   if(!currentProduct) return;
-  if(!currentSize){ alert("Please select a size"); return; }
-  if(!currentColor || currentColor.soldOut){ alert("Please select a color"); return; }
+  if(!currentSize){ toast("Please select a size"); return; }
+  if(!currentColor || currentColor.soldOut){ toast("Please select a color"); return; }
   const sm = getStockForColor(currentProduct, currentColor.name) || {};
-  if(Object.keys(sm).length && (sm[currentSize]||0) <= 0){ alert("Out of stock"); return; } 
+  if(Object.keys(sm).length && (sm[currentSize]||0) <= 0){ toast("Out of stock"); return; } 
   const isFlash = isFlashItem(currentProduct.id);
   const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
@@ -1610,7 +1610,7 @@ async function placeOrder(){
     for (const it of items) {
     const p = products.find(x => x.id === it.id);
     if (p && p.soldOut) {
-      alert("⚠️ " + p.name + " is SOLD OUT. Please remove it from cart.");
+      toast("⚠️ " + p.name + " is SOLD OUT. Please remove it from cart.");
       isPlacing = false;
       btn.disabled = false;
       btn.textContent = "PLACE ORDER";
@@ -1982,7 +1982,7 @@ async function delProduct(id){
     await db.collection("products").doc(id).delete();
     loadAdminProducts();
     renderProducts();
-  } catch(e) { alert(e.message); }
+  } catch(e) { toast(e.message); }
 }
   let unsubOrders = null;
 function loadOrders(){
@@ -2054,17 +2054,17 @@ async function updateStatus(id, status){
       }
     }
   }
-  catch(e) { alert(e.message); }
+  catch(e) { toast(e.message); }
 }
 async function replyToOrder(id){
   const box = document.getElementById("rb_" + id);
   const msg = box.value.trim();
-  if (!msg) { alert("Type a reply first"); return; }
+  if (!msg) { toast("Type a reply first"); return; }
   try {
     const o = await db.collection("orders").doc(id).get();
     await db.collection("orders").doc(id).update({ reply: msg });
     if (EMAILJS_PUBLIC_KEY === "PASTE_PUBLIC_KEY") {
-      alert("Reply saved. Email abhi configure nahi hai (EmailJS keys daalni hain).");
+      toast("Reply saved. Email abhi configure nahi hai (EmailJS keys daalni hain).");
       return;
     }
     if (o.data().email) {
@@ -2074,10 +2074,10 @@ async function replyToOrder(id){
           order_name: o.data().customer,
           reply: msg
         }, EMAILJS_PUBLIC_KEY);
-        alert("Reply saved and emailed to customer");
-      } catch(e) { alert(e.message); }
+        toast("Reply saved and emailed to customer");
+      } catch(e) { toast(e.message); }
     }
-  } catch(e) { alert(e.message); }
+  } catch(e) { toast(e.message); }
 }
 async function deleteOrder(id){
   if(!confirm("Delete this order?")) return;
@@ -2085,8 +2085,8 @@ async function deleteOrder(id){
     const od = await db.collection("orders").doc(id).get();
     if (od.exists && od.data().status !== "Cancelled") await restockOrder(od.data());
     await db.collection("orders").doc(id).delete();
-    alert("Order deleted");
-  } catch(e) { alert(e.message); }
+    toast("Order deleted");
+  } catch(e) { toast(e.message); }
 }    
   const INFO_PAGES = {
   about: {
@@ -2135,7 +2135,7 @@ function openTrack(){
   function closeTrack(){ document.getElementById("trackModal").style.display="none"; }
 function trackOrder(){
   const val = document.getElementById("trackPhone").value.trim();
-  if (!val) { alert("Enter your phone number or Order ID"); return; }
+  if (!val) { toast("Enter your phone number or Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
   const isOrderId = /^[A-Za-z0-9]+$/.test(val) && val.length >= 8 && !/^\d{10,}$/.test(val);
@@ -2190,10 +2190,10 @@ function cancelOrder(orderId){
           message:"Order " + orderId + " has been CANCELLED by the customer.",
           subject:"Order Cancelled - " + orderId
         }).then(()=>{
-          alert("Order cancelled. We'll be in touch.");
+          toast("Order cancelled. We'll be in touch.");
           trackOrder();
         }).catch(e=>{
-          alert("Order cancelled but email failed: " + JSON.stringify(e));
+          toast("Order cancelled but email failed: " + JSON.stringify(e));
           trackOrder();
         });
       });
@@ -2215,7 +2215,7 @@ function cancelOrder(orderId){
         doc.ref.delete().then(()=>{
           toast("Cancelled order removed ✅");
           trackOrder();
-        }).catch(e=>alert("Error: "+e.message));
+        }).catch(e=>toast("Error: "+e.message));
       }
     });
   });
@@ -2234,14 +2234,14 @@ function whatsappOrder(id){
 }
   async function saveSetting(key){
   const val = document.getElementById("set" + key[0].toUpperCase() + key.slice(1)).value.trim();
-  if (!val) { alert("Enter a value"); return; }
+  if (!val) { toast("Enter a value"); return; }
   try {
     const doc = await db.collection("settings").doc("site").get();
     if (doc.exists) await db.collection("settings").doc("site").update({ [key]: val });
     else await db.collection("settings").doc("site").set({ [key]: val });
     applySettings({ [key]: val });
     const settingsMsgEl=document.getElementById("settingsMsg");if(settingsMsgEl)settingsMsgEl.textContent
-  } catch(e) { alert(e.message); }
+  } catch(e) { toast(e.message); }
 }
 function fillFlashDropdown(){
   const fs=document.getElementById("setFlash");
@@ -2263,19 +2263,19 @@ function saveInstaImages(){
     const v=document.getElementById("setInsta"+i).value.trim();
     if(v) data["insta"+i]=v;
   }
-  if(!Object.keys(data).length){ alert("Enter at least one image URL"); return; }
+  if(!Object.keys(data).length){ toast("Enter at least one image URL"); return; }
   db.collection("settings").doc("site").get().then(doc=>{
     if(doc.exists) return db.collection("settings").doc("site").update(data);
     return db.collection("settings").doc("site").set(data);
   }).then(()=>{
     applySettings(data);
     toast("Instagram images saved ✅");
-  }).catch(e=>alert("Error: "+e.message));
+  }).catch(e=>toast("Error: "+e.message));
 }
   function saveBundle(){
   const on=document.getElementById("setBundleOn").checked;
   const price=Number(document.getElementById("setBundlePrice").value)||0;
-  if(on && !price){ alert("Enter bundle price"); return; }
+  if(on && !price){ toast("Enter bundle price"); return; }
   const data={ bundleOn:on, bundlePrice:on?price:0 };
   db.collection("settings").doc("site").get().then(doc=>{
     if(doc.exists) return db.collection("settings").doc("site").update(data);
@@ -2283,7 +2283,7 @@ function saveInstaImages(){
   }).then(()=>{
     applySettings(data);
     toast("Bundle deal saved ✅");
-  }).catch(e=>alert("Error: "+e.message));
+  }).catch(e=>toast("Error: "+e.message));
 }
 function applyBundle(s){
   const sec=document.getElementById("bundleSection");
@@ -2319,7 +2319,7 @@ function deleteSub(email){
 }
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
-  if(!sel.value){ alert("Select a product"); return; }
+  if(!sel.value){ toast("Select a product"); return; }
   localStorage.setItem("cd_flash", sel.value);
   renderFlashSale();
   toast("Flash sale set ✅");
@@ -2392,11 +2392,11 @@ function closeAll(){
 }
 function joinNewsletter(){
   const e = document.getElementById("nlEmail").value.trim();
-  if (!e) { alert("Enter your email"); return; }
+  if (!e) { toast("Enter your email"); return; }
   db.collection("subscribers").add({ email: e, date: new Date().toISOString() }).then(() => {
-    alert("Thanks for subscribing!");
+    toast("Thanks for subscribing!");
     document.getElementById("nlEmail").value = "";
-  }).catch(err => alert("Already subscribed or error"));
+  }).catch(err => toast("Already subscribed or error"));
 }
 document.addEventListener("DOMContentLoaded", () => {
   (function(){
