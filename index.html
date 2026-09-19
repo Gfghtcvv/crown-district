@@ -944,6 +944,7 @@ const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
 const DELIVERY_CHARGE = 200;
 let BUNDLE_PRICE = 3500;
+let BUNDLE_ON = true;
 function isFlashItem(id){ return id === (localStorage.getItem("cd_flash") || ""); }
 function flashPrice(p){ return Math.round(p.price / 2); }
 const EMAILJS_SERVICE_ID = "service_g55ha9n";
@@ -1544,7 +1545,7 @@ function openCheckout(){
   const hasFlash = cart.some(c => isFlashItem(c.id));
   if (hasFlash) couponDiscount = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tCount += c.qty; tTotal += c.price * c.qty; } });
-  if (tCount >= 2 && couponDiscount === 0) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
+  if (tCount >= 2 && couponDiscount === 0 && BUNDLE_ON) { const bPrice = BUNDLE_PRICE * Math.floor(tCount / 2); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
@@ -1559,7 +1560,7 @@ function openCheckout(){
     const discAmt = Math.round(total * couponDiscount / 100);
     s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>DISCOUNT (' + couponDiscount + '%)</span><span>-' + fmt(discAmt) + '</span></div>';
     }
-  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. 3,500)</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
+  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ${BUNDLE_PRICE.toLocaleString()})</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
   if (total >= 5000 && !hasFlash) { s.innerHTML += '<div style="font-size:13px;color:#c0392b;font-weight:700;margin-top:6px">🎁 Rs. 5,000+ order pe FREE CAP milega!</div>'; }
   if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
@@ -2288,7 +2289,8 @@ function saveInstaImages(){
 function applyBundle(s){
   const sec=document.getElementById("bundleSection");
   if(!sec) return;
-  const on=s.bundleOn!==false;
+  const on=(s.bundleOn===undefined)?true:(s.bundleOn===true);
+BUNDLE_ON=on;
   sec.style.display=on?"block":"none";
   if(s.bundlePrice){
     BUNDLE_PRICE=Number(s.bundlePrice);
