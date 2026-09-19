@@ -1399,7 +1399,6 @@ const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (i
   if (existing) existing.qty++;
   else cart.push({ key, id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: (currentColor.images && currentColor.images[0]) || currentProduct.image, size: currentSize, color: currentColor.name, qty: 1 });
     saveCart();
-  closePDP();
   toast("Added to cart ✅");
 }
   let buyNowItem = null;
