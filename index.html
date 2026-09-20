@@ -783,10 +783,27 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <input id="coPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
     <input id="coEmail" type="email" placeholder="Email (required)">
     <input id="coAddress" placeholder="Full Address">
-    <input id="coCity" placeholder="City">
-    <textarea id="coNotes" rows="2" placeholder="Notes (optional)"></textarea>
+    <select id="coCity" onchange="document.getElementById('coCityOther').style.display=this.value==='Other'?'block':'none'">
+<option value="">Select City</option>
+<option>Karachi</option>
+<option>Lahore</option>
+<option>Islamabad</option>
+<option>Rawalpindi</option>
+<option>Faisalabad</option>
+<option>Multan</option>
+<option>Peshawar</option>
+<option>Quetta</option>
+<option>Hyderabad</option>
+<option>Sargodha</option>
+<option>Sialkot</option>
+<option>Gujranwala</option>
+<option>Other</option>
+    </select>
+    <input id="coCityOther" placeholder="Apni city ka naam likho" style="display:none">
+<textarea id="coNotes" rows="2" placeholder="Notes (optional)"></textarea>
     <div id="checkoutSummary"></div>
-    <button id="placeOrderBtn" class="full-btn" onclick="placeOrder()">PLACE ORDER</button>
+    <p style="font-size:12px;color:#25D366;text-align:center;margin-top:8px">✅ Hamari team aapko WhatsApp pe order confirm karegi</p>
+<button id="placeOrderBtn" class="full-btn" onclick="placeOrder()">PLACE ORDER</button>
     <div class="coupon-row"><input id="coCoupon" placeholder="Enter coupon code"><button onclick="applyCoupon()">APPLY</button></div>
 <div id="couponMsg" class="coupon-msg"></div>
     <p id="coMessage" class="message"></p>
@@ -1561,6 +1578,7 @@ function openCheckout(){
     }
   if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ' + BUNDLE_PRICE.toLocaleString() + ')</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
+  s.innerHTML += '<div style="font-size:11px;color:#999;margin-top:2px">Delivery: 2-5 working days (COD)</div>';
   if (total >= 5000 && !hasFlash) { s.innerHTML += '<div style="font-size:13px;color:#c0392b;font-weight:700;margin-top:6px">🎁 Rs. 5,000+ order pe FREE CAP milega!</div>'; }
   if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
     if (couponDiscount > 0 && bundleSaved === 0) { grandTotal -= Math.round(total * couponDiscount / 100); }
@@ -1591,8 +1609,13 @@ async function placeOrder(){
   const email = document.getElementById("coEmail").value.trim();
   const address = document.getElementById("coAddress").value.trim();
   const city = document.getElementById("coCity").value.trim();
+  const cityOther = document.getElementById("coCityOther").value.trim();
+  const finalCity = city === "Other" ? cityOther : city;
+  if (city === "Other" && !cityOther) { document.getElementById("coMessage").textContent = "City select karo (Other pe apna city naam likho)"; return; }
   const notes = document.getElementById("coNotes").value.trim();
-  if (!name || !phone || !email || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields (email required)"; return; }
+   if (!name || !phone || !email || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields (email required)"; return; }
+  const ph = phone.replace(/[^0-9]/g, "");
+  if (!(ph.startsWith("03") && (ph.length === 10 || ph.length === 11))) { document.getElementById("coMessage").textContent = "Ghalat phone number. 03xx-xxxxxxx format mein daalo"; return; }
   const btn = document.getElementById("placeOrderBtn");
   isPlacing = true;
   btn.disabled = true;
@@ -1606,7 +1629,7 @@ async function placeOrder(){
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tC += c.qty; tT += c.price * c.qty; } });
    if (tC >= 2 && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
   const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
-  const order = { customer: name, phone, email, address, city, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
     for (const it of items) {
     const p = products.find(x => x.id === it.id);
     if (p && p.soldOut) {
