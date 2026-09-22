@@ -1175,7 +1175,7 @@ function renderPdpSizes(p){
     else sizes = ["S","M","L","XL","XXL"];
   }
   const stockMap = getStockForColor(p, currentColor.name) || {};
-  const hasStock = Object.keys(stockMap).length > 0;
+  const hasStock = !p.unlimited && Object.keys(stockMap).length > 0;
   if (hasStock) sizes = Object.keys(stockMap);
   currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
   const sz = document.getElementById("pdpSizes");
