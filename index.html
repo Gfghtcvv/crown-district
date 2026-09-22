@@ -1976,7 +1976,19 @@ function fillColorStocks(d, colorStocks){
         row.appendChild(b);
         row.appendChild(inp);
         row.appendChild(rm);
-        box.appendChild(row);
+                const ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size"];
+        let insertBefore = addBtn;
+        for (let i = 0; i < box.children.length; i++) {
+            const ch = box.children[i];
+            if (ch === addBtn) continue;
+            const cb = ch.querySelector ? ch.querySelector("button") : null;
+            if (cb) {
+                const a = ORDER.indexOf(szName);
+                const b2 = ORDER.indexOf(cb.textContent);
+                if (a !== -1 && b2 !== -1 && a < b2) { insertBefore = ch; break; }
+            }
+        }
+        box.insertBefore(row, insertBefore);
     };
     box.appendChild(addBtn);
 }
