@@ -2087,10 +2087,6 @@ if (_cr.length) {
   const _imgs = _cr[0].querySelectorAll("input[placeholder^='Image']");
   if (_imgs.length) image = _imgs[0].value.trim();
 }
-  const image2 = document.getElementById("pfImg2").value.trim();
-  const image3 = document.getElementById("pfImg3").value.trim();
-  const image4 = document.getElementById("pfImg4").value.trim();
-const image5 = document.getElementById("pfImg5").value.trim();
   const sizes = getSelectedSizes();
     const unlimited = document.getElementById("pfUnlimited").checked;
 const stocks = unlimited ? {} : getStocksFromForm();
