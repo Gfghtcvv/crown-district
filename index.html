@@ -1167,7 +1167,7 @@ function renderRecentlyViewed(){
 }
 function renderPdpSizes(p){
   const cat = (p.category || "").toUpperCase();
-  let sizes = DEFAULT_SIZES[cat];
+  let sizes = (p.sizes && p.sizes.length) ? p.sizes : DEFAULT_SIZES[cat];
   if(!sizes){
     if(cat.includes("CAP") || cat.includes("ACCESSORY")) sizes = ["One Size"];
     else if(cat.includes("TROUSER") || cat.includes("JEAN") || cat.includes("SHORT")) sizes = ["30","32","34","36","38"];
