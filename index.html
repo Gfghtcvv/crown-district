@@ -935,6 +935,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="modal-card">
     <div class="modal-head"><h2 id="pfTitle">ADD PRODUCT</h2><button onclick="closeProductForm()">&#10005;</button></div>
     <input type="hidden" id="pfId">
+    <input type="text" id="p_color0" placeholder="Color (e.g. Black)" style="width:100%;padding:12px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:#fff;margin-bottom:8px;font-size:14px">
     <input id="pfName" placeholder="Product Name">
     <select id="pfCat"></select>
     <input id="pfPrice" type="number" placeholder="Price (Rs.)">
@@ -1181,6 +1182,7 @@ function renderPdpSizes(p){
   const label = sz.querySelector("strong");
   sizes.forEach(s => {
     const st = hasStock ? (stockMap[s] || 0) : Infinity;
+    if (hasStock && st === 0) return;
     const b = document.createElement("button");
     b.className = "size-btn" + (s === currentSize ? " sel" : "");
     b.textContent = hasStock ? s + " (" + st + ")" : s;
