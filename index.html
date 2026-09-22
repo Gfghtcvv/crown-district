@@ -945,7 +945,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
         <div id="pfColors" style="margin-top:10px"></div>
     <button type="button" class="full-btn" onclick="addColor()">+ ADD COLOR</button>
     <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfSoldOut" style="width:auto;margin:0"> PRODUCT SOLD OUT</label>
-<label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfUnlimited" style="width:auto;margin:0"> UNLIMITED STOCK</label>
+<label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="pfUnlimited" style="width:auto;margin:0" onchange="refreshColorStocks()"> UNLIMITED STOCK</label>
     <textarea id="pfDesc" rows="3" placeholder="Description"></textarea>
     <button class="full-btn" onclick="saveProduct()">SAVE PRODUCT</button>
     <p class="message" id="pfMsg"></p>
@@ -1995,12 +1995,14 @@ function fillColorStocks(d, colorStocks){
 }
 function refreshColorStocks(){
   const rows = document.querySelectorAll("#pfColors > div");
-  document.querySelectorAll("#pfSizesBox .stock-inp").forEach(i => { i.style.display = rows.length ? "none" : ""; });
+  const unlim = document.getElementById("pfUnlimited").checked;
+  document.querySelectorAll("#pfSizesBox .stock-inp").forEach(i => { i.style.display = (rows.length || unlim) ? "none" : ""; });
   rows.forEach(d => {
     const cur = {};
     d.querySelectorAll(".stock-inp").forEach(i => { if (i.value !== "") cur[i.dataset.size] = i.value; });
     fillColorStocks(d, cur);
   });
+  document.querySelectorAll("#pfColors .stock-inp").forEach(i => { i.style.display = unlim ? "none" : ""; });
 }
   function removeColorRow(btn){
   const row = btn.closest('[id^="cr_"]');
