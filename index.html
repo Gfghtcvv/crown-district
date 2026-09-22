@@ -2098,19 +2098,15 @@ const image5 = document.getElementById("pfImg5").value.trim();
 const stocks = unlimited ? {} : getStocksFromForm();
   const description = document.getElementById("pfDesc").value.trim();
     const colors = getColorsFromForm();
-    colors.forEach((c, i) => {
-    const inp = document.querySelector('#pfColors input[value="' + c.name + '"]');
-    let row = inp;
-    for (let d = 0; d < 5 && row && row.id !== "pfColors"; d++) row = row.parentElement;
-    if (row) {
-      const btns = row.querySelectorAll("button");
-      const cs = [];
-      btns.forEach(b => {
-        const t = (b.textContent || "").trim().toUpperCase();
-        if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) cs.push(t);
-      });
-      if (cs.length) c.sizes = cs;
-    }
+  const colorRows = document.querySelectorAll("#pfColors > div");
+  colors.forEach((c, i) => {
+    if (!colorRows[i]) return;
+    const cs = [];
+    colorRows[i].querySelectorAll("button").forEach(b => {
+      const t = (b.textContent || "").trim().toUpperCase();
+      if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) cs.push(t);
+    });
+    if (cs.length) c.sizes = cs;
   });
   const soldOut = document.getElementById("pfSoldOut").checked;
   if (!name || !price || !image) { document.getElementById("pfMsg").textContent = "Name, price and image URL are required"; return; }
