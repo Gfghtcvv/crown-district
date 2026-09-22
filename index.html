@@ -1854,7 +1854,19 @@ function renderSizeButtons(cat, selected, stocks){
         row2.appendChild(b2);
         row2.appendChild(inp2);
         row2.appendChild(rm2);
-        box.appendChild(row2);
+                const ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size"];
+        let insertBefore = addBtn;
+        for (let i = 0; i < box.children.length; i++) {
+            const ch = box.children[i];
+            if (ch === addBtn) continue;
+            const cb = ch.querySelector ? ch.querySelector(".size-btn") : null;
+            if (cb) {
+                const a = ORDER.indexOf(szName);
+                const b = ORDER.indexOf(cb.textContent);
+                if (a !== -1 && b !== -1 && a < b) { insertBefore = ch; break; }
+            }
+        }
+        box.insertBefore(row2, insertBefore);
     };
     box.appendChild(addBtn);
 }
@@ -1923,8 +1935,17 @@ function fillColorStocks(d, colorStocks){
     inp.className = "stock-inp";
     inp.dataset.size = s;
     if (colorStocks && colorStocks[s] !== null && colorStocks[s] !== undefined) inp.value = colorStocks[s];
-    box.appendChild(b);
-    box.appendChild(inp);
+        const row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:4px";
+    row.appendChild(b);
+    row.appendChild(inp);
+    const rm = document.createElement("button");
+    rm.type = "button";
+    rm.textContent = "×";
+    rm.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:13px";
+    rm.onclick = () => { row.remove(); };
+    row.appendChild(rm);
+    box.appendChild(row);
   });
 }
 function refreshColorStocks(){
