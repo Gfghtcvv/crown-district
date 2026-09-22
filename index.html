@@ -2051,10 +2051,7 @@ function getColorsFromForm(){
     document.getElementById("pfPrice").value = p.price;
     document.getElementById("pfOldPrice").value = p.oldPrice || "";
     
-    document.getElementById("pfImg2").value = p.image2 || "";
-    document.getElementById("pfImg3").value = p.image3 || "";
-    document.getElementById("pfImg4").value = p.image4 || "";
-document.getElementById("pfImg5").value = p.image5 || "";
+
     renderSizeButtons(p.category, p.sizes || [], p.stock || {});
         const cb = document.getElementById("pfColors");
     cb.innerHTML = "";
