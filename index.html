@@ -1947,6 +1947,38 @@ function fillColorStocks(d, colorStocks){
     row.appendChild(rm);
     box.appendChild(row);
   });
+      const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.textContent = "+ ADD SIZE";
+    addBtn.style.cssText = "background:#333;color:#fff;border:1px dashed #666;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;margin-top:6px";
+    addBtn.onclick = () => {
+        const sz = prompt("Size name:");
+        if (!sz || !sz.trim()) return;
+        const szName = sz.trim().toUpperCase();
+        const row = document.createElement("div");
+        row.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:4px";
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = szName;
+        b.style.cssText = "font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#fff";
+        const inp = document.createElement("input");
+        inp.type = "number";
+        inp.min = "0";
+        inp.placeholder = "Stock";
+        inp.style.cssText = "width:70px;margin:0";
+        inp.className = "stock-inp";
+        inp.dataset.size = szName;
+        const rm = document.createElement("button");
+        rm.type = "button";
+        rm.textContent = "×";
+        rm.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;width:22px;height:22px;cursor:pointer;font-size:13px";
+        rm.onclick = () => { row.remove(); };
+        row.appendChild(b);
+        row.appendChild(inp);
+        row.appendChild(rm);
+        box.appendChild(row);
+    };
+    box.appendChild(addBtn);
 }
 function refreshColorStocks(){
   const rows = document.querySelectorAll("#pfColors > div");
