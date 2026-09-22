@@ -1877,8 +1877,8 @@ function getSelectedSizes(){
 function getStockForColor(p, colorName){
   if (p.unlimited) return null;
   const s = p.stock || {};
-  if (s[colorName] && typeof s[colorName] === "object") return s[colorName];
-  if (s.S !== undefined || s.M !== undefined || s.L !== undefined || s.XL !== undefined || s.XXL !== undefined) return s;
+  if (s[colorName] && typeof s[colorName] === "object")
+    return s[colorName];
   return s;
 }
 function colorSoldOut(p, colorName){
