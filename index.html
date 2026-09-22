@@ -1173,6 +1173,8 @@ function renderPdpSizes(p){
   const stockMap = getStockForColor(p, currentColor.name) || {};
   const hasStock = !p.unlimited && Object.keys(stockMap).length > 0;
   if (hasStock) sizes = Object.keys(stockMap);
+const SZ_ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size","30","32","34","36","38"];
+sizes = sizes.slice().sort((a,b) => { const ia = SZ_ORDER.indexOf(a), ib = SZ_ORDER.indexOf(b); return (ia===-1?99:ia) - (ib===-1?99:ib); });
   currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
   const sz = document.getElementById("pdpSizes");
   if(!sz) return;
@@ -1924,6 +1926,8 @@ function fillColorStocks(d, colorStocks){
     const cat = document.getElementById("pfCat").value;
   const defaultSizes = DEFAULT_SIZES[cat] || ["One Size"];
   let sizes = (colorStocks && Object.keys(colorStocks).length > 0) ? Object.keys(colorStocks) : defaultSizes;
+const SZ_ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size","30","32","34","36","38"];
+sizes = sizes.slice().sort((a,b) => { const ia = SZ_ORDER.indexOf(a), ib = SZ_ORDER.indexOf(b); return (ia===-1?99:ia) - (ib===-1?99:ib); });
   sizes.forEach(s => {
     const b = document.createElement("button");
     b.type = "button";
