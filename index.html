@@ -940,11 +940,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <select id="pfCat"></select>
     <input id="pfPrice" type="number" placeholder="Price (Rs.)">
     <input id="pfOldPrice" type="number" placeholder="Old Price (optional)">
-    <input id="pfImg1" placeholder="Image 1 URL (required)">
-    <input id="pfImg2" placeholder="Image 2 URL (optional)">
-    <input id="pfImg3" placeholder="Image 3 URL (optional)">
-    <input id="pfImg4" placeholder="Image 4 URL (optional)">
-<input id="pfImg5" placeholder="Image 5 URL (optional)">
+
     <div id="pfSizesBox" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
         <div id="pfColors" style="margin-top:10px"></div>
     <button type="button" class="full-btn" onclick="addColor()">+ ADD COLOR</button>
@@ -2054,7 +2050,7 @@ function getColorsFromForm(){
     document.getElementById("pfCat").value = p.category;
     document.getElementById("pfPrice").value = p.price;
     document.getElementById("pfOldPrice").value = p.oldPrice || "";
-    document.getElementById("pfImg1").value = p.image;
+    
     document.getElementById("pfImg2").value = p.image2 || "";
     document.getElementById("pfImg3").value = p.image3 || "";
     document.getElementById("pfImg4").value = p.image4 || "";
@@ -2072,7 +2068,7 @@ document.getElementById("pfImg5").value = p.image5 || "";
     document.getElementById("pfDesc").value = p.description || "";
   } else {
     document.getElementById("pfTitle").textContent = "ADD PRODUCT";
-    ["pfId","pfName","pfPrice","pfOldPrice","pfImg1","pfImg2","pfImg3","pfImg4","pfImg5","pfDesc"].forEach(x => document.getElementById(x).value = "");
+    ["pfId","pfName","pfPrice","pfOldPrice","pfDesc"].forEach(x => document.getElementById(x).value = "");
 renderSizeButtons("T-SHIRTS", [], {});
         document.getElementById("pfColors").innerHTML = "";
     document.getElementById("pfSoldOut").checked = false;
@@ -2088,7 +2084,12 @@ async function saveProduct(){
   const category = document.getElementById("pfCat").value;
   const price = Number(document.getElementById("pfPrice").value);
   const oldPrice = Number(document.getElementById("pfOldPrice").value) || 0;
-  const image = document.getElementById("pfImg1").value.trim();
+  let image = "";
+const _cr = document.querySelectorAll("#pfColors > div");
+if (_cr.length) {
+  const _imgs = _cr[0].querySelectorAll("input[placeholder^='Image']");
+  if (_imgs.length) image = _imgs[0].value.trim();
+}
   const image2 = document.getElementById("pfImg2").value.trim();
   const image3 = document.getElementById("pfImg3").value.trim();
   const image4 = document.getElementById("pfImg4").value.trim();
