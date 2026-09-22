@@ -1046,7 +1046,7 @@ setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.d
     const d = document.createElement("div");
     d.className = "p-card";
     d.onclick = () => openPDP(p);
-    d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://placehold.co/300x400?text=JAZB\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + fmt(p.price) + '</div>';
+    d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=JAZB\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + fmt(p.price) + '</div>';
     g.appendChild(d);
   });
 }
@@ -1066,7 +1066,7 @@ function renderProducts(){
       const disc = Math.round((1 - p.price / p.oldPrice) * 100);
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
-    d.innerHTML = '<img class="p-img" src="' + p.image + '" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
+    d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
     productSoldOut(p) ? '<span class="sold-badge">SOLD OUT</span>' : ''
     const wb = document.createElement("button");
 wb.className = "wish-btn";
@@ -1163,7 +1163,7 @@ function renderRecentlyViewed(){
     const d=document.createElement("div");
     d.className="p-card";
     d.onclick=()=>openPDP(p);
-    d.innerHTML='<img class="p-img" src="'+p.image+'"><div class="p-name">'+p.name+'</div><div class="p-price">'+fmt(p.price)+'</div>';
+    d.innerHTML='<img class="p-img" src="'+p.image+'" alt="'+p.name+'" loading="lazy"><div class="p-name">'+p.name+'</div><div class="p-price">'+fmt(p.price)+'</div>';
     g.appendChild(d);
   });
 }
@@ -1317,7 +1317,7 @@ if (allSoldOut) {
     const d = document.createElement("div");
     d.className = "p-card";
     d.onclick = () => openPDP(x);
-    d.innerHTML = '<img class="p-img" src="' + x.image + '"><div class="p-name">' + x.name + '</div><div class="p-price">' + fmt(x.price) + '</div>';
+    d.innerHTML = '<img class="p-img" src="' + x.image + '" alt="' + x.name + '" loading="lazy"><div class="p-name">' + x.name + '</div><div class="p-price">' + fmt(x.price) + '</div>';
     rel.appendChild(d);
   });
   (function(){
