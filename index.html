@@ -1168,6 +1168,7 @@ function renderRecentlyViewed(){
 function renderPdpSizes(p){
   const cat = (p.category || "").toUpperCase();
   let sizes = (p.sizes && p.sizes.length) ? p.sizes : DEFAULT_SIZES[cat];
+    if (currentColor && currentColor.sizes && currentColor.sizes.length) sizes = currentColor.sizes;
   if(!sizes){
     if(cat.includes("CAP") || cat.includes("ACCESSORY")) sizes = ["One Size"];
     else if(cat.includes("TROUSER") || cat.includes("JEAN") || cat.includes("SHORT")) sizes = ["30","32","34","36","38"];
@@ -2097,6 +2098,20 @@ const image5 = document.getElementById("pfImg5").value.trim();
 const stocks = unlimited ? {} : getStocksFromForm();
   const description = document.getElementById("pfDesc").value.trim();
     const colors = getColorsFromForm();
+    colors.forEach((c, i) => {
+    const inp = document.querySelector('#pfColors input[value="' + c.name + '"]');
+    let row = inp;
+    for (let d = 0; d < 5 && row && row.id !== "pfColors"; d++) row = row.parentElement;
+    if (row) {
+      const btns = row.querySelectorAll("button");
+      const cs = [];
+      btns.forEach(b => {
+        const t = (b.textContent || "").trim().toUpperCase();
+        if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) cs.push(t);
+      });
+      if (cs.length) c.sizes = cs;
+    }
+  });
   const soldOut = document.getElementById("pfSoldOut").checked;
   if (!name || !price || !image) { document.getElementById("pfMsg").textContent = "Name, price and image URL are required"; return; }
     const data = { name, category, price, oldPrice, image, image2, image3, image4, image5, sizes, description, colors, soldOut, unlimited, stock: stocks };
