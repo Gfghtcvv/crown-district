@@ -1794,7 +1794,7 @@ function loadAdminProducts(){
 }
 function renderSizeButtons(cat, selected, stocks){
   const box = document.getElementById("pfSizesBox");
-  const sizes = DEFAULT_SIZES[cat] || ["One Size"];
+  const sizes = (selected && selected.length > 0) ? selected : (DEFAULT_SIZES[cat] || ["One Size"]);
   box.innerHTML = "";
   sizes.forEach(s => {
     const row = document.createElement("div");
