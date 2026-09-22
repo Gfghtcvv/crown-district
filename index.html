@@ -1175,6 +1175,7 @@ function renderPdpSizes(p){
   }
   const stockMap = getStockForColor(p, currentColor.name) || {};
   const hasStock = Object.keys(stockMap).length > 0;
+  if (hasStock) sizes = Object.keys(stockMap);
   currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
   const sz = document.getElementById("pdpSizes");
   if(!sz) return;
@@ -1877,9 +1878,12 @@ function getSelectedSizes(){
 function getStockForColor(p, colorName){
   if (p.unlimited) return null;
   const s = p.stock || {};
-  if (s[colorName] && typeof s[colorName] === "object")
-    return s[colorName];
-  return s;
+  if (!(p.colors && p.colors.length)) return s;
+  if (!colorName) return {};
+  if (s[colorName] && typeof s[colorName] === "object") return s[colorName];
+  const key = Object.keys(s).find(k => k.toLowerCase() === String(colorName).toLowerCase());
+  if (key) return s[key];
+  return {};
 }
 function colorSoldOut(p, colorName){
   const s = getStockForColor(p, colorName);
