@@ -1922,7 +1922,8 @@ function fillColorStocks(d, colorStocks){
   if (!box) return;
   box.innerHTML = "";
     const cat = document.getElementById("pfCat").value;
-  const sizes = DEFAULT_SIZES[cat] || ["One Size"];
+  const defaultSizes = DEFAULT_SIZES[cat] || ["One Size"];
+  let sizes = (colorStocks && Object.keys(colorStocks).length > 0) ? Object.keys(colorStocks) : defaultSizes;
   sizes.forEach(s => {
     const b = document.createElement("button");
     b.type = "button";
