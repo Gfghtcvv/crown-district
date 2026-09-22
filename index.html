@@ -1822,6 +1822,7 @@ function renderSizeButtons(cat, selected, stocks){
         row.appendChild(rm);
     row.appendChild(inp);
     box.appendChild(row);
+        });
         const addBtn = document.createElement("button");
     addBtn.type = "button";
     addBtn.textContent = "+ ADD SIZE";
@@ -1856,7 +1857,6 @@ function renderSizeButtons(cat, selected, stocks){
         box.appendChild(row2);
     };
     box.appendChild(addBtn);
-  });
 }
   refreshColorStocks();
 function getSelectedSizes(){
