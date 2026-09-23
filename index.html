@@ -1677,7 +1677,7 @@ for (const it of items) {
     try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, subject: "Order Confirmed - " + docId, message: "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.", order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
+    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, subject: "Aapka JAZB order " + docId + " confirm ho gaya", message: "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.", order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2342,7 +2342,7 @@ function cancelOrder(orderId){
         emailjs.send("service_g55ha9n","template_5p2fqnz",{
           to_email:"muhammadshehroz2008@gmail.com",
           message:"Order " + orderId + " has been CANCELLED by the customer.",
-          subject:"Order Cancelled - " + orderId
+          subject:"Aapka JAZB order " + orderId + " cancel ho gaya"
         }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
           trackOrder();
