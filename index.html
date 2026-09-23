@@ -424,6 +424,10 @@ body.dark #loader p{color:#fff}
 .review-item .r-stars{color:#FFB800;font-size:13px}
 .review-item .r-text{font-size:13px;color:#555;margin:6px 0}
 .review-item .r-name{font-size:12px;font-weight:700;color:#000}
+.rev-more-btn,.rev-hide-btn{color:#111}
+body.dark .rev-more-btn,body.dark .rev-hide-btn{color:#fff!important;background:transparent!important;border-color:#fff!important}
+body.dark .rev-more-btn,body.dark .rev-hide-btn{color:#fff!important;background:transparent!important;border-color:#fff!important}
+body.dark .rev-more-btn,body.dark .rev-hide-btn{color:#fff}
 .review-form{margin-top:16px}
 .review-form .r-stars-input{display:flex;gap:4px;margin:8px 0}
 .review-form .r-stars-input span{font-size:24px;cursor:pointer;color:#ddd}
@@ -1370,13 +1374,48 @@ function loadReviews(productId){
   db.collection("reviews").where("productId", "==", productId).get().then(snap => {
     if (snap.empty) { list.innerHTML = '<p style="font-size:13px;color:#999">No reviews yet. Be the first!</p>'; return; }
     list.innerHTML = "";
+let idx = 0;
     snap.forEach(doc => {
       const r = doc.data();
       const d = document.createElement("div");
       d.className = "review-item";
-            d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-text">' + r.text + '</div>' + (r.image ? '<img src="' + r.image + '" style="max-width:120px;border-radius:6px;margin-top:6px">' : '') + '<div class="r-name">' + r.name + '</div>';
+      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-name">' + r.name + '</div><div class="r-text">' + r.text + '</div>' + (r.image ? '<img src="' + r.image + '" style="width:100%;border-radius:8px;margin-top:8px;">' : '');
+      if (idx >= 5) { d.style.display = "none"; d.dataset.extra = "1"; }
+      idx++;
+      let myKeys = [];
+      try { myKeys = JSON.parse(localStorage.getItem("cd_my_reviews") || "[]"); } catch(e) {}
+      const mine = myKeys.includes(r.productId + "|" + r.name + "|" + r.text);
+      if (location.href.includes("admin") || mine) {
+        const del = document.createElement("button");
+        del.textContent = "DELETE";
+        del.style.cssText = "margin-top:6px;background:transparent;color:#e74c3c;border:1px solid #e74c3c;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;";
+        del.onclick = () => { if (confirm("Delete this review?")) db.collection("reviews").doc(doc.id).delete().then(()=>loadReviews(currentProduct.id)); };
+        d.appendChild(del);
+      }
       list.appendChild(d);
     });
+    if (snap.size > 5) {
+      const more = document.createElement("button");
+      more.textContent = "MORE REVIEWS";
+      more.className = "rev-more-btn";
+      more.style.cssText = "margin-top:10px;width:100%;background:#fff;color:#000;border:1px solid #111;padding:10px 16px;font-weight:bold;letter-spacing:1px;cursor:pointer;";
+      const hide = document.createElement("button");
+      hide.textContent = "HIDE REVIEWS";
+      hide.className = "rev-hide-btn";
+      hide.style.cssText = "margin-top:6px;width:100%;background:transparent;color:#000;border:1px solid #111;padding:10px 16px;font-weight:bold;letter-spacing:1px;cursor:pointer;display:none;";
+      more.onclick = () => {
+        list.querySelectorAll(".review-item[data-extra]").forEach(el => el.style.display = "");
+        more.style.display = "none";
+        hide.style.display = "block";
+      };
+      hide.onclick = () => {
+        list.querySelectorAll(".review-item[data-extra]").forEach(el => el.style.display = "none");
+        hide.style.display = "none";
+        more.style.display = "block";
+      };
+      list.appendChild(more);
+      list.appendChild(hide);
+  }
   });
 }
 function submitReview(){
@@ -1388,6 +1427,11 @@ function submitReview(){
   const rImg = document.getElementById("rImg").value.trim();
   db.collection("reviews").add({ productId: currentProduct.id, name, text, rating: currentRating, image: rImg, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => {
     toast("Review submitted ✅");
+          const rk = currentProduct.id + "|" + name + "|" + text;
+      let rks = [];
+      try { rks = JSON.parse(localStorage.getItem("cd_my_reviews") || "[]"); } catch(e) {}
+      if (!rks.includes(rk)) rks.push(rk);
+      localStorage.setItem("cd_my_reviews", JSON.stringify(rks));
     loadReviews(currentProduct.id);
     document.getElementById("rName").value = "";
     document.getElementById("rText").value = "";
