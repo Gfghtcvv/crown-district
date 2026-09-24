@@ -74,7 +74,7 @@ img{display:block}
 .header{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:100}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 16px}
 .logo{height:60px;max-width:200px;object-fit:contain}
-.icon-btn{font-size:20px;padding:6px 10px;position:relative}
+.icon-btn{font-size:20px;padding:6px 10px;position:relative;margin-right:4px}
 .icon-btn .badge{position:absolute;top:2px;right:2px;background:#c0392b;color:#fff;font-size:10px;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center}
 .search-bar{display:none;padding:0 16px 12px}
 .search-bar.show{display:block}
@@ -642,7 +642,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <img id="logoImg" class="logo" src="https://i.ibb.co/gMqDCZSJ/aelius-a-brand-logo-design-for-a.png" alt="JAZB">
     <div>
 <button class="icon-btn" onclick="toggleSearch()">&#128269;</button>
-      <button class="icon-btn" onclick="openWishlist()">❤️</button>
+      
       <button class="icon-btn" onclick="openCart()">&#128717;<span id="cartCount" class="badge">0</span></button>
     </div>
   </div>
@@ -1053,6 +1053,10 @@ function renderDrawer(){
   a1.textContent = "TRACK ORDER";
   a1.onclick = () => { openTrack(); toggleDrawer(); };
   d.appendChild(a1);
+  const a2 = document.createElement("a");
+a2.textContent = "❤️ WISHLIST";
+a2.onclick = () => { openWishlist(); toggleDrawer(); };
+d.appendChild(a2);
   [["ABOUT US","about"],["SHOPPING GUIDE","guide"],["EXCHANGE & RETURNS","returns"],["SHIPPING & DELIVERY","shipping"],["CONTACT US","contact"]].forEach(x => {
     const a = document.createElement("a");
     a.textContent = x[0];
