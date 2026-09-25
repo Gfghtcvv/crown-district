@@ -728,7 +728,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 </section>
 <section class="newsletter">
   <p>Get updates on our latest collections, drops &amp; features coming up.</p>
-  <p style="font-size:13px;color:#c0392b;font-weight:700;margin-bottom:10px">🎁 Dost ko code do: <strong>JAZB10</strong> — unhein 10% off (Rs. 3,000+ order pe)</p>
+  <p style="font-size:13px;color:#c0392b;font-weight:700;margin-bottom:10px">🎁 Dost ko code do: <strong id="cpnName">JAZB10</strong> — unhein 10% off (Rs. 3,000+ order pe)</p>
   <input id="nlEmail" type="email" placeholder="ENTER YOUR EMAIL">
   <button class="full-btn" onclick="joinNewsletter()">SIGN ME UP</button>
 </section>
@@ -1614,6 +1614,9 @@ function chQty(i, d){
 }
 function rmItem(i){ cart.splice(i, 1); saveCart(); openCart(); }
   let couponDiscount = 0;
+  const COUPON_NAME = "JAZB10";
+const _cpnEl = document.getElementById("cpnName");
+if (_cpnEl) _cpnEl.textContent = COUPON_NAME;
 function applyCoupon(){
   const code = document.getElementById("coCoupon").value.trim().toUpperCase();
   const msg = document.getElementById("couponMsg");
@@ -1625,7 +1628,7 @@ function applyCoupon(){
   }
   let total = 0;
   cart.forEach(c => { total += c.price * c.qty; });
-  if (code === "JAZB10") {
+  if (code === COUPON_NAME) {
     if (total >= 3000) {
       couponDiscount = 10;
       msg.textContent = "10% discount applied! ✅ (Bundle deal nahi lagegi)";
@@ -1638,7 +1641,7 @@ function applyCoupon(){
     }
   } else {
     couponDiscount = 0;
-    msg.textContent = "Invalid code. Try JAZB10";
+    msg.textContent = "Invalid code. Try " + COUPON_NAME;
     msg.className = "coupon-msg err";
   }
 } 
