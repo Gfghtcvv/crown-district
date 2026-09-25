@@ -980,6 +980,17 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 </div>
 <script>
 const ADMIN_EMAIL = "muhammadshehroz2008@gmail.com";
+  const RESEND_KEY = "re_gDTjSv6n_nnTxJorQMxv1BtBQMhj5e5Y8yai";
+async function sendMail(to, subject, html){
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + RESEND_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: "JAZB <no-reply@jazbwear.pk>", to: to, subject: subject, html: html })
+    });
+    if (!r.ok) throw new Error("Email failed: " + r.status);
+  } catch(e) { console.log("Email error: " + e.message); }
+}
 const ADMIN_PASSWORD = "1127shehroz";
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
@@ -1743,11 +1754,10 @@ for (const it of items) {
     document.getElementById("confTotal").textContent = fmt(grandTotal);
     document.getElementById("confirmModal").classList.add("show");
     const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    const emailData = { to_email: ADMIN_EMAIL, subject: "New Order - " + docId, message: "New order received!\n\nOrder ID: " + docId + "\nCustomer: " + name + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal), order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId };
-    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailData, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("admin email failed", e); }
+    try { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, "<h2>Naya Order: " + docId + "</h2><p><b>Customer:</b> " + name + "<br><b>Phone:</b> " + phone + "<br><b>Email:</b> " + email + "<br><b>Address:</b> " + address + ", " + finalCity + "</p><p><b>Items:</b></p><pre>" + itemsStr + "</pre><p><b>Total: Rs. " + grandTotal + "</b></p>"); } catch(e) {}
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-    try { emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, subject: "Aapka JAZB order " + docId + " confirm ho gaya", message: "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.", order_name: name, order_phone: phone, order_address: address, order_city: city, order_items: itemsStr, order_total: fmt(grandTotal), orderId: docId }, EMAILJS_PUBLIC_KEY); } catch(e) { console.log("customer email failed", e); }
+   sendMail(email, "Aapka JAZB Order - " + docId, "<h2>Shukriya " + name + "!</h2><p>Aapka JAZB order place ho gaya hai.</p><p><b>Order ID:</b> " + docId + "<br><b>Total:</b> Rs. " + grandTotal + "<br><b>Address:</b> " + address + ", " + finalCity + "<br><b>Phone:</b> " + phone + "</p><p><b>Items:</b></p><pre>" + itemsStr + "</pre><p>Order track karein: <a href='https://jazbwear.pk'>jazbwear.pk</a> (apna phone number daalein)</p>");
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2298,7 +2308,7 @@ async function replyToOrder(id){
           order_name: o.data().customer,
           reply: msg
         }, EMAILJS_PUBLIC_KEY);
-        toast("Reply saved and emailed to customer");
+        if (o.data().email) { sendMail(o.data().email, "JAZB Reply - Order " + (o.data().orderId||id), "<h2>JAZB Reply</h2><p><b>Order ID:</b> " + (o.data().orderId||id) + "</p><p>" + msg + "</p><p>Shukriya,<br><b>JAZB Team</b><br><a href='https://jazbwear.pk'>jazbwear.pk</a></p>"); }
       } catch(e) { toast(e.message); }
     }
   } catch(e) { toast(e.message); }
@@ -2408,12 +2418,11 @@ function cancelOrder(orderId){
   if(!confirm("Are you sure you want to cancel this order?")) return;
   db.collection("orders").where("orderId","==",orderId).get().then(snap=>{
     snap.forEach(doc=>{
-      doc.ref.update({status:"Cancelled"}).then(()=>{
-        emailjs.send("service_g55ha9n","template_5p2fqnz",{
-          to_email:"muhammadshehroz2008@gmail.com",
-          message:"Order " + orderId + " has been CANCELLED by the customer.",
-          subject:"Aapka JAZB order " + orderId + " cancel ho gaya"
-        }).then(()=>{
+doc.ref.update({status:"Cancelled"}).then(()=>{
+  const od = doc.data();
+  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "<h2>Order Cancelled: " + orderId + "</h2><p><b>Customer:</b> " + (od.customer||"-") + "<br><b>Phone:</b> " + (od.phone||"-") + "<br><b>Email:</b> " + (od.email||"-") + "</p>");
+  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "<h2>Order Cancelled</h2><p><b>Order ID:</b> " + orderId + "</p><p>Agar galti se cancel hua hai toh rabta karein: <a href='https://jazbwear.pk'>jazbwear.pk</a></p>");
+}).then(()=>{
           toast("Order cancelled. We'll be in touch.");
           trackOrder();
         }).catch(e=>{
@@ -2422,7 +2431,6 @@ function cancelOrder(orderId){
         });
       });
     });
-  });
 }
 function expandPdpImg(){
   if (document.querySelector(".pdp-exp")) return;
