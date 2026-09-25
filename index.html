@@ -983,14 +983,14 @@ const ADMIN_EMAIL = "muhammadshehroz2008@gmail.com";
   const RESEND_KEY = "re_gDTjSv6n_nnTxJorQMxv1BtBQMhj5e5Y8yai";
 async function sendMail(to, subject, html){
   try {
-    const r = await fetch("https://api.resend.com/emails", {
+    const r = await fetch("/api/send-mail", {
       method: "POST",
-      headers: { "Authorization": "Bearer " + RESEND_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: "JAZB <no-reply@jazbwear.pk>", to: to, subject: subject, html: html })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to: to, subject: subject, html: html })
     });
     if (!r.ok) throw new Error("Email failed: " + r.status);
   } catch(e) { console.log("Email error: " + e.message); }
-}
+  }
 const ADMIN_PASSWORD = "1127shehroz";
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
