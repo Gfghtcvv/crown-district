@@ -983,7 +983,7 @@ const ADMIN_EMAIL = "muhammadshehroz2008@gmail.com";
   const RESEND_KEY = "re_gDTjSv6n_nnTxJorQMxv1BtBQMhj5e5Y8yai";
 async function sendMail(to, subject, html){
   try {
-    const r = await fetch("/api/send-mail", {
+    const r = await fetch("https://api.jazbwear.pk/send-mail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to: to, subject: subject, html: html })
