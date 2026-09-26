@@ -1755,7 +1755,7 @@ for (const it of items) {
     document.getElementById("confTotal").textContent = fmt(grandTotal);
     document.getElementById("confirmModal").classList.add("show");
     const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    try { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, "NAYA JAZB ORDER: " + docId + "\n\nCustomer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + address + ", " + finalCity + "\n\nItems:\n" + itemsStr + "\n\nTotal: Rs. " + grandTotal); } catch(e) {}
+    fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ subject: "NAYA JAZB ORDER - " + docId, Customer: name, Phone: phone, Email: email, Address: address + ", " + finalCity, Items: itemsStr, Total: "Rs. " + grandTotal }) }).catch(function(){});
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
    sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna phone number daalein)");
@@ -2417,7 +2417,7 @@ function cancelOrder(orderId){
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
-  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Order Cancelled: " + orderId + "\n\nCustomer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-"));
+  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ subject: "ORDER CANCELLED - " + orderId, Customer: od.customer || "-", Phone: od.phone || "-", Email: od.email || "-" }) }).catch(function(){});
   if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
