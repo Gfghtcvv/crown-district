@@ -982,11 +982,11 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 const ADMIN_EMAIL = "muhammadshehroz2008@gmail.com";
 async function sendMail(to, subject, html){
   try {
-    await fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to: to, subject: subject, html: html })
-    });
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: to,
+      subject: subject,
+      message: html
+    }, EMAILJS_PUBLIC_KEY);
   } catch(e) { console.log("Email error: " + e.message); }
 }
 const ADMIN_PASSWORD = "1127shehroz";
@@ -2279,6 +2279,9 @@ async function updateStatus(id, status){
     const od = await db.collection("orders").doc(id).get();
     if (status === "Cancelled" && od.exists) await restockOrder(od.data());
     await db.collection("orders").doc(id).update({ status });
+        if (status === "Cancelled" && od.exists && od.data().email) {
+      sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "<h2>Order Cancelled</h2><p><b>Order ID:</b> " + (od.data().orderId || id) + "</p><p>Agar galti se cancel hua hai toh rabta karein: <a href='https://jazbwear.pk'>jazbwear.pk</a></p>");
+        }
     if (od.exists) {
       const d = od.data();
       let phone = String(d.phone || "").replace(/[^0-9]/g, "");
@@ -2309,7 +2312,7 @@ async function replyToOrder(id){
           order_name: o.data().customer,
           reply: msg
         }, EMAILJS_PUBLIC_KEY);
-        if (o.data().email) { sendMail(o.data().email, "JAZB Reply - Order " + (o.data().orderId||id), "<h2>JAZB Reply</h2><p><b>Order ID:</b> " + (o.data().orderId||id) + "</p><p>" + msg + "</p><p>Shukriya,<br><b>JAZB Team</b><br><a href='https://jazbwear.pk'>jazbwear.pk</a></p>"); }
+
       } catch(e) { toast(e.message); }
     }
   } catch(e) { toast(e.message); }
