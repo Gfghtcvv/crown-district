@@ -1698,6 +1698,26 @@ function closeCheckout(){
   document.body.style.overflow = "";
   ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
 }
+function notifyAdmin(docId, name, phone, email, addr, itemsStr, total){
+  const body = "Customer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + addr + "\nItems: " + itemsStr + "\nTotal: Rs. " + total;
+  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "NAYA JAZB ORDER - " + docId, Customer: name, Phone: phone, Email: email, Address: addr, Items: itemsStr, Total: "Rs. " + total }) })
+  .then(function(r){
+    if (!r.ok) { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, body); toast("⚠️ FormSubmit fail, EmailJS backup bheja ✅"); }
+  })
+  .catch(function(){
+    sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, body);
+    toast("⚠️ FormSubmit fail, EmailJS backup bheja ✅");
+  });
+}
+function retryAdminEmail(id){
+  db.collection("orders").doc(id).get().then(snap=>{
+    if(!snap.exists){ toast("Order nahi mila"); return; }
+    const o = snap.data();
+    const itemsStr = (o.items||[]).map(i => i.name + " (" + (i.color||"") + ", " + i.size + ") x" + i.qty).join(", ");
+    notifyAdmin(o.orderId || id, o.customer, o.phone, o.email || "-", o.address + ", " + o.city, itemsStr, o.total);
+    toast("Admin email dobara bheji gayi ✅");
+  });
+}
 let isPlacing = false;
 
 async function placeOrder(){
@@ -1763,7 +1783,7 @@ for (const it of items) {
     document.getElementById("confTotal").textContent = fmt(grandTotal);
     document.getElementById("confirmModal").classList.add("show");
     const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "NAYA JAZB ORDER - " + docId, Customer: name, Phone: phone, Email: email, Address: address + ", " + finalCity, Items: itemsStr, Total: "Rs. " + grandTotal }) }).then(function(r){ if(!r.ok) toast("⚠️ Admin email failed: " + r.status); }).catch(function(){ toast("⚠️ Admin email failed (network)"); });
+    notifyAdmin(docId, name, phone, email, address + ", " + finalCity, itemsStr, grandTotal);
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
    sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna phone number daalein)");
@@ -2260,6 +2280,7 @@ function loadOrders(){
         + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\',this.value)">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
+        + '<button onclick="retryAdminEmail(\'' + o.id + '\')">📧 EMAIL</button>'
         + '<button onclick="replyToOrder(\'' + o.id + '\')">REPLY</button>'
         + '<button onclick="whatsappOrder(\'' + o.id + '\')">WHATSAPP</button>'
         + '<button onclick="deleteOrder(\'' + o.id + '\')" style="border-color:#c0392b;color:#c0392b">DELETE</button>'
@@ -2425,7 +2446,7 @@ function cancelOrder(orderId){
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
-  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "ORDER CANCELLED - " + orderId, Customer: od.customer || "-", Phone: od.phone || "-", Email: od.email || "-" }) }).catch(function(){});
+  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "ORDER CANCELLED - " + orderId, Customer: od.customer || "-", Phone: od.phone || "-", Email: od.email || "-" }) }).then(function(r){ if(!r.ok) sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); }).catch(function(){ sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); });
   if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
