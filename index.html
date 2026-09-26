@@ -655,7 +655,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="drawer-head"><span>MENU</span><button onclick="toggleDrawer()">&#10005;</button></div>
   <div id="drawerLinks"></div>
   <div style="padding:12px 16px;border-top:1px solid #333;margin-top:10px">
-  <button onclick="toggleDark()" style="width:100%;background:#222;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🌙 Dark Mode</button>
+  <button id="darkBtn" onclick="toggleDark()" style="width:100%;background:#222;color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🌙 Dark Mode</button>
   </div>
 </div>
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
@@ -2657,19 +2657,21 @@ async function loadSettings(){
   document.getElementById("drawer").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("show");
 }
+function updateDarkBtn(){
+  const b = document.getElementById("darkBtn");
+  if (b) b.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+}
 function toggleDark(){
   document.body.classList.toggle("dark");
-  localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
+  updateDarkBtn();
 }
 function applyAutoDark(){
-  const manual = localStorage.getItem("cd_dark");
-  if (manual === "1") { document.body.classList.add("dark"); return; }
-  if (manual === "0") { document.body.classList.remove("dark"); return; }
   if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
     document.body.classList.add("dark");
   } else {
     document.body.classList.remove("dark");
   }
+  updateDarkBtn();
 }
 if(document.body){ applyAutoDark(); }
 else { document.addEventListener("DOMContentLoaded", applyAutoDark); }
