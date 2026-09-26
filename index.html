@@ -808,7 +808,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <div class="modal-head"><h2>CHECKOUT</h2><button onclick="closeCheckout()">&#10005;</button></div>
     <input id="coName" placeholder="Full Name">
     <input id="coPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
-    <input id="coEmail" type="email" placeholder="Email (required)">
+    <input id="coEmail" type="email" placeholder="Email (required)" autocomplete="off" autocapitalize="none" autocorrect="off">
     <input id="coAddress" placeholder="Full Address">
     <select id="coCity" onchange="document.getElementById('coCityOther').style.display=this.value==='Other'?'block':'none'">
 <option value="">Select City</option>
@@ -1682,13 +1682,20 @@ function openCheckout(){
   }
   document.getElementById("coMessage").textContent = "";
   document.getElementById("checkoutModal").classList.add("show");
+  document.body.style.overflow = "hidden";
 }
+document.addEventListener("focusin", function(e){
+  if (e.target.closest && e.target.closest("#checkoutModal")) {
+    e.target.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+});
 function closeCheckout(){
   document.getElementById("checkoutModal").classList.remove("show");
   if(buyNowItem){ cart = cart.filter(c => c.key !== buyNowItem); buyNowItem = null; saveCart(); }
   couponDiscount = 0;
   document.getElementById("coCoupon").value = "";
   document.getElementById("couponMsg").textContent = "";
+  document.body.style.overflow = "";
   ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
 }
 let isPlacing = false;
@@ -1705,6 +1712,7 @@ async function placeOrder(){
   if (city === "Other" && !cityOther) { document.getElementById("coMessage").textContent = "City select karo (Other pe apna city naam likho)"; return; }
   const notes = document.getElementById("coNotes").value.trim();
    if (!name || !phone || !email || !address || !city) { document.getElementById("coMessage").textContent = "Please fill all required fields (email required)"; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById("coMessage").textContent = "Ghalat email address. Sahi email likho (jaise name@gmail.com)"; return; }
   const ph = phone.replace(/[^0-9]/g, "");
   if (!(ph.startsWith("03") && (ph.length === 10 || ph.length === 11))) { document.getElementById("coMessage").textContent = "Ghalat phone number. 03xx-xxxxxxx format mein daalo"; return; }
   const btn = document.getElementById("placeOrderBtn");
