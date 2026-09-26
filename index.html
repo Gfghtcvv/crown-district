@@ -1755,10 +1755,10 @@ for (const it of items) {
     document.getElementById("confTotal").textContent = fmt(grandTotal);
     document.getElementById("confirmModal").classList.add("show");
     const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-    try { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, "<h2>Naya Order: " + docId + "</h2><p><b>Customer:</b> " + name + "<br><b>Phone:</b> " + phone + "<br><b>Email:</b> " + email + "<br><b>Address:</b> " + address + ", " + finalCity + "</p><p><b>Items:</b></p><pre>" + itemsStr + "</pre><p><b>Total: Rs. " + grandTotal + "</b></p>"); } catch(e) {}
+    try { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, "NAYA JAZB ORDER: " + docId + "\n\nCustomer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + address + ", " + finalCity + "\n\nItems:\n" + itemsStr + "\n\nTotal: Rs. " + grandTotal); } catch(e) {}
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-   sendMail(email, "Aapka JAZB Order - " + docId, "<h2>Shukriya " + name + "!</h2><p>Aapka JAZB order place ho gaya hai.</p><p><b>Order ID:</b> " + docId + "<br><b>Total:</b> Rs. " + grandTotal + "<br><b>Address:</b> " + address + ", " + finalCity + "<br><b>Phone:</b> " + phone + "</p><p><b>Items:</b></p><pre>" + itemsStr + "</pre><p>Order track karein: <a href='https://jazbwear.pk'>jazbwear.pk</a> (apna phone number daalein)</p>");
+   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna phone number daalein)");
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2280,7 +2280,7 @@ async function updateStatus(id, status){
     if (status === "Cancelled" && od.exists) await restockOrder(od.data());
     await db.collection("orders").doc(id).update({ status });
         if (status === "Cancelled" && od.exists && od.data().email) {
-      sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "<h2>Order Cancelled</h2><p><b>Order ID:</b> " + (od.data().orderId || id) + "</p><p>Agar galti se cancel hua hai toh rabta karein: <a href='https://jazbwear.pk'>jazbwear.pk</a></p>");
+      sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
         }
     if (od.exists) {
       const d = od.data();
@@ -2424,8 +2424,8 @@ function cancelOrder(orderId){
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
-  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "<h2>Order Cancelled: " + orderId + "</h2><p><b>Customer:</b> " + (od.customer||"-") + "<br><b>Phone:</b> " + (od.phone||"-") + "<br><b>Email:</b> " + (od.email||"-") + "</p>");
-  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "<h2>Order Cancelled</h2><p><b>Order ID:</b> " + orderId + "</p><p>Agar galti se cancel hua hai toh rabta karein: <a href='https://jazbwear.pk'>jazbwear.pk</a></p>");
+  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Order Cancelled: " + orderId + "\n\nCustomer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-"));
+  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
           trackOrder();
