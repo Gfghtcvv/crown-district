@@ -1700,7 +1700,7 @@ function closeCheckout(){
 }
 function notifyAdmin(docId, name, phone, email, addr, itemsStr, total){
   const body = "Customer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + addr + "\nItems: " + itemsStr + "\nTotal: Rs. " + total;
-  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "NAYA JAZB ORDER - " + docId, Customer: name, Phone: phone, Email: email, Address: addr, Items: itemsStr, Total: "Rs. " + total }) })
+  fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ access_key: "8899226c-b1dd-4d25-9432-872e6d1b1744", subject: "NAYA JAZB ORDER - " + docId, message: "Customer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + addr + "\nItems: " + itemsStr + "\nTotal: Rs. " + total }) })
   .then(function(r){
     if (!r.ok) { sendMail(ADMIN_EMAIL, "NAYA JAZB ORDER - " + docId, body); toast("⚠️ FormSubmit fail, EmailJS backup bheja ✅"); }
   })
@@ -2446,7 +2446,7 @@ function cancelOrder(orderId){
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
-  fetch("https://formsubmit.co/ajax/muhammadshehroz2008@gmail.com", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ _subject: "ORDER CANCELLED - " + orderId, Customer: od.customer || "-", Phone: od.phone || "-", Email: od.email || "-" }) }).then(function(r){ if(!r.ok) sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); }).catch(function(){ sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); });
+  fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify({ access_key: "8899226c-b1dd-4d25-9432-872e6d1b1744", subject: "ORDER CANCELLED - " + orderId, message: "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-") }) }).then(function(r){ if(!r.ok) sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); }).catch(function(){ sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-")); });
   if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
