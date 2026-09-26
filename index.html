@@ -2306,14 +2306,7 @@ async function replyToOrder(id){
       return;
     }
     if (o.data().email) {
-      try {
-                emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_REPLY_TEMPLATE_ID, {
-          to_email: o.data().email,
-          order_name: o.data().customer,
-          reply: msg
-        }, EMAILJS_PUBLIC_KEY);
-
-      } catch(e) { toast(e.message); }
+      sendMail(o.data().email, "Your Order Update - JAZB", "Hello " + o.data().customer + ",\n\n" + msg + "\n\nShukriya, JAZB");
     }
   } catch(e) { toast(e.message); }
 }
