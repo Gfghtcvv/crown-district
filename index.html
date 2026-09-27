@@ -2441,7 +2441,7 @@ function cancelOrder(orderId){
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
-  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-");
+  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-"));
   if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
@@ -2557,7 +2557,7 @@ function whatsappOrder(id){
     if (doc.exists) await db.collection("settings").doc("site").update({ [key]: val });
     else await db.collection("settings").doc("site").set({ [key]: val });
     applySettings({ [key]: val });
-    const settingsMsgEl=document.getElementById("settingsMsg");if(settingsMsgEl)settingsMsgEl.textContent
+    toast("Setting saved ✅");
   } catch(e) { toast(e.message); }
 }
 function fillFlashDropdown(){
