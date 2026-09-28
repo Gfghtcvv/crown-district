@@ -720,7 +720,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <h2>FAQ</h2>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How long does delivery take?</div><div class="a">2-5 working days within Pakistan. You will get a tracking update via WhatsApp.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the return policy?</div><div class="a">Size exchange within 7 days of delivery. Item must be unworn with tags. Contact us on WhatsApp for exchange.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I track my order?</div><div class="a">Use the "Track Order" button in the footer. Enter your phone number or Order ID to see your order status.</div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I track my order?</div><div class="a">Use the "Track Order" button in the footer. Enter your Order ID (from your confirmation or receipt email) to see your order status.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the delivery charge?</div><div class="a">Rs. 200 for orders under Rs. 3,000. FREE delivery on orders above Rs. 3,000.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I pay?</div><div class="a">Cash on delivery (COD) available across Pakistan. We will confirm your order via WhatsApp before shipping.</div></div>
   </div>
@@ -938,7 +938,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
       <p style="margin:0 0 6px"><strong>Order ID:</strong> <span id="confOrderId"></span></p>
       <p style="margin:0"><strong>Total:</strong> <span id="confTotal"></span></p>
     </div>
-    <p style="font-size:13px;color:#777;margin:14px 0">We will confirm your order via WhatsApp shortly. Track it anytime with your phone number.</p>
+    <p style="font-size:13px;color:#777;margin:14px 0">We will confirm your order via WhatsApp shortly. Track it anytime with your Order ID.</p>
     <button class="full-btn" style="background:#25D366;margin-bottom:8px" onclick="sendReceipt()">📄 SEND RECEIPT ON WHATSAPP</button>
     <button class="full-btn" onclick="document.getElementById('confirmModal').classList.remove('show')">CONTINUE SHOPPING</button>
   </div>
@@ -955,8 +955,8 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <h2>TRACK ORDER</h2>
   </div>
   <div class="fp-body">
-    <p style="font-size:13px;color:#666;margin-bottom:12px">Enter your phone number or Order ID to see your order status.</p>
-    <input id="trackPhone" type="text" placeholder="Phone or Order ID" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+    <p style="font-size:13px;color:#666;margin-bottom:12px">Enter your Order ID to see your order status.</p>
+    <input id="trackPhone" type="text" placeholder="Order ID (e.g. JZB595956)" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
     <button class="full-btn" onclick="trackOrder()" style="margin-top:12px">TRACK ORDER</button>
     <div id="trackResult" style="margin-top:16px"></div>
   </div>
@@ -1792,7 +1792,7 @@ for (const it of items) {
     notifyAdmin(docId, name, phone, email, address + ", " + finalCity, itemsStr, grandTotal);
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna phone number daalein)");
+   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna Order ID daalein)");
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2408,13 +2408,10 @@ function openTrack(){
   function closeTrack(){ document.getElementById("trackModal").style.display="none"; }
 function trackOrder(){
   const val = document.getElementById("trackPhone").value.trim();
-  if (!val) { toast("Enter your phone number or Order ID"); return; }
+  if (!val) { toast("Enter your Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
-  const isOrderId = /^[A-Za-z0-9]+$/.test(val) && val.length >= 8 && !/^\d{10,}$/.test(val);
-  const q = isOrderId
-    ? db.collection("orders").where("orderId", "==", val)
-    : db.collection("orders").where("phone", "==", val.replace(/[^0-9]/g, ""));
+  const q = db.collection("orders").where("orderId", "==", val);
   q.get().then(snap => {
     if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your phone number or Order ID.</p>'; return; }
     res.innerHTML = "";
@@ -2556,16 +2553,14 @@ function viewImg(url){
   });
   }
 function whatsappOrder(id){
-  const o = products; // not used, get from order list
-  const sel = document.getElementById("st_" + id);
-  // find phone from rendered card
-  const card = sel.closest(".order-card");
-  const phone = card.querySelector(".oc-row").textContent.replace("Phone: ", "");
-  const name = card.querySelector(".oc-head strong").textContent;
-  const clean = phone.replace(/[^0-9]/g, "");
-  const num = clean.startsWith("0") ? "92" + clean.slice(1) : clean;
-  const msg = "Hello " + name + ", this is JAZB. Your order has been received. We will contact you shortly.";
-  location.href = "https://wa.me/" + num + "?text=" + encodeURIComponent(msg);
+  db.collection("orders").doc(id).get().then(o => {
+    if (!o.exists) return;
+    const d = o.data();
+    const num = String(d.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
+    const itemsStr = (d.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
+    const msg = "Hello " + d.customer + ", this is JAZB. Your order has been received.\n\nOrder ID: " + (d.orderId || id) + "\nItems: " + itemsStr + "\nTotal: Rs. " + Number(d.total || 0).toLocaleString() + "\n\nWe will contact you shortly.";
+    location.href = "https://wa.me/" + num + "?text=" + encodeURIComponent(msg);
+  });
 }
   async function saveSetting(key){
   const val = document.getElementById("set" + key[0].toUpperCase() + key.slice(1)).value.trim();
