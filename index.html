@@ -1818,7 +1818,7 @@ async function adminLogin(){
       document.getElementById("loginMessage").textContent = "Yeh account admin nahi hai";
     }
   } catch(err) {
-    document.getElementById("loginMessage").textContent = "Wrong email or password";
+    document.getElementById("loginMessage").textContent = "Error: " + err.message;
   }
 }
 function openAdmin(){
