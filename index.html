@@ -59,6 +59,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo+Black&display=swap');
@@ -1030,7 +1031,17 @@ let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
 let cart = JSON.parse(localStorage.getItem("cd_cart") || "[]");
-let isAdmin = sessionStorage.getItem("cd_admin") === "1";
+let isAdmin = false;
+firebase.auth().onAuthStateChanged(u => {
+  if (u) {
+    db.collection("users").doc(u.uid).get().then(s => {
+      if (s.exists && s.data().admin === true) {
+        isAdmin = true;
+        sessionStorage.setItem("cd_admin", "1");
+      }
+    });
+  }
+});
   function colorHex(n){n=(n||'').toLowerCase();if(n.includes('black'))return'#111';if(n.includes('white'))return'#fff';if(n.includes('red'))return'#d32f2f';if(n.includes('blue'))return'#1565c0';if(n.includes('green'))return'#2e7d32';if(n.includes('grey')||n.includes('gray'))return'#9e9e9e';if(n.includes('navy'))return'#1a237e';if(n.includes('brown'))return'#6d4c41';if(n.includes('yellow'))return'#fbc02d';if(n.includes('orange'))return'#ef6c00';if(n.includes('pink'))return'#ec407a';if(n.includes('purple'))return'#7b1fa2';if(n.includes('beige')||n.includes('khaki'))return'#d7ccc8';if(n.includes('default'))return'#888';return'#bbb';}
 function fmt(n){ return "Rs. " + Number(n).toLocaleString(); }
 function renderTabs(){
@@ -1792,15 +1803,21 @@ for (const it of items) {
 }
   function openAdminLogin(){ document.getElementById("adminLoginModal").classList.add("show"); }
 function closeAdminLogin(){ document.getElementById("adminLoginModal").classList.remove("show"); }
-function adminLogin(){
+async function adminLogin(){
   const e = document.getElementById("adminEmail").value.trim();
   const p = document.getElementById("adminPassword").value;
-  if (e === ADMIN_EMAIL && p === ADMIN_PASSWORD) {
-    sessionStorage.setItem("cd_admin", "1");
-    isAdmin = true;
-    closeAdminLogin();
-    openAdmin();
-  } else {
+  try {
+    const cred = await firebase.auth().signInWithEmailAndPassword(e, p);
+    const s = await db.collection("users").doc(cred.user.uid).get();
+    if (s.exists && s.data().admin === true) {
+      isAdmin = true;
+      sessionStorage.setItem("cd_admin", "1");
+      closeAdminLogin();
+      openAdmin();
+    } else {
+      document.getElementById("loginMessage").textContent = "Yeh account admin nahi hai";
+    }
+  } catch(err) {
     document.getElementById("loginMessage").textContent = "Wrong email or password";
   }
 }
@@ -1812,6 +1829,7 @@ function openAdmin(){
   loadOrders();
 }
 function closeAdmin(){
+  firebase.auth().signOut();
   sessionStorage.removeItem("cd_admin");
   isAdmin = false;
   document.getElementById("adminPanel").classList.remove("show");
