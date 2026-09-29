@@ -14,12 +14,11 @@
 <meta property="og:title" content="JAZB - Premium Streetwear">
 <meta property="og:description" content="Premium streetwear from Pakistan. T-shirts, trousers, shorts. Order online with easy tracking.">
 <meta property="og:site_name" content="JAZB">
-<meta property="og:image" content="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
 <meta property="og:url" content="https://jazbwear.pk/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="JAZB - Premium Streetwear">
 <meta name="twitter:description" content="Premium streetwear from Pakistan. T-shirts, track suits, shorts. Order online with easy tracking.">
-<meta name="twitter:image" content="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/87cf742e-4f6a-4b8e-8b2a-242b921195c1.png">
+<meta name="twitter:image" content="https://jazbwear.pk/logo.png">
 <link rel="canonical" href="https://jazbwear.pk/">
   <meta name="description" content="JAZB is a premium streetwear brand for men. Shop oversized T-shirts, track suits, trousers and shorts in bold original designs. Pakistan-wide delivery.">
 <script type="application/ld+json">
@@ -400,7 +399,7 @@ body.dark .trust-box .ts{color:#999}
 .track-step:last-child::after{display:none}
 .track-info{font-size:13px;color:#555;margin-top:8px}
 .track-reply{background:#f9f9f9;padding:10px;font-size:13px;margin-top:10px;border-left:3px solid #111}
-  .new-badge{position:absolute;top:10px;left:10px;background:#25D366;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:1px;z-index:2}
+  .new-badge{position:absolute;top:10px;right:10px;background:#25D366;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:1px;z-index:2}
   #pdpSticky{position:fixed;bottom:0;left:0;right:0;background:#fff;padding:12px 16px;box-shadow:0 -4px 12px rgba(0,0,0,.1);z-index:150;display:none}
 #pdpSticky.show{display:flex;gap:10px;align-items:center}
 #pdpSticky .sticky-price{font-size:18px;font-weight:700}
@@ -956,7 +955,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   </div>
   <div class="fp-body">
     <p style="font-size:13px;color:#666;margin-bottom:12px">Enter your Order ID to see your order status.</p>
-    <input id="trackPhone" type="text" placeholder="Order ID (e.g. JZB595956)" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
+    <input id="trackPhone" type="text" placeholder="Order ID (e.g. JZB4K7M9X)" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box">
     <button class="full-btn" onclick="trackOrder()" style="margin-top:12px">TRACK ORDER</button>
     <div id="trackResult" style="margin-top:16px"></div>
   </div>
@@ -1038,6 +1037,10 @@ firebase.auth().onAuthStateChanged(u => {
       if (s.exists && s.data().admin === true) {
         isAdmin = true;
         sessionStorage.setItem("cd_admin", "1");
+        if (new URLSearchParams(location.search).has("admin") && !document.getElementById("adminPanel").classList.contains("show")) {
+          document.getElementById("adminLoginModal").classList.remove("show");
+          openAdmin();
+        }
       }
     });
   }
@@ -1302,7 +1305,7 @@ function openPDP(p){
   document.getElementById("pdpPrice").innerHTML = priceHtml;
     const revBox = document.getElementById("pdpReviews");
   if (revBox) {
-    revBox.innerHTML = '<div class="reviews-section"><h4>REVIEWS</h4><div id="reviewsList"></div><div class="review-form"><strong style="font-size:13px">Write a Review:</strong><div class="r-stars-input" id="rStarsInput">' + [1,2,3,4,5].map(n => '<span data-v="'+n+'" onclick="setRating('+n+')">★</span>').join('') + '</div><input id="rName" placeholder="Your name"><input id="rImg" placeholder="Photo URL (optional)"><textarea id="rText" placeholder="Your review..."></textarea><button onclick="submitReview()">SUBMIT REVIEW</button></div></div>';
+    revBox.innerHTML = '<div class="reviews-section"><h4>REVIEWS</h4><div id="reviewsList"></div><div class="review-form"><strong style="font-size:13px">Write a Review:</strong><div class="r-stars-input" id="rStarsInput">' + [1,2,3,4,5].map(n => '<span data-v="'+n+'" onclick="setRating('+n+')">★</span>').join('') + '</div><input id="rName" placeholder="Your name" maxlength="49"><input id="rImg" placeholder="Photo URL (optional)"><textarea id="rText" placeholder="Your review..." maxlength="499"></textarea><button onclick="submitReview()">SUBMIT REVIEW</button></div></div>';
     loadReviews(p.id);
   }
     document.getElementById("stickyPrice").textContent = fmt(p.price);
@@ -1312,7 +1315,7 @@ function openPDP(p){
 const curStock = getStockForColor(p, currentColor.name);
 const allSoldOut = !p.unlimited && colorSoldOut(p, currentColor.name);
 if (allSoldOut) {
-  const imgWrap = document.querySelector(".pdp-img");
+  const imgWrap = document.querySelector(".pdp-images");
   if (imgWrap) {
     const wrap = imgWrap.parentElement || imgWrap;
     wrap.style.position = "relative";
@@ -1333,7 +1336,7 @@ if (allSoldOut) {
   }
 }
   else if(p.soldOut) {
-  const imgWrap = document.querySelector(".pdp-img");
+  const imgWrap = document.querySelector(".pdp-images");
   if (imgWrap) {
     const wrap = imgWrap.parentElement || imgWrap;
     wrap.style.position = "relative";
@@ -1395,6 +1398,7 @@ if (allSoldOut) {
   document.body.style.overflow = "hidden";
 }
 function closePDP(){
+  document.querySelectorAll(".pdp-images").forEach(w => { const p = w.parentElement; if (p) p.querySelectorAll("div").forEach(x => { if (x.textContent === "SOLD OUT" && x.style.position === "absolute") x.remove(); }); });
   document.getElementById("pdp").classList.remove("show");
     document.getElementById("pdpSticky").classList.remove("show");
   document.body.style.overflow = "";
@@ -1428,13 +1432,13 @@ let idx = 0;
       const r = doc.data();
       const d = document.createElement("div");
       d.className = "review-item";
-      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-name">' + esc(r.name) + '</div><div class="r-text">' + esc(r.text) + '</div>' + (r.image ? '<img src="' + r.image + '" style="width:100%;border-radius:8px;margin-top:8px;">' : '');
+      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-name">' + esc(r.name) + '</div><div class="r-text">' + esc(r.text) + '</div>' + (r.image ? '<img src="' + esc(r.image) + '" style="width:100%;border-radius:8px;margin-top:8px;">' : '');
       if (idx >= 5) { d.style.display = "none"; d.dataset.extra = "1"; }
       idx++;
       let myKeys = [];
       try { myKeys = JSON.parse(localStorage.getItem("cd_my_reviews") || "[]"); } catch(e) {}
       const mine = myKeys.includes(r.productId + "|" + r.name + "|" + r.text);
-      if (location.href.includes("admin") || mine) {
+      if (isAdmin) {
         const del = document.createElement("button");
         del.textContent = "DELETE";
         del.style.cssText = "margin-top:6px;background:transparent;color:#e74c3c;border:1px solid #e74c3c;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;";
@@ -1515,7 +1519,10 @@ function addFromPDP(){
   const isFlash = isFlashItem(currentProduct.id);
 const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
-  if (existing) existing.qty++;
+  if (existing) {
+    if (Object.keys(sm).length && (sm[currentSize] || 0) <= existing.qty) { toast("Yeh size sirf " + (sm[currentSize]||0) + " stock mein hai"); return; }
+    existing.qty++;
+  }
   else cart.push({ key, id: currentProduct.id, name: currentProduct.name, price: currentProduct.price, image: (currentColor.images && currentColor.images[0]) || currentProduct.image, size: currentSize, color: currentColor.name, qty: 1 });
     saveCart();
   toast("Added to cart ✅");
@@ -1530,7 +1537,10 @@ function buyNow(){
   const isFlash = isFlashItem(currentProduct.id);
   const key = currentProduct.id + "_" + currentSize + "_" + currentColor.name + (isFlash ? "_flash" : "");
   const existing = cart.find(c => c.key === key);
-  if(existing) existing.qty++;
+  if(existing){
+    if(Object.keys(sm).length && (sm[currentSize]||0) <= existing.qty){ toast("Yeh size sirf " + (sm[currentSize]||0) + " stock mein hai"); return; }
+    existing.qty++;
+  }
   else cart.push({key, id:currentProduct.id, name:currentProduct.name, price:currentProduct.price, size:currentSize, color:currentColor.name, qty:1, image:(currentColor.images && currentColor.images[0]) || currentProduct.image, flash:isFlash});
   buyNowItem = key;
   saveCart();
@@ -1619,6 +1629,11 @@ d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
 }
 function closeCart(){ document.getElementById("cartModal").style.display = "none"; }
 function chQty(i, d){
+  if (d > 0) {
+    const p = products.find(x => x.id === cart[i].id);
+    const sm = p ? (getStockForColor(p, cart[i].color) || {}) : {};
+    if (Object.keys(sm).length && (sm[cart[i].size] || 0) <= cart[i].qty) { toast("Yeh size sirf " + (sm[cart[i].size]||0) + " stock mein hai"); return; }
+  }
   cart[i].qty += d;
   if (cart[i].qty <= 0) cart.splice(i, 1);
   saveCart();
@@ -1768,6 +1783,16 @@ async function placeOrder(){
       btn.textContent = "PLACE ORDER";
       return;
     }
+    if (p && !p.unlimited) {
+      const sm2 = getStockForColor(p, it.color) || {};
+      if (Object.keys(sm2).length && (sm2[it.size] || 0) < it.qty) {
+        toast("⚠️ " + p.name + " (" + it.size + ") stock khatam ho gaya. Cart se hatao.");
+        isPlacing = false;
+        btn.disabled = false;
+        btn.textContent = "PLACE ORDER";
+        return;
+      }
+    }
     }
   try {
     const docId = "JZB" + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[b % 32]).join("");
@@ -1824,6 +1849,7 @@ function openAdmin(){
   loadOrders();
 }
 function closeAdmin(){
+  if (unsubOrders) { unsubOrders(); unsubOrders = null; }
   firebase.auth().signOut();
   sessionStorage.removeItem("cd_admin");
   isAdmin = false;
@@ -1858,7 +1884,7 @@ function loadCustomers(){
       const d = document.createElement("div");
       d.className = "ap-item";
       const num = c.phone.replace(/[^0-9]/g, "").replace(/^0/, "");
-      d.innerHTML = '<div class="ap-info"><div class="ap-name">' + c.name + '</div><div class="ap-meta">' + c.phone + ' | ' + c.orders + ' order(s) | ' + fmt(c.spent) + '</div></div><button onclick="location.href=\'https://wa.me/92' + num + '?text=Hello ' + c.name + ', JAZB se hai. Kya haal hai?\'">WHATSAPP</button>';
+      d.innerHTML = '<div class="ap-info"><div class="ap-name">' + esc(c.name) + '</div><div class="ap-meta">' + esc(c.phone) + ' | ' + c.orders + ' order(s) | ' + fmt(c.spent) + '</div></div><button onclick="location.href=\'https://wa.me/92' + num + '?text=Hello ' + encodeURIComponent(c.name) + ', JAZB se hai. Kya haal hai?\'">WHATSAPP</button>';
       list.appendChild(d);
     });
   });
@@ -1896,7 +1922,7 @@ function loadStats(){
       +'<h3 style="font-size:14px;letter-spacing:1px;margin-bottom:10px">TOP PRODUCTS</h3>'
       +(top.length?top.map(t=>'<div style="background:#fff;border:1px solid #eee;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between"><span style="font-size:13px">'+t[0]+'</span><strong style="font-size:13px">'+t[1]+'</strong></div>').join(""):'<p class="empty">No sales yet</p>')
       +'<h3 style="font-size:14px;letter-spacing:1px;margin:16px 0 10px">THIS MONTH</h3>'
-      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Orders</span><strong>'+orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()&&new Date(o.createdAt.toDate()).getFullYear()===new Date().getFullYear()).length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Revenue</span><strong>'+fmt(orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).reduce((a,o)=>a+Number(o.total||0),0))+'</strong></div></div>';
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Orders</span><strong>'+orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()&&new Date(o.createdAt.toDate()).getFullYear()===new Date().getFullYear()).length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Revenue</span><strong>'+fmt(orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()&&new Date(o.createdAt.toDate()).getFullYear()===new Date().getFullYear()).reduce((a,o)=>a+Number(o.total||0),0))+'</strong></div></div>';
   });
 }
 function loadAdminProducts(){
@@ -2276,8 +2302,8 @@ function loadOrders(){
           + '</div>';
       }).join("");
       d.innerHTML = '<div class="oc-head"><strong>' + esc(o.customer) + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
-        + '<div class="oc-row">Phone: ' + o.phone + '</div>'
-        + (o.email ? '<div class="oc-row">Email: ' + o.email + '</div>' : '')
+        + '<div class="oc-row">Phone: ' + esc(o.phone) + '</div>'
+        + (o.email ? '<div class="oc-row">Email: ' + esc(o.email) + '</div>' : '')
         + '<div class="oc-row">Address: ' + esc(o.address) + ', ' + esc(o.city) + '</div>'
         + (o.notes ? '<div class="oc-row">Notes: ' + esc(o.notes) + '</div>' : '')
         + '<div class="oc-row" style="font-size:11px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleString() : "N/A") + '</div>'
@@ -2314,7 +2340,7 @@ async function updateStatus(id, status){
   if(!isAdmin) return;
   try {
     const od = await db.collection("orders").doc(id).get();
-    if (status === "Cancelled" && od.exists) await restockOrder(od.data());
+    if (status === "Cancelled" && od.exists && ["Confirmed","Shipping","Delivered"].includes(od.data().status)) await restockOrder(od.data());
     await db.collection("orders").doc(id).update({ status });
     if (status === "Confirmed") {
       for (const it of (od.data().items || [])) {
@@ -2362,7 +2388,7 @@ async function deleteOrder(id){
   if(!confirm("Delete this order?")) return;
   try {
     const od = await db.collection("orders").doc(id).get();
-    if (od.exists && od.data().status !== "Cancelled") await restockOrder(od.data());
+    if (od.exists && ["Confirmed","Shipping","Delivered"].includes(od.data().status)) await restockOrder(od.data());
     await db.collection("orders").doc(id).delete();
     toast("Order deleted");
   } catch(e) { toast(e.message); }
@@ -2433,7 +2459,7 @@ function trackOrder(){
       });
       timeline += '</div>';
       d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
-        + '<strong style="font-size:15px">' + o.customer + '</strong>'
+        + '<strong style="font-size:15px">' + esc(o.customer) + '</strong>'
         + '<span class="track-status ' + o.status + '">' + o.status + '</span>'
         + '</div>'
         + timeline
@@ -2643,7 +2669,7 @@ BUNDLE_ON=on;
     const arr=[];
     snap.forEach(d=>arr.push(d.data()));
     arr.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-    el.innerHTML=arr.map((s,i)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px;background:#fafafa"><div><div style="font-size:13px;font-weight:600">'+(i+1)+'. '+(s.email||"")+'</div><div style="font-size:11px;color:#999">'+(s.date?new Date(s.date).toLocaleDateString():"")+'</div></div><button onclick="deleteSub(\''+(s.email||"")+'\')" style="background:#c0392b;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer">DELETE</button></div>').join("");
+    el.innerHTML=arr.map((s,i)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px;background:#fafafa"><div><div style="font-size:13px;font-weight:600">'+(i+1)+'. '+esc(s.email||"")+'</div><div style="font-size:11px;color:#999">'+(s.date?new Date(s.date).toLocaleDateString():"")+'</div></div><button onclick="deleteSub(\''+(s.email||"")+'\')" style="background:#c0392b;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer">DELETE</button></div>').join("");
   });
 }
 function deleteSub(email){
@@ -2723,14 +2749,15 @@ function updateDarkBtn(){
 }
 function toggleDark(){
   document.body.classList.toggle("dark");
+  localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
   updateDarkBtn();
 }
 function applyAutoDark(){
-  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    document.body.classList.add("dark");
-  } else {
-    document.body.classList.remove("dark");
-  }
+  const saved = localStorage.getItem("cd_dark");
+  if (saved === "1") document.body.classList.add("dark");
+  else if (saved === "0") document.body.classList.remove("dark");
+  else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) document.body.classList.add("dark");
+  else document.body.classList.remove("dark");
   updateDarkBtn();
 }
 if(document.body){ applyAutoDark(); }
@@ -2748,6 +2775,7 @@ function closeAll(){
 function joinNewsletter(){
   const e = document.getElementById("nlEmail").value.trim();
   if (!e) { toast("Enter your email"); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { toast("Sahi email likho (jaise name@gmail.com)"); return; }
   db.collection("subscribers").add({ email: e, date: new Date().toISOString() }).then(() => {
     toast("Thanks for subscribing!");
     document.getElementById("nlEmail").value = "";
@@ -2810,7 +2838,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFlashSale();
     if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
       });
-  if (location.search.includes("admin")) {
+  if (new URLSearchParams(location.search).has("admin")) {
     if (isAdmin) {
       openAdmin();
     } else {
