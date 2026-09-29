@@ -2858,6 +2858,51 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
 <script>document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll("section,.p-card,.review-item").forEach(el=>el.classList.add("fade-in"))});</script>
 <script>document.addEventListener("scroll",()=>{document.querySelectorAll(".fade-in").forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight-60)el.classList.add("visible")})});window.addEventListener("load",()=>{document.querySelectorAll(".fade-in").forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight-60)el.classList.add("visible")})});</script>
+  <!-- ADMIN REVIEW MANAGER -->
+<div id="adminReviewManager" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#111; color:#fff; padding:12px; max-height:60vh; overflow-y:auto; z-index:9999; box-shadow:0 -4px 12px rgba(0,0,0,.3);">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <strong>🗑 Reviews Manager</strong>
+    <button onclick="document.getElementById('adminReviewManager').style.display='none'" style="background:#e33; color:#fff; border:none; padding:6px 12px; border-radius:4px;">Close</button>
+  </div>
+  <div id="adminReviewList"></div>
+</div>
+<button id="adminReviewBtn" onclick="openAdminReviews()" style="display:none; position:fixed; bottom:80px; right:16px; background:#e33; color:#fff; border:none; padding:10px 14px; border-radius:50px; z-index:9998; box-shadow:0 2px 8px rgba(0,0,0,.3);">🗑 Reviews</button>
+<script>
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function openAdminReviews(){
+  document.getElementById('adminReviewManager').style.display = 'block';
+  loadAdminReviews();
+}
+async function loadAdminReviews(){
+  const list = document.getElementById('adminReviewList');
+  list.innerHTML = 'Loading...';
+  try {
+    const snap = await db.collection('reviews').get();
+    if (snap.empty) { list.innerHTML = 'No reviews yet.'; return; }
+    let html = '';
+    snap.forEach(doc => {
+      const r = doc.data();
+      html += '<div style="background:#222; padding:10px; border-radius:8px; margin-bottom:8px;">'
+        + '<div style="font-weight:600;">' + esc(r.name) + ' — ' + '★'.repeat(r.rating||0) + '</div>'
+        + '<div style="color:#aaa; font-size:13px;">' + esc(r.text) + '</div>'
+        + '<div style="color:#666; font-size:12px; margin:4px 0;">Product: ' + esc(r.productId) + '</div>'
+        + '<button onclick="deleteAdminReview(\'' + doc.id + '\')" style="background:#e33; color:#fff; border:none; padding:6px 12px; border-radius:4px;">Delete</button>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+  } catch(e) { list.innerHTML = 'Error: ' + e.message; }
+}
+async function deleteAdminReview(id){
+  if (!confirm('Delete this review?')) return;
+  try {
+    await db.collection('reviews').doc(id).delete();
+    loadAdminReviews();
+  } catch(e) { alert('Delete failed: ' + e.message); }
+}
+if (window.location.search.includes('admin')) {
+  document.getElementById('adminReviewBtn').style.display = 'block';
+}
+</script>
   </body>
   
 </html>
