@@ -1795,7 +1795,7 @@ async function placeOrder(){
     }
     }
   try {
-    const docId = "JZB" + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[b % 32]).join("");
+    const docId = "JZB" + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[b % 31]).join("");
     order.orderId = docId;
     order.trackToken = docId;
     await db.collection("orders").doc(docId).set(order);
