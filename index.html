@@ -913,7 +913,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
           <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
     <select id="setFlash" style="margin-bottom:8px"></select>
     <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
-  <button onclick="localStorage.removeItem('cd_flash');renderFlashSale();toast('Flash sale removed')" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
+  <button onclick="removeFlashProduct()" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
       <h3 style="margin:20px 0 10px">INSTAGRAM IMAGES (6 posts)</h3>
     <input id="setInsta1" placeholder="Instagram image 1 URL">
     <input id="setInsta2" placeholder="Instagram image 2 URL" style="margin-top:8px">
@@ -965,7 +965,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="modal-card">
     <div class="modal-head"><h2 id="pfTitle">ADD PRODUCT</h2><button onclick="closeProductForm()">&#10005;</button></div>
     <input type="hidden" id="pfId">
-    <input type="text" id="p_color0" placeholder="Color (e.g. Black)" style="width:100%;padding:12px;border:1px solid #444;border-radius:8px;background:#1a1a1a;color:#fff;margin-bottom:8px;font-size:14px">
+
     <input id="pfName" placeholder="Product Name">
     <select id="pfCat"></select>
     <input id="pfPrice" type="number" placeholder="Price (Rs.)">
@@ -992,7 +992,7 @@ async function sendMail(to, subject, html){
     }, EMAILJS_PUBLIC_KEY);
   } catch(e) { console.log("Email error: " + e.message); }
 }
-const ADMIN_PASSWORD = "1127shehroz";
+
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
   const DELIVERY_FREE_ABOVE = 3000;
 const DELIVERY_CHARGE = 200;
@@ -1044,6 +1044,7 @@ firebase.auth().onAuthStateChanged(u => {
 });
   function colorHex(n){n=(n||'').toLowerCase();if(n.includes('black'))return'#111';if(n.includes('white'))return'#fff';if(n.includes('red'))return'#d32f2f';if(n.includes('blue'))return'#1565c0';if(n.includes('green'))return'#2e7d32';if(n.includes('grey')||n.includes('gray'))return'#9e9e9e';if(n.includes('navy'))return'#1a237e';if(n.includes('brown'))return'#6d4c41';if(n.includes('yellow'))return'#fbc02d';if(n.includes('orange'))return'#ef6c00';if(n.includes('pink'))return'#ec407a';if(n.includes('purple'))return'#7b1fa2';if(n.includes('beige')||n.includes('khaki'))return'#d7ccc8';if(n.includes('default'))return'#888';return'#bbb';}
 function fmt(n){ return "Rs. " + Number(n).toLocaleString(); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); } 
 function renderTabs(){
   const t = document.getElementById("catTabs");
   t.innerHTML = "";
@@ -1427,7 +1428,7 @@ let idx = 0;
       const r = doc.data();
       const d = document.createElement("div");
       d.className = "review-item";
-      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-name">' + r.name + '</div><div class="r-text">' + r.text + '</div>' + (r.image ? '<img src="' + r.image + '" style="width:100%;border-radius:8px;margin-top:8px;">' : '');
+      d.innerHTML = '<div class="r-stars">' + "★".repeat(r.rating) + "☆".repeat(5 - r.rating) + '</div><div class="r-name">' + esc(r.name) + '</div><div class="r-text">' + esc(r.text) + '</div>' + (r.image ? '<img src="' + r.image + '" style="width:100%;border-radius:8px;margin-top:8px;">' : '');
       if (idx >= 5) { d.style.display = "none"; d.dataset.extra = "1"; }
       idx++;
       let myKeys = [];
@@ -1751,8 +1752,8 @@ async function placeOrder(){
   const items = cart.map(c => { const p = products.find(x => x.id === c.id); const fp = (isFlashItem(c.id) && p) ? flashPrice(p) : c.price; total += fp * c.qty; return { id: c.id, name: c.name, size: c.size, color: c.color, qty: c.qty, price: fp }; });
   const delivery = (hasFlash || total < DELIVERY_FREE_ABOVE) ? DELIVERY_CHARGE : 0;
   let bSaved = 0, tC = 0, tT = 0;
-  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id)) { tC += c.qty; tT += c.price * c.qty; } });
-   if (tC >= 2 && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2); if (bP < tT) bSaved = tT - bP; }
+  cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id) && c.price * 2 > BUNDLE_PRICE) { tC += c.qty; tT += c.price * c.qty; } });
+   if (tC >= 2 && BUNDLE_ON && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2) + (tC % 2) * (tT / tC); if (bP < tT) bSaved = tT - bP; }
   const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
   const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
     for (const it of items) {
@@ -2280,11 +2281,11 @@ function loadOrders(){
           + '<div><div style="font-size:13px;font-weight:600">'+i.name+'</div><div style="font-size:12px;color:#888">'+(i.color||'-')+' | Size: '+i.size+' | x'+i.qty+'</div></div>'
           + '</div>';
       }).join("");
-      d.innerHTML = '<div class="oc-head"><strong>' + o.customer + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
+      d.innerHTML = '<div class="oc-head"><strong>' + esc(o.customer) + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
         + '<div class="oc-row">Phone: ' + o.phone + '</div>'
         + (o.email ? '<div class="oc-row">Email: ' + o.email + '</div>' : '')
         + '<div class="oc-row">Address: ' + o.address + ', ' + o.city + '</div>'
-        + (o.notes ? '<div class="oc-row">Notes: ' + o.notes + '</div>' : '')
+        + (o.notes ? '<div class="oc-row">Notes: ' + esc(o.notes) + '</div>' : '')
         + '<div class="oc-row" style="font-size:11px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleString() : "N/A") + '</div>'
         + '<div class="oc-items">' + itemsHtml + '</div>'
         + '<div class="oc-row" style="font-weight:700">Total: ' + fmt(o.total) + '</div>'
@@ -2368,7 +2369,7 @@ async function deleteOrder(id){
   },
   guide: {
     title: "SHOPPING GUIDE",
-    body: '<div class="info-step"><div class="num">1</div><div><strong>Choose Your Product</strong>Pick a style, select your size and color. Size guide check karo agar unsure ho.</div></div><div class="info-step"><div class="num">2</div><div><strong>Add to Cart</strong>Tap "Add to Cart". Ek order mein multiple items add kar sakte ho.</div></div><div class="info-step"><div class="num">3</div><div><strong>Checkout</strong>Apna name, phone, email aur full delivery address daalo.</div></div><div class="info-step"><div class="num">4</div><div><strong>We Confirm on WhatsApp</strong>Hamari team aapko WhatsApp pe call/message kar ke order confirm karegi.</div></div><div class="info-step"><div class="num">5</div><div><strong>Delivery in 2-5 Days</strong>Cash on delivery. Apne phone number se order track karo jab bhi.</div></div>'
+    body: '<div class="info-step"><div class="num">1</div><div><strong>Choose Your Product</strong>Pick a style, select your size and color. Size guide check karo agar unsure ho.</div></div><div class="info-step"><div class="num">2</div><div><strong>Add to Cart</strong>Tap "Add to Cart". Ek order mein multiple items add kar sakte ho.</div></div><div class="info-step"><div class="num">3</div><div><strong>Checkout</strong>Apna name, phone, email aur full delivery address daalo.</div></div><div class="info-step"><div class="num">4</div><div><strong>We Confirm on WhatsApp</strong>Hamari team aapko WhatsApp pe call/message kar ke order confirm karegi.</div></div><div class="info-step"><div class="num">5</div><div><strong>Delivery in 2-5 Days</strong>Cash on delivery. Apne Order ID se order track karo jab bhi.</div></div>'
   },
   returns: {
     title: "EXCHANGE & RETURNS",
@@ -2376,7 +2377,7 @@ async function deleteOrder(id){
   },
   shipping: {
     title: "SHIPPING & DELIVERY",
-    body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 200 for orders under Rs. 3,000.<br><strong>FREE delivery</strong> on orders above Rs. 3,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne phone number se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
+    body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 200 for orders under Rs. 3,000.<br><strong>FREE delivery</strong> on orders above Rs. 3,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne Order ID se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
   },
   contact: {
     title: "CONTACT US",
@@ -2407,13 +2408,13 @@ function openTrack(){
 }
   function closeTrack(){ document.getElementById("trackModal").style.display="none"; }
 function trackOrder(){
-  const val = document.getElementById("trackPhone").value.trim();
+  const val = document.getElementById("trackPhone").value.trim().toUpperCase();
   if (!val) { toast("Enter your Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
   const q = db.collection("orders").where("orderId", "==", val);
   q.get().then(snap => {
-    if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your phone number or Order ID.</p>'; return; }
+    if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your Order ID.</p>'; return; }
     res.innerHTML = "";
     const steps = ["Pending", "Confirmed", "Shipping", "Delivered"];
     snap.forEach(doc => {
@@ -2650,9 +2651,25 @@ function deleteSub(email){
 function setFlashProduct(){
   const sel=document.getElementById("setFlash");
   if(!sel.value){ toast("Select a product"); return; }
-  localStorage.setItem("cd_flash", sel.value);
-  renderFlashSale();
-  toast("Flash sale set ✅");
+  const val=sel.value;
+  db.collection("settings").doc("site").get().then(doc=>{
+    if(doc.exists) return db.collection("settings").doc("site").update({flashProduct:val});
+    return db.collection("settings").doc("site").set({flashProduct:val});
+  }).then(()=>{
+    localStorage.setItem("cd_flash",val);
+    renderFlashSale();
+    toast("Flash sale set ✅");
+  }).catch(e=>toast("Error: "+e.message));
+}
+function removeFlashProduct(){
+  db.collection("settings").doc("site").get().then(doc=>{
+    if(doc.exists) return db.collection("settings").doc("site").update({flashProduct:null});
+    return Promise.resolve();
+  }).then(()=>{
+    localStorage.removeItem("cd_flash");
+    renderFlashSale();
+    toast("Flash sale removed");
+  }).catch(e=>toast("Error: "+e.message));
 }
 function applySettings(s){
   if (s.logo) document.getElementById("logoImg").src = s.logo;
@@ -2673,6 +2690,7 @@ function applySettings(s){
     document.getElementById("waBtn").onclick = () => location.href = "https://wa.me/" + num;
   }
     applyBundle(s);
+  if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); }
   for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
   renderInstaGrid();
 }
