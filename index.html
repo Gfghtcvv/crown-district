@@ -630,7 +630,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   </style>
 </head>
 <body>
-  <div id="announceBar">FREE DELIVERY on Rs. 3,000+ 🚚 &nbsp;|&nbsp; FREE CAP on Rs. 5,000+ 🧢 🚚</div>
+  <div id="announceBar">FREE DELIVERY on Rs. 5,000+ 🚚 &nbsp;|&nbsp; FREE CAP on Rs. 5,000+ 🧢 🚚</div>
   <div id="saleBar" style="background:#c0392b;color:#fff;text-align:center;padding:6px 12px;font-size:12px;font-weight:700;letter-spacing:.5px">🔥 SALE ENDS IN <span id="saleTimer">23:59:59</span></div>
   <div id="loader"><div class="spinner"></div><p>JAZB</p></div>
   <div id="toast"></div>
@@ -721,7 +721,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How long does delivery take?</div><div class="a">2-5 working days within Pakistan. You will get a tracking update via WhatsApp.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the return policy?</div><div class="a">Size exchange within 7 days of delivery. Item must be unworn with tags. Contact us on WhatsApp for exchange.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I track my order?</div><div class="a">Use the "Track Order" button in the footer. Enter your Order ID (from your confirmation or receipt email) to see your order status.</div></div>
-  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the delivery charge?</div><div class="a">Rs. 200 for orders under Rs. 3,000. FREE delivery on orders above Rs. 3,000.</div></div>
+  <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">What is the delivery charge?</div><div class="a">Rs. 250 for orders under Rs. 5,000. FREE delivery on orders above Rs. 5,000.</div></div>
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I pay?</div><div class="a">Cash on delivery (COD) available across Pakistan. We will confirm your order via WhatsApp before shipping.</div></div>
   </div>
 <section>
@@ -774,7 +774,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
         <p class="pdp-desc" id="pdpDesc"></p>
         <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button><div class="acc-body"><div style="margin:0 0 12px;padding:12px;background:#f5f5f5;border-radius:10px"><p style="margin:0 0 8px;font-weight:700;font-size:14px">Find Your Size</p><div style="display:flex;gap:8px"><input type="number" id="sgChest" placeholder="Chest (inch)" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px"><button onclick="sgRecommend()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px">GO</button></div><div id="sgResult" style="margin-top:10px;font-weight:700;font-size:16px"></div></div>S: 38-40 inch chest<br>M: 40-42 inch chest<br>L: 42-44 inch chest<br>XL: 44-46 inch chest<br>XXL: 46-48 inch chest</div></div>
         <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">PRODUCT DETAILS</button><div class="acc-body">Premium quality fabric. Pre-shrunk. Machine wash cold. Made in Pakistan.</div></div>
-        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">DELIVERY INFO</button><div class="acc-body">Cash on delivery all over Pakistan. Delivery 2-5 working days. Free delivery above Rs. 3000.</div></div>
+        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">DELIVERY INFO</button><div class="acc-body">Cash on delivery all over Pakistan. Delivery 2-5 working days. Free delivery above Rs. 5000.</div></div>
       </div>
     </div>
     <div class="pdp-related">
@@ -994,8 +994,8 @@ async function sendMail(to, subject, html){
 }
 
 const EMAILJS_PUBLIC_KEY = "onKfdiuEHid3NeRnn";
-  const DELIVERY_FREE_ABOVE = 3000;
-const DELIVERY_CHARGE = 200;
+  const DELIVERY_FREE_ABOVE = 5000;
+const DELIVERY_CHARGE = 250;
 let BUNDLE_PRICE = 3500;
 let BUNDLE_ON = true;
 function isFlashItem(id){ return id === (localStorage.getItem("cd_flash") || ""); }
@@ -1121,7 +1121,7 @@ function renderProducts(){
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
     d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
-    productSoldOut(p) ? '<span class="sold-badge">SOLD OUT</span>' : ''
+    if (productSoldOut(p)) { const sb = document.createElement("span"); sb.className = "sold-badge"; sb.style.cssText = "position:absolute;top:48px;left:10px;z-index:2"; sb.textContent = "SOLD OUT"; d.appendChild(sb); }
     const wb = document.createElement("button");
 wb.className = "wish-btn";
 wb.dataset.id = p.id;
@@ -1610,7 +1610,7 @@ d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
       total += fp * c.qty;
       const d = document.createElement("div");
       d.className = "cart-item";
-      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ FLASH</span>' : '') + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(c.price * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
+      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ FLASH</span>' : '') + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(fp * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
       items.appendChild(d);
     });
     document.getElementById("cartTotal").textContent = fmt(total);
@@ -1643,7 +1643,7 @@ function applyCoupon(){
   if (code === COUPON_NAME) {
     if (total >= 3000) {
       couponDiscount = 10;
-      msg.textContent = "10% discount applied! ✅ (Bundle deal nahi lagegi)";
+      msg.textContent = "10% discount applied! ✅ (System behtar deal khud lagayega)";
       msg.className = "coupon-msg ok";
       openCheckout();
     } else {
@@ -1666,7 +1666,7 @@ function openCheckout(){
   const hasFlash = cart.some(c => isFlashItem(c.id));
   if (hasFlash) couponDiscount = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id) && c.price * 2 > BUNDLE_PRICE) { tCount += c.qty; tTotal += c.price * c.qty; } });
-  if (tCount >= 2 && BUNDLE_ON) { const bundles = Math.floor(tCount / 2); const singles = tCount % 2; const bPrice = bundles * BUNDLE_PRICE + singles * (tTotal / tCount); if (bPrice < tTotal) { bundleSaved = tTotal - bPrice; total = total - bundleSaved; } } 
+  if (tCount >= 2 && BUNDLE_ON) { const bundles = Math.floor(tCount / 2); const singles = tCount % 2; const bPrice = bundles * BUNDLE_PRICE + singles * (tTotal / tCount); if (bPrice < tTotal) bundleSaved = tTotal - bPrice; }  
   const s = document.getElementById("checkoutSummary");
   s.innerHTML = "<strong>ORDER SUMMARY</strong>";
   cart.forEach(c => {
@@ -1675,18 +1675,20 @@ function openCheckout(){
     total += fp * c.qty;
     s.innerHTML += '<div class="sum-row"><span>' + c.name + ' (' + c.size + ') x' + c.qty + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ 50% OFF</span>' : '') + '</span><span>' + fmt(fp * c.qty) + '</span></div>';
   });
+  const coupSaved = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
+  if (coupSaved > bundleSaved) bundleSaved = 0;
+  const bestSaved = Math.max(bundleSaved, coupSaved);
     const delivery = (hasFlash || total < DELIVERY_FREE_ABOVE) ? DELIVERY_CHARGE : 0;
-  let grandTotal = total + delivery;
-    if (couponDiscount > 0 && bundleSaved === 0) {
-    const discAmt = Math.round(total * couponDiscount / 100);
-    s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>DISCOUNT (' + couponDiscount + '%)</span><span>-' + fmt(discAmt) + '</span></div>';
-    }
-  if (bundleSaved > 0) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ' + BUNDLE_PRICE.toLocaleString() + ')</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
+  let grandTotal = total + delivery - bestSaved;
+  if (coupSaved > 0 && coupSaved >= bundleSaved) {
+    s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>DISCOUNT (' + couponDiscount + '%)</span><span>-' + fmt(coupSaved) + '</span></div>';
+  }
+  if (bundleSaved > 0 && bundleSaved >= coupSaved) { s.innerHTML += '<div class="sum-row" style="color:#25D366"><span>BUNDLE DEAL (2 T-shirts = Rs. ' + BUNDLE_PRICE.toLocaleString() + ')</span><span>-' + fmt(bundleSaved) + '</span></div>'; }
   s.innerHTML += '<div class="sum-row"><span>DELIVERY</span><span>' + (delivery === 0 ? 'FREE' : fmt(delivery)) + '</span></div>';
   s.innerHTML += '<div style="font-size:11px;color:#999;margin-top:2px">Delivery: 2-5 working days (COD)</div>';
   if (total >= 5000 && !hasFlash) { s.innerHTML += '<div style="font-size:13px;color:#c0392b;font-weight:700;margin-top:6px">🎁 Rs. 5,000+ order pe FREE CAP milega!</div>'; }
-  if (delivery > 0) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">' + ' aur add karo FREE delivery ke liye!</div>'; }
-    if (couponDiscount > 0 && bundleSaved === 0) { grandTotal -= Math.round(total * couponDiscount / 100); }
+  if (delivery > 0 && !hasFlash) { s.innerHTML += '<div style="font-size:12px;color:#25D366;margin-top:4px">🚚 ' + fmt(DELIVERY_FREE_ABOVE - total) + ' aur add karo FREE delivery ke liye!</div>'; } 
+    // best discount already applied to total
   s.innerHTML += '<div class="sum-row" style="font-weight:700;border-top:1px solid #eee;margin-top:6px;padding-top:6px"><span>TOTAL</span><span>' + fmt(grandTotal) + '</span></div>';
     const cm = document.getElementById("couponMsg");
   if (cm) {
@@ -1710,7 +1712,7 @@ function closeCheckout(){
   document.getElementById("coCoupon").value = "";
   document.getElementById("couponMsg").textContent = "";
   document.body.style.overflow = "";
-  ["coName","coPhone","coEmail","coAddress","coCity","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+  ["coName","coPhone","coEmail","coAddress","coCity","coCityOther","coNotes"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
 }
 function notifyAdmin(docId, name, phone, email, addr, itemsStr, total){
   const body = "Customer: " + name + "\nPhone: " + phone + "\nEmail: " + email + "\nAddress: " + addr + "\nItems: " + itemsStr + "\nTotal: Rs. " + total;
@@ -1753,8 +1755,9 @@ async function placeOrder(){
   const delivery = (hasFlash || total < DELIVERY_FREE_ABOVE) ? DELIVERY_CHARGE : 0;
   let bSaved = 0, tC = 0, tT = 0;
   cart.forEach(c => { const p = products.find(x => x.id === c.id); if (p && p.category === "T-SHIRTS" && !isFlashItem(c.id) && c.price * 2 > BUNDLE_PRICE) { tC += c.qty; tT += c.price * c.qty; } });
-   if (tC >= 2 && BUNDLE_ON && couponDiscount === 0) { const bP = BUNDLE_PRICE * Math.floor(tC / 2) + (tC % 2) * (tT / tC); if (bP < tT) bSaved = tT - bP; }
-  const grandTotal = total + delivery - bSaved - (couponDiscount > 0 ? Math.round(total * couponDiscount / 100) : 0);
+   if (tC >= 2 && BUNDLE_ON) { const bP = BUNDLE_PRICE * Math.floor(tC / 2) + (tC % 2) * (tT / tC); if (bP < tT) bSaved = tT - bP; }
+  const cSaved2 = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
+  const grandTotal = total + delivery - Math.max(bSaved, cSaved2);
   const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
     for (const it of items) {
     const p = products.find(x => x.id === it.id);
@@ -1767,20 +1770,11 @@ async function placeOrder(){
     }
     }
   try {
-    const docId = "JZB" + Date.now().toString().slice(-6);
+    const docId = "JZB" + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[b % 32]).join("");
     order.orderId = docId;
-    await db.collection("orders").add(order);
-for (const it of items) {
-  const p = products.find(x => x.id === it.id);
-  if (p && p.stock && !p.unlimited && it.color) {
-    const cs = getStockForColor(p, it.color) || {};
-    if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
-      cs[it.size] = cs[it.size] - (it.qty || 1);
-      const newStock = { ...p.stock, [it.color]: cs };
-      await db.collection("products").doc(it.id).update({ stock: newStock });
-    }
-  }
-}
+    order.trackToken = docId;
+    await db.collection("orders").doc(docId).set(order);
+
     cart = [];
     saveCart();
     couponDiscount = 0;
@@ -1902,7 +1896,7 @@ function loadStats(){
       +'<h3 style="font-size:14px;letter-spacing:1px;margin-bottom:10px">TOP PRODUCTS</h3>'
       +(top.length?top.map(t=>'<div style="background:#fff;border:1px solid #eee;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between"><span style="font-size:13px">'+t[0]+'</span><strong style="font-size:13px">'+t[1]+'</strong></div>').join(""):'<p class="empty">No sales yet</p>')
       +'<h3 style="font-size:14px;letter-spacing:1px;margin:16px 0 10px">THIS MONTH</h3>'
-      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Orders</span><strong>'+orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Revenue</span><strong>'+fmt(orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).reduce((a,o)=>a+Number(o.total||0),0))+'</strong></div></div>';
+      +'<div style="background:#fff;border:1px solid #eee;padding:14px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Orders</span><strong>'+orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()&&new Date(o.createdAt.toDate()).getFullYear()===new Date().getFullYear()).length+'</strong></div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Revenue</span><strong>'+fmt(orders.filter(o=>o.createdAt&&new Date(o.createdAt.toDate()).getMonth()===new Date().getMonth()).reduce((a,o)=>a+Number(o.total||0),0))+'</strong></div></div>';
   });
 }
 function loadAdminProducts(){
@@ -2284,7 +2278,7 @@ function loadOrders(){
       d.innerHTML = '<div class="oc-head"><strong>' + esc(o.customer) + '</strong><span class="status ' + o.status + '">' + o.status + '</span></div>'
         + '<div class="oc-row">Phone: ' + o.phone + '</div>'
         + (o.email ? '<div class="oc-row">Email: ' + o.email + '</div>' : '')
-        + '<div class="oc-row">Address: ' + o.address + ', ' + o.city + '</div>'
+        + '<div class="oc-row">Address: ' + esc(o.address) + ', ' + esc(o.city) + '</div>'
         + (o.notes ? '<div class="oc-row">Notes: ' + esc(o.notes) + '</div>' : '')
         + '<div class="oc-row" style="font-size:11px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleString() : "N/A") + '</div>'
         + '<div class="oc-items">' + itemsHtml + '</div>'
@@ -2322,6 +2316,17 @@ async function updateStatus(id, status){
     const od = await db.collection("orders").doc(id).get();
     if (status === "Cancelled" && od.exists) await restockOrder(od.data());
     await db.collection("orders").doc(id).update({ status });
+    if (status === "Confirmed") {
+      for (const it of (od.data().items || [])) {
+        const p = products.find(x => x.id === it.id);
+        if (!p || p.unlimited || !p.stock) continue;
+        const cs = getStockForColor(p, it.color) || {};
+        if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
+          cs[it.size] = cs[it.size] - (it.qty || 1);
+          await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
+        }
+      }
+    }
         if (status === "Cancelled" && od.exists && od.data().email) {
       sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
         }
@@ -2377,7 +2382,7 @@ async function deleteOrder(id){
   },
   shipping: {
     title: "SHIPPING & DELIVERY",
-    body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 200 for orders under Rs. 3,000.<br><strong>FREE delivery</strong> on orders above Rs. 3,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne Order ID se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
+    body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 250 for orders under Rs. 5,000.<br><strong>FREE delivery</strong> on orders above Rs. 5,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne Order ID se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
   },
   contact: {
     title: "CONTACT US",
@@ -2444,7 +2449,7 @@ function trackOrder(){
       }).join("") + '</div>'
         + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
         + '<div class="track-info" style="margin-top:10px;font-size:12px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : "N/A") + '</div>'
-              + (o.status === "Pending" || o.status === "Confirmed" ? '<button onclick="cancelOrder(\'' + o.orderId + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
+              + (o.status === "Pending" ? '<button onclick="cancelOrder(\'' + o.orderId + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
 + (o.status === "Cancelled" ? '<button onclick="removeCancelled(\'' + o.orderId + '\')" style="margin-top:12px;background:#555;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE CANCELLED ORDER</button>' : '')
       res.appendChild(d);
     });
@@ -2690,7 +2695,7 @@ function applySettings(s){
     document.getElementById("waBtn").onclick = () => location.href = "https://wa.me/" + num;
   }
     applyBundle(s);
-  if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); }
+  if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); } else if(s.flashProduct === null){ localStorage.removeItem("cd_flash"); renderFlashSale(); } 
   for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
   renderInstaGrid();
 }
