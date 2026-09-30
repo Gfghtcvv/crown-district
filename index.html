@@ -1443,7 +1443,10 @@ let idx = 0;
         const del = document.createElement("button");
         del.textContent = "DELETE";
         del.style.cssText = "margin-top:6px;background:transparent;color:#e74c3c;border:1px solid #e74c3c;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;";
-        del.onclick = () => { if (confirm("Delete this review?")) db.collection("reviews").doc(doc.id).delete().then(()=>loadReviews(currentProduct.id)); };
+        del.onclick = () => {
+          if (isAdmin) { if (confirm("Delete this review?")) db.collection("reviews").doc(doc.id).delete().then(()=>loadReviews(currentProduct.id)); }
+          else { location.href = "https://wa.me/923358134489?text=" + encodeURIComponent("Assalam o Alaikum, apna review delete karwana chahta hoon.\n\nReview ID: " + doc.id + "\nProduct: " + currentProduct.name + "\nNaam: " + r.name); }
+        };
         d.appendChild(del);
       }
       list.appendChild(d);
