@@ -848,7 +848,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   </div>
 </div>
 <div id="adminPanel" class="admin-panel">
-  <div class="admin-head"><h2>ADMIN PANEL</h2><button onclick="closeAdmin()">LOG OUT</button></div>
+  <div class="admin-head"><h2>ADMIN PANEL</h2><button onclick="closeAdmin()">CLOSE</button></div>
   <div class="admin-tabs">
     <button class="atab active" id="tabProducts" onclick="adminTab('products')">PRODUCTS</button>
     <button class="atab" id="tabOrders" onclick="adminTab('orders')">ORDERS</button>
@@ -1030,7 +1030,7 @@ let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
 let cart = JSON.parse(localStorage.getItem("cd_cart") || "[]");
-let isAdmin = false;
+let isAdmin = sessionStorage.getItem("cd_admin") === "1";
 firebase.auth().onAuthStateChanged(u => {
   if (u) {
     db.collection("users").doc(u.uid).get().then(s => {
@@ -1272,6 +1272,7 @@ function openPDP(p){
     localStorage.setItem("cd_recent",JSON.stringify(rv));
     renderRecentlyViewed();
   })();
+  document.querySelectorAll(".pdp-images").forEach(w => { const p2 = w.parentElement; if (p2) p2.querySelectorAll("div").forEach(x => { if (x.textContent === "SOLD OUT" && x.style.position === "absolute") x.remove(); }); });
   currentProduct = p;
   const colors = getColors(p);
   let ci = 0;
@@ -1850,9 +1851,6 @@ function openAdmin(){
 }
 function closeAdmin(){
   if (unsubOrders) { unsubOrders(); unsubOrders = null; }
-  firebase.auth().signOut();
-  sessionStorage.removeItem("cd_admin");
-  isAdmin = false;
   document.getElementById("adminPanel").classList.remove("show");
 }
 function adminTab(t){
@@ -2443,9 +2441,9 @@ function trackOrder(){
   if (!val) { toast("Enter your Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
-  const q = db.collection("orders").where("orderId", "==", val);
-  q.get().then(snap => {
-    if (snap.empty) { res.innerHTML = '<p class="empty">No order found. Check your Order ID.</p>'; return; }
+  db.collection("orders").doc(val).get().then(doc => {
+    if (!doc.exists) { res.innerHTML = '<p class="empty">No order found. Check your Order ID.</p>'; return; }
+    const snap = { empty: false, forEach: function(fn){ fn(doc); } }; 
     res.innerHTML = "";
     const steps = ["Pending", "Confirmed", "Shipping", "Delivered"];
     snap.forEach(doc => {
@@ -2484,7 +2482,9 @@ function trackOrder(){
   emailjs.init({publicKey:"onKfdiuEHid3NeRnn"});
 function cancelOrder(orderId){
   if(!confirm("Are you sure you want to cancel this order?")) return;
-  db.collection("orders").where("orderId","==",orderId).get().then(snap=>{
+  db.collection("orders").doc(orderId).get().then(doc=>{
+    if(!doc.exists) return;
+    const snap={forEach:function(fn){fn(doc);}};
     snap.forEach(doc=>{
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
@@ -2573,7 +2573,9 @@ function viewImg(url){
   }
   function removeCancelled(orderId){
   if(!confirm("Is cancelled order ko hata dein?")) return;
-  db.collection("orders").where("orderId","==",orderId).get().then(snap=>{
+  db.collection("orders").doc(orderId).get().then(doc=>{
+    if(!doc.exists) return;
+    const snap={forEach:function(fn){fn(doc);}};
     snap.forEach(doc=>{
       if(doc.data().status==="Cancelled"){
         doc.ref.delete().then(()=>{
@@ -2821,7 +2823,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (pp) {
     const checkP = setInterval(() => {
       const prod = products.find(x => x.id === pp);
-      if (prod) { clearInterval(checkP); openPDP(prod); history.replaceState(null, "", location.pathname); }
+      if (prod) { clearInterval(checkP); openPDP(prod); const _ps = new URLSearchParams(location.search); _ps.delete("p"); history.replaceState(null, "", location.pathname + (_ps.toString() ? "?" + _ps.toString() : "")); } 
     }, 500);
     setTimeout(() => clearInterval(checkP), 15000);
   }
@@ -2868,7 +2870,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <button id="adminReviewBtn" onclick="openAdminReviews()" style="display:none; position:fixed; bottom:80px; right:16px; background:#e33; color:#fff; border:none; padding:10px 14px; border-radius:50px; z-index:9998; box-shadow:0 2px 8px rgba(0,0,0,.3);">🗑 Reviews</button>
 <script>
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function openAdminReviews(){
   document.getElementById('adminReviewManager').style.display = 'block';
   loadAdminReviews();
@@ -2899,7 +2900,7 @@ async function deleteAdminReview(id){
     loadAdminReviews();
   } catch(e) { alert('Delete failed: ' + e.message); }
 }
-if (window.location.search.includes('admin')) {
+if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin') === '1') {
   document.getElementById('adminReviewBtn').style.display = 'block';
 }
 </script>
