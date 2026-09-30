@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<!-- 404: Cloudflare pe alag file nahi chahiye, ye script galat URL pe JAZB page dikhata hai -->
+<script>
+// Agar URL /xyz jaisa galat hai (jo site pe nahi hai), toh main page load karo
+(function(){
+  var p = location.pathname;
+  var allowed = ["/", "/index.html", "/logo.png", "/logo.svg", "/sitemap.xml", "/robots.txt"];
+  if (allowed.indexOf(p) === -1 && !p.match(/\.(png|jpg|svg|xml|txt|css|js)$/i)) {
+    history.replaceState(null, "", "/");
+  }
+})();
+</script>
 <html lang="en">
 <head>
 <meta name="google-site-verification" content="w-CZ99R7EDELhpLegr5j5uFBZwVlDgHJd1GSor7s74M" />
@@ -742,6 +753,8 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <a onclick="openInfoPage('returns')" style="cursor:pointer">Exchange &amp; Returns</a>
     <a onclick="openInfoPage('shipping')" style="cursor:pointer">Shipping &amp; Delivery</a>
     <a onclick="openInfoPage('contact')" style="cursor:pointer">Contact Us</a>
+    <a onclick="openInfoPage('privacy')" style="cursor:pointer">Privacy Policy</a>
+    <a onclick="openInfoPage('terms')" style="cursor:pointer">Terms &amp; Conditions</a>
     <a onclick="openTrack()" style="cursor:pointer">Track Order</a>
   </div>
   <div class="f-support" id="support">
@@ -1030,21 +1043,8 @@ let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
 let cart = JSON.parse(localStorage.getItem("cd_cart") || "[]");
-let isAdmin = sessionStorage.getItem("cd_admin") === "1";
-firebase.auth().onAuthStateChanged(u => {
-  if (u) {
-    db.collection("users").doc(u.uid).get().then(s => {
-      if (s.exists && s.data().admin === true) {
-        isAdmin = true;
-        sessionStorage.setItem("cd_admin", "1");
-        if (new URLSearchParams(location.search).has("admin") && !document.getElementById("adminPanel").classList.contains("show")) {
-          document.getElementById("adminLoginModal").classList.remove("show");
-          openAdmin();
-        }
-      }
-    });
-  }
-});
+let isAdmin = false;
+// Admin login manual only — ?admin kholo aur har baar credentials daalo (no auto-login).
   function colorHex(n){n=(n||'').toLowerCase();if(n.includes('black'))return'#111';if(n.includes('white'))return'#fff';if(n.includes('red'))return'#d32f2f';if(n.includes('blue'))return'#1565c0';if(n.includes('green'))return'#2e7d32';if(n.includes('grey')||n.includes('gray'))return'#9e9e9e';if(n.includes('navy'))return'#1a237e';if(n.includes('brown'))return'#6d4c41';if(n.includes('yellow'))return'#fbc02d';if(n.includes('orange'))return'#ef6c00';if(n.includes('pink'))return'#ec407a';if(n.includes('purple'))return'#7b1fa2';if(n.includes('beige')||n.includes('khaki'))return'#d7ccc8';if(n.includes('default'))return'#888';return'#bbb';}
 function fmt(n){ return "Rs. " + Number(n).toLocaleString(); }
 function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); } 
@@ -1445,7 +1445,7 @@ let idx = 0;
         del.style.cssText = "margin-top:6px;background:transparent;color:#e74c3c;border:1px solid #e74c3c;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;";
         del.onclick = () => {
           if (isAdmin) { if (confirm("Delete this review?")) db.collection("reviews").doc(doc.id).delete().then(()=>loadReviews(currentProduct.id)); }
-          else { location.href = "https://wa.me/923358134489?text=" + encodeURIComponent("Assalam o Alaikum, apna review delete karwana chahta hoon.\n\nReview ID: " + doc.id + "\nProduct: " + currentProduct.name + "\nNaam: " + r.name); }
+          else { window.open("https://wa.me/923358134489?text=" + encodeURIComponent("Assalam o Alaikum, apna review delete karwana chahta hoon.\n\nReview ID: " + doc.id + "\nProduct: " + currentProduct.name + "\nNaam: " + r.name), "_blank"); } 
         };
         d.appendChild(del);
       }
@@ -1835,7 +1835,6 @@ async function adminLogin(){
     const s = await db.collection("users").doc(cred.user.uid).get();
     if (s.exists && s.data().admin === true) {
       isAdmin = true;
-      sessionStorage.setItem("cd_admin", "1");
       closeAdminLogin();
       openAdmin();
     } else {
@@ -2410,6 +2409,14 @@ async function deleteOrder(id){
   shipping: {
     title: "SHIPPING & DELIVERY",
     body: '<h3>DELIVERY TIME</h3><p>2-5 working days all over Pakistan.</p><h3>DELIVERY CHARGE</h3><p>Rs. 250 for orders under Rs. 5,000.<br><strong>FREE delivery</strong> on orders above Rs. 5,000.</p><h3>TRACKING</h3><p>Har order ka status WhatsApp pe update hota hai. "Track Order" button se bhi apne Order ID se track kar sakte ho.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available across Pakistan. Order confirm hone ke baad hi ship hota hai.</p>'
+  },
+      privacy: {
+    title: "PRIVACY POLICY",
+    body: '<p>JAZB aapki privacy ka poora khayal rakhta hai. Ye policy batati hai ke hum aapki kya information collect karte hain aur kyun.</p><h3>WHAT WE COLLECT</h3><p>Order ke waqt: Naam, phone, email, delivery address. Ye sirf aapka order process aur deliver karne ke liye use hota hai.</p><h3>HOW WE USE IT</h3><p>Order confirm karna, delivery track karna, aur aapko updates bhejna (WhatsApp/email). Hum aapki information kisi third party ko nahi bechte.</p><h3>COOKIES</h3><p>Hum aapke cart, wishlist aur dark mode yaad rakhne ke liye browser storage use karte hain. Ye aapke phone pe hi rehta hai.</p><h3>CONTACT</h3><p>Koi bhi sawal ho toh: 0335-8134489 ya @jazb.wear</p>'
+  },
+  terms: {
+    title: "TERMS & CONDITIONS",
+    body: '<p>JAZB se order karke aap neeche diye rules se muhaafat karte hain.</p><h3>ORDERS</h3><p>Har order WhatsApp pe confirm hota hai. Confirm hone ke baad hi ship hota hai.</p><h3>PRICES</h3><p>Sab prices PKR mein hain. Hum prices change karne ka haq rakhte hain, lekin order confirm hone ke baad price nahi badhti.</p><h3>DELIVERY</h3><p>2-5 working days. Delivery charge Rs. 250 (Rs. 5,000+ pe free). Agar delivery delay ho toh hum responsible nahi hain courier ki taraf se.</p><h3>RETURNS</h3><p>7 din ke andar size exchange. Item unworn, unwashed, tags ke saath hona chahiye.</p><h3>PAYMENT</h3><p>Cash on delivery (COD) available. Order confirm hone ke baad hi ship hota hai.</p>'
   },
   contact: {
     title: "CONTACT US",
