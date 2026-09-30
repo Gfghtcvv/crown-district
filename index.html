@@ -2915,15 +2915,21 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
   document.getElementById('adminReviewBtn').style.display = 'block';
 }
 </script>
-  <script>
-window.addEventListener('load', function() {
-  var e = document.getElementById('nlEmail');
-  if (e) {
-    e.value = '';
-    e.addEventListener('focus', function() { this.value = ''; });
+<script>
+(function(){
+  function clearNl(){
+    var e = document.getElementById('nlEmail');
+    if (e) e.value = '';
   }
-});
-  </script>
+  window.addEventListener('load', function(){
+    clearNl();
+    setTimeout(clearNl, 800);
+    setTimeout(clearNl, 2000);
+    var e = document.getElementById('nlEmail');
+    if (e) e.addEventListener('focus', clearNl);
+  });
+})();
+</script>
   </body>
   
 </html>
