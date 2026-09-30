@@ -1438,7 +1438,7 @@ let idx = 0;
       let myKeys = [];
       try { myKeys = JSON.parse(localStorage.getItem("cd_my_reviews") || "[]"); } catch(e) {}
       const mine = myKeys.includes(r.productId + "|" + r.name + "|" + r.text);
-      if (isAdmin) {
+      if (isAdmin || mine) {
         const del = document.createElement("button");
         del.textContent = "DELETE";
         del.style.cssText = "margin-top:6px;background:transparent;color:#e74c3c;border:1px solid #e74c3c;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;";
