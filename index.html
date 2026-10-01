@@ -2932,10 +2932,13 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
       inp.type = 'text';
       inp.setAttribute('inputmode', 'email');
       inp.setAttribute('autocomplete', 'off');
+      inp.setAttribute('readonly', 'readonly');
       inp.placeholder = 'JOIN THE LIST';
       inp.style.cssText = 'width:100%;box-sizing:border-box;padding:14px;font-size:14px;text-align:center;letter-spacing:1px;background:#fff;color:#111;border:none;outline:none;';
+      inp.addEventListener('focus', function(){ this.removeAttribute('readonly'); this.value=''; });
+      inp.addEventListener('blur', function(){ this.setAttribute('readonly','readonly'); });
       b.appendChild(inp);
-    }
+  }
     var e = document.getElementById('nlEmail');
     if (e) e.addEventListener('focus', clearNl);
   });
