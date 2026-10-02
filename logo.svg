@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
   <rect width="400" height="120" fill="#000"/>
-  <text x="200" y="80" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="70" fill="#fff" text-anchor="middle" letter-spacing="4">JAZB</text>
-  <rect x="55" y="94" width="290" height="11" fill="#fff"/>
+  <path d="M100 25 L100 85 Q100 100 85 100 Q70 100 65 85" stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M115 100 L140 25 L165 100 Z" fill="#fff"/>
+  <path d="M180 25 L220 25 L180 100 L220 100" stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M240 25 L280 25 Q300 25 300 45 Q300 60 285 62 Q305 64 305 82 Q305 100 280 100 L240 100 Z" fill="#fff"/>
+  <rect x="55" y="108" width="290" height="8" fill="#fff"/>
 </svg>
