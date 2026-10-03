@@ -3,6 +3,7 @@
 <script>
 // Agar URL /xyz jaisa galat hai (jo site pe nahi hai), toh main page load karo
 (function(){
+  if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
   var p = location.pathname;
   var allowed = ["/", "/index.html", "/logo.png", "/logo.svg", "/sitemap.xml", "/robots.txt"];
   if (allowed.indexOf(p) === -1 && !p.match(/\.(png|jpg|svg|xml|txt|css|js)$/i)) {
@@ -746,9 +747,9 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I pay?</div><div class="a">Cash on delivery (COD) available across Pakistan. We will confirm your order via WhatsApp before shipping.</div></div>
   </div>
 <section>
-  <h2 class="sec-title">@JAZB.WEAR ON INSTAGRAM</h2>
+  <h2 class="sec-title">@jazbwear.pk ON INSTAGRAM</h2>
   <div class="insta-grid" id="instaGrid"></div>
-  <a href="https://instagram.com/jazbwear.pk" target="_blank" class="insta-follow">FOLLOW @JAZB.WEAR</a>
+  <a href="https://instagram.com/jazbwear.pk" target="_blank" class="insta-follow">FOLLOW @jazbwear.pk</a>
 </section>
 <section class="newsletter">
   <p>Get updates on our latest collections, drops &amp; features coming up.</p>
