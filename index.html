@@ -21,17 +21,17 @@
 <meta http-equiv="Expires" content="0">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.png">
-<meta property="og:image" content="https://jazbwear.pk/logo.png">
+<meta property="og:image" content="https://jazb.wear/logo.png">
 <title>JAZB | Premium Streetwear — Men's T-Shirts, Track Suits & More</title>
 <meta property="og:title" content="JAZB - Premium Streetwear">
 <meta property="og:description" content="Premium streetwear from Pakistan. T-shirts, trousers, shorts. Order online with easy tracking.">
 <meta property="og:site_name" content="JAZB">
-<meta property="og:url" content="https://jazbwear.pk/">
+<meta property="og:url" content="https://jazb.wear/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="JAZB - Premium Streetwear">
 <meta name="twitter:description" content="Premium streetwear from Pakistan. T-shirts, track suits, shorts. Order online with easy tracking.">
-<meta name="twitter:image" content="https://jazbwear.pk/logo.png">
-<link rel="canonical" href="https://jazbwear.pk/">
+<meta name="twitter:image" content="https://jazb.wear/logo.png">
+<link rel="canonical" href="https://jazb.wear/">
   <meta name="description" content="JAZB is a premium Pakistani streetwear brand for men. Shop oversized T-shirts, track suits, trousers, shorts, hoodies and jackets in bold original designs. Made in Pakistan, Pakistan-wide delivery.">
 <script type="application/ld+json">
 {
@@ -40,7 +40,7 @@
   "name": "JAZB",
   "alternateName": ["JAZB Streetwear", "JAZB Mens Wear", "JAZB Men's Wear"],
   "logo": "https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/40737094-64b8-48fa-8716-0838c61f8ed7.png",
-  "url": "https://jazbwear.pk/"
+  "url": "https://jazb.wear/"
 }
 </script>
 <script type="application/ld+json">
@@ -48,9 +48,9 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "JAZB",
-  "url": "https://jazbwear.pk/",
+  "url": "https://jazb.wear/",
   "logo": "https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/40737094-64b8-48fa-8716-0838c61f8ed7.png",
-  "sameAs": ["https://instagram.com/jazbwear.pk"],
+  "sameAs": ["https://instagram.com/jazb.wear"],
   "contactPoint": {
     "@type": "ContactPoint",
     "telephone": "+92-335-8134489",
@@ -747,9 +747,9 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="faq-item" onclick="this.classList.toggle('open')"><div class="q">How do I pay?</div><div class="a">Cash on delivery (COD) available across Pakistan. We will confirm your order via WhatsApp before shipping.</div></div>
   </div>
 <section>
-  <h2 class="sec-title">@jazbwear.pk ON INSTAGRAM</h2>
+  <h2 class="sec-title">@jazb.wear ON INSTAGRAM</h2>
   <div class="insta-grid" id="instaGrid"></div>
-  <a href="https://instagram.com/jazbwear.pk" target="_blank" class="insta-follow">FOLLOW @jazbwear.pk</a>
+  <a href="https://instagram.com/jazb.wear" target="_blank" class="insta-follow">FOLLOW @jazb.wear</a>
 </section>
 <section class="newsletter">
   <p>Get updates on our latest collections, drops &amp; features coming up.</p>
@@ -772,7 +772,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
   <div class="f-support" id="support">
     <h3>CUSTOMER SUPPORT</h3>
     <div class="f-phone" id="supportPhone">0335-8134489</div>
-        <a href="https://instagram.com/jazbwear.pk" target="_blank" style="display:block;margin-top:12px;color:#000;text-decoration:none;font-size:14px">Instagram: @jazbwear.pk</a>
+        <a href="https://instagram.com/jazb.wear" target="_blank" style="display:block;margin-top:12px;color:#000;text-decoration:none;font-size:14px">Instagram: @jazb.wear</a>
     <div class="f-btns">
       <button class="btn-dark" id="callBtn" onclick="location.href='tel:03358134489'">CALL NOW</button>
       <button class="btn-outline" id="waBtn" onclick="location.href='https://wa.me/923358134489'">WHATSAPP</button>
@@ -906,7 +906,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     <input id="setWaNumber" placeholder="923358134489 (country code ke saath)">
     <button class="full-btn" onclick="saveSetting('waNumber')">SAVE WHATSAPP NUMBER</button>
           <h3 style="margin:20px 0 10px">INSTAGRAM HANDLE</h3>
-    <input id="setInsta" placeholder="jazbwear.pk">
+    <input id="setInsta" placeholder="jazb.wear">
     <button class="full-btn" onclick="saveSetting('insta')">SAVE INSTAGRAM</button>
               <h3 style="margin:20px 0 10px">FOCUS IMAGES (Categories in Focus)</h3>
     <input id="setFocusT" placeholder="T-Shirts focus image URL">
@@ -1532,7 +1532,7 @@ function submitReview(){
 }
   function shareProduct(){
   if (!currentProduct) return;
-  const url = "https://jazbwear.pk/?p=" + currentProduct.id;
+  const url = "https://jazb.wear/?p=" + currentProduct.id;
   if (navigator.share) {
     navigator.share({ title: currentProduct.name, text: currentProduct.name + " - JAZB", url: url }).catch(() => {});
   } else {
@@ -1849,7 +1849,7 @@ async function placeOrder(){
     notifyAdmin(docId, name, phone, email, address + ", " + finalCity, itemsStr, grandTotal);
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna Order ID daalein)");
+   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazb.wear (apna Order ID daalein)");
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2387,7 +2387,7 @@ async function updateStatus(id, status){
       }
     }
         if (status === "Cancelled" && od.exists && od.data().email) {
-      sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
+      sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
         }
     if (od.exists) {
       const d = od.data();
@@ -2429,7 +2429,7 @@ async function deleteOrder(id){
   const INFO_PAGES = {
   about: {
     title: "ABOUT JAZB",
-    body: '<p>JAZB is a premium streetwear brand from Pakistan. We design bold, original pieces — oversized tees, track suits, trousers and shorts — built for the streets. Every drop is limited. Every design is ours.</p><p>Premium quality fabric, clean fits, made in Pakistan. Delivered to your door, anywhere in the country.</p><h3>OUR PROMISE</h3><p>Original designs — no copies. Quality fabric you can feel. Fair prices. Fast delivery with easy tracking.</p><p style="font-weight:700;color:#000">Follow the movement: @jazbwear.pk</p>'
+    body: '<p>JAZB is a premium streetwear brand from Pakistan. We design bold, original pieces — oversized tees, track suits, trousers and shorts — built for the streets. Every drop is limited. Every design is ours.</p><p>Premium quality fabric, clean fits, made in Pakistan. Delivered to your door, anywhere in the country.</p><h3>OUR PROMISE</h3><p>Original designs — no copies. Quality fabric you can feel. Fair prices. Fast delivery with easy tracking.</p><p style="font-weight:700;color:#000">Follow the movement: @jazb.wear</p>'
   },
   guide: {
     title: "SHOPPING GUIDE",
@@ -2445,7 +2445,7 @@ async function deleteOrder(id){
   },
       privacy: {
     title: "PRIVACY POLICY",
-    body: '<p>JAZB aapki privacy ka poora khayal rakhta hai. Ye policy batati hai ke hum aapki kya information collect karte hain aur kyun.</p><h3>WHAT WE COLLECT</h3><p>Order ke waqt: Naam, phone, email, delivery address. Ye sirf aapka order process aur deliver karne ke liye use hota hai.</p><h3>HOW WE USE IT</h3><p>Order confirm karna, delivery track karna, aur aapko updates bhejna (WhatsApp/email). Hum aapki information kisi third party ko nahi bechte.</p><h3>COOKIES</h3><p>Hum aapke cart, wishlist aur dark mode yaad rakhne ke liye browser storage use karte hain. Ye aapke phone pe hi rehta hai.</p><h3>CONTACT</h3><p>Koi bhi sawal ho toh: 0335-8134489 ya @jazbwear.pk</p>'
+    body: '<p>JAZB aapki privacy ka poora khayal rakhta hai. Ye policy batati hai ke hum aapki kya information collect karte hain aur kyun.</p><h3>WHAT WE COLLECT</h3><p>Order ke waqt: Naam, phone, email, delivery address. Ye sirf aapka order process aur deliver karne ke liye use hota hai.</p><h3>HOW WE USE IT</h3><p>Order confirm karna, delivery track karna, aur aapko updates bhejna (WhatsApp/email). Hum aapki information kisi third party ko nahi bechte.</p><h3>COOKIES</h3><p>Hum aapke cart, wishlist aur dark mode yaad rakhne ke liye browser storage use karte hain. Ye aapke phone pe hi rehta hai.</p><h3>CONTACT</h3><p>Koi bhi sawal ho toh: 0335-8134489 ya @jazb.wear</p>'
   },
   terms: {
     title: "TERMS & CONDITIONS",
@@ -2453,7 +2453,7 @@ async function deleteOrder(id){
   },
   contact: {
     title: "CONTACT US",
-    body: '<h3>CUSTOMER SUPPORT</h3><p>For orders, exchanges or any question:</p><p style="font-size:18px;font-weight:700;color:#000">0335-8134489</p><h3>INSTAGRAM</h3><p>@jazbwear.pk — DM for inquiries.</p><div class="info-contact"><button class="btn-dark" onclick="location.href=\'tel:03358134489\'">CALL NOW</button><button class="btn-outline" onclick="location.href=\'https://wa.me/923358134489\'">WHATSAPP</button></div>'
+    body: '<h3>CUSTOMER SUPPORT</h3><p>For orders, exchanges or any question:</p><p style="font-size:18px;font-weight:700;color:#000">0335-8134489</p><h3>INSTAGRAM</h3><p>@jazb.wear — DM for inquiries.</p><div class="info-contact"><button class="btn-dark" onclick="location.href=\'tel:03358134489\'">CALL NOW</button><button class="btn-outline" onclick="location.href=\'https://wa.me/923358134489\'">WHATSAPP</button></div>'
   }
 };
 function openInfoPage(key){
@@ -2532,7 +2532,7 @@ function cancelOrder(orderId){
 doc.ref.update({status:"Cancelled"}).then(()=>{
   const od = doc.data();
   sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-"));
-  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazbwear.pk");
+  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
 }).then(()=>{
           toast("Order cancelled. We'll be in touch.");
           trackOrder();
@@ -2662,7 +2662,7 @@ function renderInstaGrid(){
   const g=document.getElementById("instaGrid");
   if(!g) return;
   const urls=[1,2,3,4,5,6].map(i=>instaImgs["insta"+i]).filter(Boolean);
-  g.innerHTML=urls.length?urls.map(u=>'<a href="https://instagram.com/jazbwear.pk" target="_blank"><img src="'+u+'" onerror="this.src=\'https://placehold.co/300x300?text=JAZB\'"></a>').join("") : '<p class="empty">Follow @jazbwear.pk</p>';
+  g.innerHTML=urls.length?urls.map(u=>'<a href="https://instagram.com/jazb.wear" target="_blank"><img src="'+u+'" onerror="this.src=\'https://placehold.co/300x300?text=JAZB\'"></a>').join("") : '<p class="empty">Follow @jazb.wear</p>';
 }
 function saveInstaImages(){
   const data={};
