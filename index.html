@@ -704,6 +704,17 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 </section>
 <section id="shop">
   <h2 class="sec-title">On The List</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 8px;flex-wrap:wrap;">
+        <div id="catChips" style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;"></div>
+        <div style="position:relative;">
+          <button id="sortBtn" onclick="toggleSort()" style="background:transparent;border:1px solid #444;color:#fff;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;">Sort &#9662;</button>
+          <div id="sortMenu" style="display:none;position:absolute;right:0;top:110%;background:#111;border:1px solid #333;border-radius:12px;overflow:hidden;z-index:50;min-width:160px;">
+            <div onclick="setSort('default')" style="padding:10px 14px;font-size:13px;color:#fff;">Default</div>
+            <div onclick="setSort('low')" style="padding:10px 14px;font-size:13px;color:#fff;">Low to High</div>
+            <div onclick="setSort('high')" style="padding:10px 14px;font-size:13px;color:#fff;">High to Low</div>
+          </div>
+        </div>
+        </div>
   <div class="grid" id="productGrid"></div>
   <div class="social-proof"><strong>500+</strong> Happy Customers Across Pakistan</div>
 <section id="recentlyViewed">
@@ -1107,12 +1118,33 @@ setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.d
     g.appendChild(d);
   });
 }
+  // ===== SORT =====
+let currentSort = 'default';
+function toggleSort() {
+  var m = document.getElementById('sortMenu');
+  m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+}
+function setSort(type) {
+  currentSort = type;
+  document.getElementById('sortMenu').style.display = 'none';
+  document.getElementById('sortBtn').innerHTML =
+    (type === 'low') ? 'Low to High ▾' : (type === 'high') ? 'High to Low ▾' : 'Sort ▾';
+  renderProducts();
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#sortBtn') && !e.target.closest('#sortMenu'))
+    document.getElementById('sortMenu').style.display = 'none';
+});
+// ===== END SORT =====
 function renderProducts(){
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const grid = document.getElementById("productGrid");
   const list = products.filter(p => (currentCat === "ALL" || p.category === currentCat) && (!q || p.name.toLowerCase().includes(q)));
+      let finalList = list;
+    if (currentSort === 'low') finalList = list.slice().sort(function(a, b) { return a.price - b.price; });
+    if (currentSort === 'high') finalList = list.slice().sort(function(a, b) { return b.price - a.price; });
   grid.innerHTML = list.length ? "" : '<p class="empty">No products yet. Admin can add products.</p>';
-  list.forEach(p => {
+      finalList.forEach(p => {
     const d = document.createElement("div");
     d.className = "p-card";
         const isNew = p.createdAt && (Date.now() - p.createdAt.toDate().getTime()) < 7 * 24 * 60 * 60 * 1000;
