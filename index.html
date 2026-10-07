@@ -552,6 +552,7 @@ body.dark #pdpSticky{background:#111}
 body.dark #pdpSticky .sticky-price{color:#fff}
 body.dark #pdpSticky button{background:#fff;color:#000}
 body.dark .acc-item{border-color:#222}
+body.dark .sort-btn{background:rgba(255,255,255,.12)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important}
 body.dark .acc-item>button{color:#eee}
 body.dark .acc-body{color:#aaa}
 body.dark .cart-item{border-color:#222}
@@ -708,7 +709,7 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 8px;flex-wrap:wrap;">
         <div id="catChips" style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;"></div>
         <div style="position:relative;">
-          <button id="sortBtn" onclick="toggleSort()" style="background:transparent;border:1px solid #ccc;color:#111;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;">Sort &#9662;</button>
+          <button id="sortBtn" class="sort-btn" onclick="toggleSort()" style="background:transparent;border:1px solid #ccc;color:#111;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;">Sort &#9662;</button>
           <div id="sortMenu" style="display:none;position:absolute;right:0;top:110%;background:#fff;border:1px solid #ccc;border-radius:12px;overflow:hidden;z-index:50;min-width:160px;">
             <div onclick="setSort('default')" style="padding:10px 14px;font-size:13px;color:#111;">Default</div>
             <div onclick="setSort('low')" style="padding:10px 14px;font-size:13px;color:#111;">Low to High</div>
