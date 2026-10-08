@@ -2551,55 +2551,112 @@ function expandPdpImg(){
   let i = window.pdpImgIdx || 0;
   const ov = document.createElement("div");
   ov.className = "pdp-exp";
-  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;overflow:hidden;opacity:0;transition:opacity .25s ease";
-  const track = document.createElement("div");
-  track.style.cssText = "display:flex;height:100%;transition:transform .35s cubic-bezier(.25,.8,.25,1);will-change:transform";
-  imgs.forEach(u => {
-    const w = document.createElement("div");
-        w.style.cssText = "width:100%;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;";
-    const im = document.createElement("img");
-    im.src = u;
-    im.style.cssText = "max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;";
-    w.appendChild(im);
-    track.appendChild(w);
-  });
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:500;overflow:hidden;opacity:0;transition:opacity .25s ease;touch-action:none";
+  const im = document.createElement("img");
+  im.src = imgs[i];
+  im.style.cssText = "max-width:100%;max-height:100%;object-fit:contain;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);touch-action:none";
+  im.draggable = false;
+  ov.appendChild(im);
   const counter = document.createElement("div");
-  counter.style.cssText = "position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);backdrop-filter:blur(8px);color:#fff;font-size:13px;padding:5px 18px;border-radius:20px;z-index:2;transition:opacity .3s";
+  counter.style.cssText = "position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px;z-index:2;pointer-events:none";
   counter.textContent = (i+1) + " / " + imgs.length;
+  ov.appendChild(counter);
   const closeB = document.createElement("button");
-  closeB.textContent = "✕";
-  closeB.style.cssText = "position:absolute;top:14px;right:14px;z-index:2;background:rgba(255,255,255,.12);backdrop-filter:blur(8px);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:18px;cursor:pointer;transition:transform .2s,background .2s";
-  closeB.onclick = (e) => { e.stopPropagation(); closeOv(); };
-  closeB.onmousedown = () => closeB.style.transform = "scale(.9)";
-  closeB.onmouseup = () => closeB.style.transform = "scale(1)";
+  closeB.textContent = "\u00d7";
+  closeB.style.cssText = "position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:28px;z-index:2;cursor:pointer;padding:8px;line-height:1";
+  ov.appendChild(closeB);
+  const prevB = document.createElement("button");
+  prevB.textContent = "\u2039";
+  prevB.style.cssText = "position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;font-size:32px;z-index:2;cursor:pointer;padding:12px 16px;border-radius:50%;line-height:1";
+  ov.appendChild(prevB);
+  const nextB = document.createElement("button");
+  nextB.textContent = "\u203a";
+  nextB.style.cssText = "position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;font-size:32px;z-index:2;cursor:pointer;padding:12px 16px;border-radius:50%;line-height:1";
+  ov.appendChild(nextB);
+  let scale=1,tx=0,ty=0,sx=0,sy=0,pinchD=0,pinchS=1,lastTap=0,pinching=false;
+  function applyZ(smooth){
+    im.style.transition = smooth ? "transform .15s ease" : "none";
+    im.style.transform = "translate(-50%,-50%) translate("+tx+"px,"+ty+"px) scale("+scale+")";
+  }
+  function resetZ(){ scale=1;tx=0;ty=0;applyZ(true); }
   function go(n){
-    if (n < 0) n = 0;
-    if (n >= imgs.length) n = imgs.length - 1;
-    if (n === i) return;
-    i = n;
-    window.pdpImgIdx = i;
-    track.style.transform = "translateX(-" + (i * 100) + "%)";
-    counter.textContent = (i+1) + " / " + imgs.length;
-    track.children.forEach((w, j) => { w.firstChild.style.transform = j === i ? "scale(1)" : "scale(.96)"; });
+    if(n<0) n=0;
+    if(n>=imgs.length) n=imgs.length-1;
+    if(n===i) return;
+    i=n;
+    window.pdpImgIdx=i;
+    resetZ();
+    im.src=imgs[i];
+    counter.textContent=(i+1)+" / "+imgs.length;
   }
   function closeOv(){
-    ov.style.opacity = "0";
-    setTimeout(() => ov.remove(), 250);
+    ov.style.opacity="0";
+    setTimeout(()=>ov.remove(),250);
   }
-ov.style.touchAction = "none";
-let sx = 0;
-ov.addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; }, { passive: true });
-ov.addEventListener("touchend", function(e){
-    const dx = e.changedTouches[0].clientX - sx;
-    if (dx < -60) go(i + 1);
-    else if (dx > 60) go(i - 1);
-});
-  track.style.transform = "translateX(-" + (i * 100) + "%)";
-  ov.appendChild(track);
-  ov.appendChild(counter);
-  ov.appendChild(closeB);
+  prevB.addEventListener("click",(e)=>{e.stopPropagation();go(i-1);});
+  nextB.addEventListener("click",(e)=>{e.stopPropagation();go(i+1);});
+  closeB.addEventListener("click",(e)=>{e.stopPropagation();closeOv();});
+  ov.addEventListener("touchstart",function(e){
+    if(e.target.closest("button")) return;
+    if(e.touches.length===2){
+      pinching=true;
+      pinchD=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      pinchS=scale;
+      return;
+    }
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+  },{passive:false});
+  ov.addEventListener("touchmove",function(e){
+    if(e.target.closest("button")) return;
+    e.preventDefault();
+    if(pinching&&e.touches.length===2){
+      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      scale=Math.min(4,Math.max(1,pinchS*(d/pinchD)));
+      if(scale===1){tx=0;ty=0;}
+      applyZ(false);
+      return;
+    }
+    if(scale>1&&e.touches.length===1){
+      tx+=e.touches[0].clientX-sx;
+      ty+=e.touches[0].clientY-sy;
+      sx=e.touches[0].clientX;
+      sy=e.touches[0].clientY;
+      applyZ(false);
+    }
+  },{passive:false});
+  ov.addEventListener("touchend",function(e){
+    if(e.target.closest("button")) return;
+    if(pinching){
+      if(e.touches.length<2){
+        pinching=false;
+        if(scale<=1.05) resetZ(); else applyZ(true);
+      }
+      return;
+    }
+    if(e.touches.length>0) return;
+    const dx=e.changedTouches[0].clientX-sx;
+    const dy=e.changedTouches[0].clientY-sy;
+    const now=Date.now();
+    if(Math.abs(dx)<10&&Math.abs(dy)<10){
+      if(now-lastTap<300){
+        if(scale>1){resetZ();}
+        else{scale=2.5;tx=0;ty=0;applyZ(true);}
+        lastTap=0;
+      } else { lastTap=now; }
+    } else if(scale===1&&Math.abs(dx)>60&&Math.abs(dy)<60){
+      if(dx<0) go(i+1); else go(i-1);
+    }
+  });
+  ov.addEventListener("click",(e)=>{if(e.target===ov) closeOv();});
+  ov.addEventListener("wheel",function(e){
+    e.preventDefault();
+    scale=Math.min(4,Math.max(1,scale*(e.deltaY<0?1.1:0.9)));
+    if(scale===1){tx=0;ty=0;}
+    applyZ(true);
+  },{passive:false});
   document.body.appendChild(ov);
-  requestAnimationFrame(() => { ov.style.opacity = "1"; track.children[i].firstChild.style.transform = "scale(1)"; });
+  requestAnimationFrame(()=>{ov.style.opacity="1";});
 }
 function viewImg(url){
   const ov=document.createElement("div");
