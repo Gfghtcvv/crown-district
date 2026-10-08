@@ -2556,10 +2556,10 @@ function expandPdpImg(){
   track.style.cssText = "display:flex;height:100%;transition:transform .35s cubic-bezier(.25,.8,.25,1);will-change:transform";
   imgs.forEach(u => {
     const w = document.createElement("div");
-    w.style.cssText = "width:100%;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center";
+        w.style.cssText = "width:100%;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;";
     const im = document.createElement("img");
     im.src = u;
-    im.style.cssText = "max-width:100%;max-height:100%;object-fit:contain;transform:scale(.96);transition:transform .35s cubic-bezier(.25,.8,.25,1)";
+    im.style.cssText = "max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;";
     w.appendChild(im);
     track.appendChild(w);
   });
@@ -2586,22 +2586,15 @@ function expandPdpImg(){
     ov.style.opacity = "0";
     setTimeout(() => ov.remove(), 250);
   }
-  let sx = 0, sy = 0, swiped = false;
-  ov.ontouchstart = function(e){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; swiped = false; };
-  ov.ontouchend = function(e){
+ov.style.touchAction = "none";
+let sx = 0;
+ov.addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; }, { passive: true });
+ov.addEventListener("touchend", function(e){
     const dx = e.changedTouches[0].clientX - sx;
-    const dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) < 20 && Math.abs(dy) < 20) { closeOv(); swiped = true; }
-    else if (dx < -60) { go(i + 1); swiped = true; }
-    else if (dx > 60) { go(i - 1); swiped = true; }
-  };
-  let opened = true;
-  ov.onclick = function(e){
-    if (e.target.tagName === "BUTTON") return;
-    if (swiped) { swiped = false; return; }
-    if (opened) { opened = false; return; }
-    closeOv();
-  };
+    if (dx < -60) go(i + 1);
+    else if (dx > 60) go(i - 1);
+});
+  track.style.transform = "translateX(-" + (i * 100) + "%)";
   ov.appendChild(track);
   ov.appendChild(counter);
   ov.appendChild(closeB);
