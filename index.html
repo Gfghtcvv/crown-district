@@ -2414,7 +2414,7 @@ async function replyToOrder(id){
       return;
     }
     if (o.data().email) {
-      sendMail(o.data().email, "Your Order Update - JAZB", "Hello " + o.data().customer + ",\n\n" + msg + "\n\nShukriya, JAZB");
+      sendMail(o.data().email, "Aapka JAZB Order Update - " + (o.data().orderId || id), "Hello " + o.data().customer + "\n\n" + msg + "\n\nShukriya, JAZB");
     }
   } catch(e) { toast(e.message); }
 }
