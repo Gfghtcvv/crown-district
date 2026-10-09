@@ -1307,7 +1307,7 @@ function openPDP(p){
     renderRecentlyViewed();
   })();
   document.querySelectorAll(".pdp-images").forEach(w => { const p2 = w.parentElement; if (p2) p2.querySelectorAll("div").forEach(x => { if (x.textContent === "SOLD OUT" && x.style.position === "absolute") x.remove(); }); });
-  currentProduct = p;
+  currentProduct = p; idx = 0;
   const colors = getColors(p);
   let ci = 0;
   for (let i = 0; i < colors.length; i++) { if (!colors[i].soldOut) { ci = i; break; } }
