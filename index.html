@@ -1533,7 +1533,7 @@ function submitReview(){
 }
   function shareProduct(){
   if (!currentProduct) return;
-  const url = "https://jazb.wear/?p=" + currentProduct.id;
+  const url = "https://jazbwear.pk/?p=" + currentProduct.id;
   if (navigator.share) {
     navigator.share({ title: currentProduct.name, text: currentProduct.name + " - JAZB", url: url }).catch(() => {});
   } else {
