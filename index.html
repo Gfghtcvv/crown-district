@@ -1264,7 +1264,7 @@ function renderPdpSizes(p){
     if (currentColor && currentColor.sizes && currentColor.sizes.length) sizes = currentColor.sizes;
   if(!sizes){
     if(cat.includes("CAP") || cat.includes("ACCESSORY")) sizes = ["One Size"];
-    else if(cat.includes("TROUSER") || cat.includes("JEAN") || cat.includes("SHORT")) sizes = ["30","32","34","36","38"];
+    else if(cat.includes("JEAN") || cat.includes("SHORT")) sizes = ["30","32","34","36","38"];
     else sizes = ["S","M","L","XL","XXL"];
   }
   const stockMap = getStockForColor(p, currentColor.name) || {};
