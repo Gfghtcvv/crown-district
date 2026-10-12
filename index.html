@@ -1820,26 +1820,29 @@ async function placeOrder(){
   const cSaved2 = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
   const grandTotal = total + delivery - Math.max(bSaved, cSaved2);
   const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-    for (const it of items) {
-    const p = products.find(x => x.id === it.id);
-    if (p && p.soldOut) {
-      toast("⚠️ " + p.name + " is SOLD OUT. Please remove it from cart.");
+for (const it of items) {
+  const p = products.find(x => x.id === it.id);
+  if (p) {
+    const col = (p.colors||[]).find(c => c.name === it.color);
+    if (col && col.soldOut) {
+      toast("⚠️ " + p.name + " (" + it.color + ") is SOLD OUT. Please remove it.");
       isPlacing = false;
       btn.disabled = false;
       btn.textContent = "PLACE ORDER";
       return;
     }
-    if (p && !p.unlimited) {
-      const sm2 = getStockForColor(p, it.color) || {};
-      if (Object.keys(sm2).length && (sm2[it.size] || 0) < it.qty) {
-        toast("⚠️ " + p.name + " (" + it.size + ") stock khatam ho gaya. Cart se hatao.");
+    if (col) {
+      const sz = (col.sizes||[]).find(s => s.name === it.size);
+      if (sz && !sz.unlimited && (sz.stock||0) < it.qty) {
+        toast("⚠️ " + p.name + " (" + it.size + ") stock kam hai. Please reduce quantity.");
         isPlacing = false;
         btn.disabled = false;
         btn.textContent = "PLACE ORDER";
         return;
       }
     }
-    }
+  }
+}
   try {
     const docId = "JZB" + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(b => "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[b % 31]).join("");
     order.orderId = docId;
@@ -2307,7 +2310,7 @@ function addColorRow(c){
   function openProductForm(p){
   const modal = document.getElementById("productFormModal");
   document.getElementById("pfId").value = p ? p.id : "";
-  document.getElementById("pfName").value = p ? p.name : "";
+  document.getElementById("pfName").value = (p && p.name) ? p.name : "";
   document.getElementById("pfCat").value = p ? p.category : "T-SHIRTS";
   document.getElementById("pfPrice").value = p ? p.price : "";
   const op = document.getElementById("pfOldPrice"); if(op) op.value = p ? (p.oldPrice||"") : "";
