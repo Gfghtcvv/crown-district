@@ -2318,7 +2318,6 @@ const stocks = unlimited ? {} : getStocksFromForm();
   } catch(e) {
     document.getElementById("pfMsg").textContent = "Error: " + e.message;
   }
-}
 async function delProduct(id){
   if (!confirm("Delete this product?")) return;
   try {
