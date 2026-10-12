@@ -1982,18 +1982,17 @@ function renderSizeButtons(cat, selected, stocks){
   box.innerHTML = "";
 
   const defaults = {
-    "T-SHIRTS": ["XS","S","M","L","XL","XXL"],
+    "T-SHIRTS": ["S","M","L","XL","XXL"],
     "TRACK SUIT": ["S","M","L","XL","XXL"],
+    "TROUSERS": ["S","M","L","XL","XXL"],
+    "SHORTS": ["S","M","L","XL","XXL"],
     "SHIRTS": ["S","M","L","XL","XXL"],
-    "TROUSERS": ["S","M","L","XL"],
-    "SHORTS": ["S","M","L","XL"],
     "HOODIES": ["S","M","L","XL","XXL"],
     "JACKETS": ["S","M","L","XL","XXL"],
     "JEANS": ["30","32","34","36","38"]
   };
 
-  const hasSaved = selected && selected.length > 0;
-  let sizes = hasSaved ? selected.slice() : (defaults[cat] || ["S","M","L","XL"]);
+  let sizes = (selected && selected.length > 0) ? selected.slice() : (defaults[cat] || ["S","M","L","XL","XXL"]);
 
   sizes.forEach(s => {
     const row = document.createElement("div");
@@ -2001,7 +2000,7 @@ function renderSizeButtons(cat, selected, stocks){
 
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "size-btn" + (hasSaved ? "" : " sel");
+    b.className = "size-btn sel";
     b.style.width = "auto";
     b.textContent = s;
     b.onclick = () => b.classList.toggle("sel");
@@ -2035,8 +2034,9 @@ function renderSizeButtons(cat, selected, stocks){
     const sz = prompt("Size name:");
     if (!sz || !sz.trim()) return;
     const szName = sz.trim().toUpperCase();
-    if (sizes.indexOf(szName) !== -1) return;
-    sizes.push(szName);
+    let exists = false;
+    box.querySelectorAll(".size-btn").forEach(b2 => { if (b2.textContent.trim() === szName) exists = true; });
+    if (exists) return;
 
     const row2 = document.createElement("div");
     row2.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px";
@@ -2069,9 +2069,16 @@ function renderSizeButtons(cat, selected, stocks){
   };
 
   box.appendChild(addBtn);
-}  refreshColorStocks();
+}
+  refreshColorStocks();
 function getSelectedSizes(){
-  return Array.from(document.querySelectorAll("#pfSizesBox .size-btn.sel")).map(b => b.textContent);
+  const box = document.getElementById("pfSizesBox");
+  if (!box) return [];
+  const sizes = [];
+  box.querySelectorAll(".size-btn.sel").forEach(b => {
+    sizes.push(b.textContent.trim());
+  });
+  return sizes;
 }
 function getStockForColor(p, colorName){
   if (p.unlimited) return null;
