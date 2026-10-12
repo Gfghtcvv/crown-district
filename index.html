@@ -2282,7 +2282,7 @@ renderSizeButtons("T-SHIRTS", null, {});
   document.getElementById("productFormModal").classList.add("show");
 }
 function closeProductForm(){ document.getElementById("productFormModal").classList.remove("show"); }
-async function saveProduct(){
+async function saveProduct(){ try {
   const id = document.getElementById("pfId").value;
   const name = document.getElementById("pfName").value.trim();
   const category = document.getElementById("pfCat").value;
@@ -2317,7 +2317,7 @@ const stocks = unlimited ? {} : getStocksFromForm();
   } catch(e) {
     document.getElementById("pfMsg").textContent = "Error: " + e.message;
   }
-}
+} catch(e) { document.getElementById("pfMsg").textContent = "Error: " + e.message; } }
 async function delProduct(id){
   if (!confirm("Delete this product?")) return;
   try {
