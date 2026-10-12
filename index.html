@@ -2303,7 +2303,7 @@ const stocks = unlimited ? {} : getStocksFromForm();
     const cs = [];
     colorRows[i].querySelectorAll("button").forEach(b => {
       const t = (b.textContent || "").trim().toUpperCase();
-      if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) cs.push(t);
+      if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t) && b.classList.contains("sel")) cs.push(t);
     });
     if (cs.length) c.sizes = cs;
   });
