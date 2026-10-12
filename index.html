@@ -2262,17 +2262,29 @@ function makeSizeRow(size){
 }
 
 function normalizeProduct(p){
-  if (!p.colors || !p.colors.length){
-    const sizes = (p.sizes && p.sizes.length) ? p.sizes : ["S","M","L","XL","XXL"];
-    const stock = p.stock || {};
+  if(!p) return p;
+  if(!p.colors || !p.colors.length){
+    let sizes = [];
+    if(p.sizes && p.sizes.length){
+      sizes = p.sizes.map(s => {
+        if(typeof s === "string"){
+          return { name: s, stock: (p.stock && p.stock[s] !== undefined) ? Number(p.stock[s]) : 0, unlimited: !!p.unlimited };
+        }
+        return { name: s.name, stock: (s.stock !== undefined) ? Number(s.stock) : 0, unlimited: !!s.unlimited };
+      });
+    }
     const imgs = [p.image, p.image2, p.image3, p.image4, p.image5].filter(Boolean);
-    p.colors = [{ name: "Default", soldOut: !!p.soldOut, images: imgs, sizes: sizes.map(s => ({ name: s, stock: (stock[s] != null && !p.unlimited) ? Number(stock[s]) : 0, unlimited: !!p.unlimited })) }];
-  } else {
-    p.colors.forEach(c => {
-      if (!c.sizes) c.sizes = [];
-      c.sizes.forEach(s => { if (s.stock == null) s.stock = 0; });
-    });
+    p.colors = [{ name: "Default", soldOut: !!p.soldOut, images: imgs, sizes: sizes }];
   }
+  p.colors.forEach(c => {
+    if(!c.images) c.images = [];
+    if(!c.sizes) c.sizes = [];
+    if(c.soldOut === undefined) c.soldOut = false;
+    c.sizes.forEach(s => {
+      if(s.stock === undefined) s.stock = 0;
+      if(s.unlimited === undefined) s.unlimited = false;
+    });
+  });
   return p;
 }
 
