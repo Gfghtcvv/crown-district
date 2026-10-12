@@ -2289,7 +2289,6 @@ async function saveProduct(){
   const price = Number(document.getElementById("pfPrice").value);
   const oldPrice = Number(document.getElementById("pfOldPrice").value) || 0;
 let image = document.getElementById("pfImage").value.trim();
-}
   const sizes = getSelectedSizes();
     const unlimited = document.getElementById("pfUnlimited").checked;
 const stocks = unlimited ? {} : getStocksFromForm();
@@ -2318,6 +2317,7 @@ const stocks = unlimited ? {} : getStocksFromForm();
   } catch(e) {
     document.getElementById("pfMsg").textContent = "Error: " + e.message;
   }
+}
 async function delProduct(id){
   if (!confirm("Delete this product?")) return;
   try {
