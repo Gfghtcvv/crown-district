@@ -1992,7 +1992,7 @@ function renderSizeButtons(cat, selected, stocks){
     "JEANS": ["30","32","34","36","38"]
   };
 
-  let sizes = (selected && selected.length > 0) ? selected.slice() : (defaults[cat] || ["S","M","L","XL","XXL"]);
+  let sizes = Array.isArray(selected) ? selected.slice() : (defaults[cat] || ["S","M","L","XL","XXL"]);
 
   sizes.forEach(s => {
     const row = document.createElement("div");
@@ -2246,7 +2246,7 @@ function getColorsFromForm(){
   function openProductForm(id){
   const sel = document.getElementById("pfCat");
   sel.innerHTML = CATEGORIES.map(c => '<option value="' + c + '">' + c + '</option>').join("");
-    sel.onchange = () => renderSizeButtons(sel.value, []);
+    sel.onchange = () => renderSizeButtons(sel.value, null);
   if (id) {
     const p = products.find(x => x.id === id);
     document.getElementById("pfTitle").textContent = "EDIT PRODUCT";
@@ -2254,10 +2254,12 @@ function getColorsFromForm(){
     document.getElementById("pfName").value = p.name;
     document.getElementById("pfCat").value = p.category;
     document.getElementById("pfPrice").value = p.price;
-    document.getElementById("pfOldPrice").value = p.oldPrice || "";
+    document.getElementById("pfOldPrice").value = p.oldPrice;
+document.getElementById("pfDesc").value = p.description || "";
+document.getElementById("pfSoldOut").checked = !!p.soldOut;
     
 
-    renderSizeButtons(p.category, p.sizes || [], p.stock || {});
+    renderSizeButtons(p.category, p.sizes || null, p.stock || {});
         const cb = document.getElementById("pfColors");
     cb.innerHTML = "";
 (p.colors || []).forEach((c, i) => {
@@ -2271,7 +2273,7 @@ function getColorsFromForm(){
   } else {
     document.getElementById("pfTitle").textContent = "ADD PRODUCT";
     ["pfId","pfName","pfPrice","pfOldPrice","pfDesc"].forEach(x => document.getElementById(x).value = "");
-renderSizeButtons("T-SHIRTS", [], {});
+renderSizeButtons("T-SHIRTS", null, {});
         document.getElementById("pfColors").innerHTML = "";
     document.getElementById("pfSoldOut").checked = false;
     document.getElementById("pfUnlimited").checked = false;
@@ -2286,11 +2288,7 @@ async function saveProduct(){
   const category = document.getElementById("pfCat").value;
   const price = Number(document.getElementById("pfPrice").value);
   const oldPrice = Number(document.getElementById("pfOldPrice").value) || 0;
-  let image = "";
-const _cr = document.querySelectorAll("#pfColors > div");
-if (_cr.length) {
-  const _imgs = _cr[0].querySelectorAll("input[placeholder^='Image']");
-  if (_imgs.length) image = _imgs[0].value.trim();
+let image = document.getElementById("pfImage").value.trim();
 }
   const sizes = getSelectedSizes();
     const unlimited = document.getElementById("pfUnlimited").checked;
