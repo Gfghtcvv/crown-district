@@ -1269,7 +1269,7 @@ function renderPdpSizes(p){
   }
   const stockMap = getStockForColor(p, currentColor.name) || {};
   const hasStock = !p.unlimited && Object.keys(stockMap).length > 0;
-  if (hasStock) sizes = Object.keys(stockMap);
+  if (hasStock) sizes = sizes.filter(s => (stockMap[s] || 0) > 0);
 const SZ_ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size","30","32","34","36","38"];
 sizes = sizes.slice().sort((a,b) => { const ia = SZ_ORDER.indexOf(a), ib = SZ_ORDER.indexOf(b); return (ia===-1?99:ia) - (ib===-1?99:ib); });
   currentSize = sizes.length === 1 && (!hasStock || sizes[0] in stockMap) ? sizes[0] : "";
