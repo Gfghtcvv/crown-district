@@ -2295,6 +2295,7 @@ async function saveProduct(){
     const unlimited = document.getElementById("pfUnlimited").checked;
     const stocks = unlimited ? {} : getStocksFromForm();
     const description = document.getElementById("pfDesc").value.trim();
+    const mainSizes = getSelectedSizes();
     const colors = getColorsFromForm();
     const colorRows = document.querySelectorAll("#pfColors .color-row");
     colors.forEach((c, i) => {
@@ -2302,9 +2303,12 @@ async function saveProduct(){
       const cs = [];
       colorRows[i].querySelectorAll("button").forEach(b => {
         const t = (b.textContent || "").trim().toUpperCase();
-        if (["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) cs.push(t);
+        if (!["S","M","L","XL","XXL","XS","3XL","FREE"].includes(t)) return;
+        const bg = getComputedStyle(b).backgroundColor;
+        const light = bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)" && bg.includes("255");
+        if (light) cs.push(t);
       });
-      if (cs.length) c.sizes = cs;
+      c.sizes = (cs.length ? cs : mainSizes.slice());
     });
     const soldOut = document.getElementById("pfSoldOut").checked;
     if (!name || !price) {
