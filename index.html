@@ -1978,17 +1978,34 @@ function loadAdminProducts(){
 }
 function renderSizeButtons(cat, selected, stocks){
   const box = document.getElementById("pfSizesBox");
-  const sizes = (selected && selected.length > 0) ? selected : (DEFAULT_SIZES[cat] || ["One Size"]);
+  if (!box) return;
   box.innerHTML = "";
+
+  const defaults = {
+    "T-SHIRTS": ["XS","S","M","L","XL","XXL"],
+    "TRACK SUIT": ["S","M","L","XL","XXL"],
+    "SHIRTS": ["S","M","L","XL","XXL"],
+    "TROUSERS": ["S","M","L","XL"],
+    "SHORTS": ["S","M","L","XL"],
+    "HOODIES": ["S","M","L","XL","XXL"],
+    "JACKETS": ["S","M","L","XL","XXL"],
+    "JEANS": ["30","32","34","36","38"]
+  };
+
+  const hasSaved = selected && selected.length > 0;
+  let sizes = hasSaved ? selected.slice() : (defaults[cat] || ["S","M","L","XL"]);
+
   sizes.forEach(s => {
     const row = document.createElement("div");
     row.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px";
+
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "size-btn" + (selected && selected.includes(s) ? " sel" : "");
+    b.className = "size-btn" + (hasSaved ? "" : " sel");
     b.style.width = "auto";
     b.textContent = s;
     b.onclick = () => b.classList.toggle("sel");
+
     const inp = document.createElement("input");
     inp.type = "number";
     inp.min = "0";
@@ -1996,65 +2013,63 @@ function renderSizeButtons(cat, selected, stocks){
     inp.style.cssText = "width:70px;margin:0";
     inp.className = "stock-inp";
     inp.dataset.size = s;
-    if (stocks && stocks[s] != null) inp.value = stocks[s];
+    if (stocks && stocks[s] != null && String(stocks[s]) !== "") inp.value = stocks[s];
+
+    const rm = document.createElement("button");
+    rm.type = "button";
+    rm.textContent = "x";
+    rm.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;padding:4px 9px;cursor:pointer";
+    rm.onclick = () => { row.remove(); };
+
     row.appendChild(b);
-            const rm = document.createElement("button");
-        rm.type = "button";
-        rm.textContent = "×";
-        rm.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:14px";
-        rm.onclick = () => { row.remove(); };
-        row.appendChild(rm);
     row.appendChild(inp);
+    row.appendChild(rm);
     box.appendChild(row);
-        });
-        const addBtn = document.createElement("button");
-    addBtn.type = "button";
-    addBtn.textContent = "+ ADD SIZE";
-    addBtn.style.cssText = "background:#333;color:#fff;border:1px dashed #666;border-radius:6px;padding:8px 12px;cursor:pointer;font-size:13px;margin-top:6px";
-    addBtn.onclick = () => {
-        const sz = prompt("Size name:");
-        if (!sz || !sz.trim()) return;
-        const szName = sz.trim().toUpperCase();
-        const row2 = document.createElement("div");
-        row2.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px";
-        const b2 = document.createElement("button");
-        b2.type = "button";
-        b2.className = "size-btn sel";
-        b2.style.width = "auto";
-        b2.textContent = szName;
-        b2.onclick = () => b2.classList.toggle("sel");
-        const inp2 = document.createElement("input");
-        inp2.type = "number";
-        inp2.min = "0";
-        inp2.placeholder = "Stock";
-        inp2.style.cssText = "width:70px;margin:0";
-        inp2.className = "stock-inp";
-        inp2.dataset.size = szName;
-        const rm2 = document.createElement("button");
-        rm2.type = "button";
-        rm2.textContent = "×";
-        rm2.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;width:24px;height:24px;cursor:pointer;font-size:14px";
-        rm2.onclick = () => { row2.remove(); };
-        row2.appendChild(b2);
-        row2.appendChild(inp2);
-        row2.appendChild(rm2);
-                const ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size"];
-        let insertBefore = addBtn;
-        for (let i = 0; i < box.children.length; i++) {
-            const ch = box.children[i];
-            if (ch === addBtn) continue;
-            const cb = ch.querySelector ? ch.querySelector(".size-btn") : null;
-            if (cb) {
-                const a = ORDER.indexOf(szName);
-                const b = ORDER.indexOf(cb.textContent);
-                if (a !== -1 && b !== -1 && a < b) { insertBefore = ch; break; }
-            }
-        }
-        box.insertBefore(row2, insertBefore);
-    };
-    box.appendChild(addBtn);
-}
-  refreshColorStocks();
+  });
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.textContent = "+ ADD SIZE";
+  addBtn.style.cssText = "background:#333;color:#fff;border:1px dashed #777;border-radius:6px;padding:6px 12px;cursor:pointer;margin-top:2px";
+  addBtn.onclick = () => {
+    const sz = prompt("Size name:");
+    if (!sz || !sz.trim()) return;
+    const szName = sz.trim().toUpperCase();
+    if (sizes.indexOf(szName) !== -1) return;
+    sizes.push(szName);
+
+    const row2 = document.createElement("div");
+    row2.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px";
+
+    const b2 = document.createElement("button");
+    b2.type = "button";
+    b2.className = "size-btn sel";
+    b2.style.width = "auto";
+    b2.textContent = szName;
+    b2.onclick = () => b2.classList.toggle("sel");
+
+    const inp2 = document.createElement("input");
+    inp2.type = "number";
+    inp2.min = "0";
+    inp2.placeholder = "Stock";
+    inp2.style.cssText = "width:70px;margin:0";
+    inp2.className = "stock-inp";
+    inp2.dataset.size = szName;
+
+    const rm2 = document.createElement("button");
+    rm2.type = "button";
+    rm2.textContent = "x";
+    rm2.style.cssText = "background:#ff4444;color:#fff;border:none;border-radius:4px;padding:4px 9px;cursor:pointer";
+    rm2.onclick = () => { row2.remove(); };
+
+    row2.appendChild(b2);
+    row2.appendChild(inp2);
+    row2.appendChild(rm2);
+    box.insertBefore(row2, addBtn);
+  };
+
+  box.appendChild(addBtn);
+}  refreshColorStocks();
 function getSelectedSizes(){
   return Array.from(document.querySelectorAll("#pfSizesBox .size-btn.sel")).map(b => b.textContent);
 }
