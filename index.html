@@ -2342,28 +2342,50 @@ async function saveProduct(){
     const category = document.getElementById("pfCat").value;
     const price = Number(document.getElementById("pfPrice").value);
     const oldPrice = Number(document.getElementById("pfOldPrice").value) || 0;
-    const image = document.getElementById("pfImage").value.trim();
+    const image = document.getElementById("pfImage") ? document.getElementById("pfImage").value.trim() : "";
     const description = document.getElementById("pfDesc").value.trim();
     const soldOut = document.getElementById("pfSoldOut").checked;
+    
+    // Har color ke andar sizes, stock aur unlimited flags properly map honge aur deleted items dobara appear nahi honge
     const colors = Array.from(document.querySelectorAll("#pfColors .cr-row")).map(row => {
       const cName = row.querySelector(".cr-name").value.trim();
       if (!cName) return null;
       const sizes = Array.from(row.querySelectorAll(".cr-size-row")).map(sr => {
         const sName = sr.querySelector(".cr-size-name").value.trim();
         if (!sName) return null;
-        return { name: sName, stock: sr.querySelector(".cr-size-unl-cb").checked ? 0 : (Number(sr.querySelector(".cr-size-stock").value) || 0), unlimited: sr.querySelector(".cr-size-unl-cb").checked };
+        return { 
+          name: sName, 
+          stock: sr.querySelector(".cr-size-unl-cb").checked ? 0 : (Number(sr.querySelector(".cr-size-stock").value) || 0), 
+          unlimited: sr.querySelector(".cr-size-unl-cb").checked 
+        };
       }).filter(Boolean);
-      return { name: cName, soldOut: row.querySelector(".cr-so").checked, images: [0,1,2,3,4].map(i => row.querySelector(".cr-img-"+i).value.trim()).filter(Boolean), sizes };
+      return { 
+        name: cName, 
+        soldOut: row.querySelector(".cr-so").checked, 
+        images: [0,1,2,3,4].map(i => {
+          const el = row.querySelector(".cr-img-"+i);
+          return el ? el.value.trim() : "";
+        }).filter(Boolean), 
+        sizes 
+      };
     }).filter(Boolean);
+
     if (!name || !price) {
       document.getElementById("pfMsg").textContent = "Naam aur price zaroori hai";
       return;
     }
-    if (!image && colors.length){ const f = (colors[0].images || [])[0]; if (f) image = f; }
-    const data = { name, category, price, oldPrice, image, description, soldOut, colors };
+    
+    let finalImage = image;
+    if (!finalImage && colors.length && colors[0].images.length) {
+      finalImage = colors[0].images[0];
+    }
+
+    const data = { name, category, price, oldPrice, image: finalImage, description, soldOut, colors };
     if (!id) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+    
     if (id) await db.collection("products").doc(id).update(data);
     else await db.collection("products").add(data);
+    
     closeProductForm();
     loadAdminProducts();
     renderProducts();
