@@ -2552,14 +2552,13 @@ function loadOrders(){
         + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\',this.value)">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
-        + '<button onclick="retryAdminEmail(\'' + o.id + '\')">📧 EMAIL</button>'
+        + '<button onclick="retryAdminEmail(\'' + o.id + '\')">EMAIL</button>'
         + '<button onclick="replyToOrder(\'' + o.id + '\')">REPLY</button>'
-
         + '<button onclick="deleteOrder(\'' + o.id + '\')" style="border-color:#c0392b;color:#c0392b">DELETE</button>'
-                        + '<a href="' + waLink + '" target="_blank" style="padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #ccc;background:#fff;color:#111;text-decoration:none;display:inline-block;font-family:Oswald,sans-serif;">WHATSAPP</a>'
-
+        + '<a href="' + waLink + '" target="_blank" style="padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #ccc;background:#fff;color:#111;text-decoration:none;display:inline-block;font-family:Oswald,sans-serif;">WHATSAPP</a>'
         + '</div>'
         + '<textarea id="rb_' + o.id + '" class="oc-reply-box" placeholder="Type reply to customer (emailed to them)"></textarea>';
+
       list.appendChild(d);
     });
   });
