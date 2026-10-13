@@ -1263,47 +1263,57 @@ function renderPdpSizes(p){
   const cat = (p.category || "").toUpperCase();
   let sizes = [];
   if (currentColor && currentColor.sizes && currentColor.sizes.length) {
-    sizes = currentColor.sizes.map(s => s.name);
+    sizes = currentColor.sizes.map(s => {
+      if (typeof s === "string") return s;
+      return s && s.name ? s.name : String(s);
+    }).filter(Boolean);
   } else {
     if(cat.includes("CAP") || cat.includes("ACCESSORY")) sizes = ["One Size"];
-    else if(cat.includes("JEAN") || cat.includes("SHO")) sizes = ["30","32","34","36","38"];
+    else if(cat.includes("JEAN") || cat.includes("SHO") || cat.includes("TROUSER")) sizes = ["30","32","34","36","38"];
     else sizes = ["S","M","L","XL","XXL"];
   }
+
   const stockMap = {};
   const unlimitedMap = {};
   if (currentColor && currentColor.sizes) {
     currentColor.sizes.forEach(s => {
-      stockMap[s.name] = s.stock || 0;
-      unlimitedMap[s.name] = s.unlimited || false;
+      const name = typeof s === "string" ? s : (s ? s.name : "");
+      if (name) {
+        stockMap[name] = (s && s.stock != null) ? s.stock : 10;
+        unlimitedMap[name] = (s && s.unlimited) || false;
+      }
     });
   }
+
   const SZ_ORDER = ["XS","S","M","L","XL","XXL","XXXL","One Size","30","32","34","36","38"];
   sizes = sizes.slice().sort((a,b) => { const ia = SZ_ORDER.indexOf(a), ib = SZ_ORDER.indexOf(b); return (ia===-1?99:ia) - (ib===-1?99:ib); });
-  currentSize = sizes.length === 1 ? sizes[0] : "";
+  if (!sizes.length) sizes = ["S","M","L","XL","XXL"];
+  if (!currentSize || !sizes.includes(currentSize)) currentSize = sizes[0];
+
   const sz = document.getElementById("pdpSizes");
   if(!sz) return;
-  sz.querySelectorAll(".size-btn, .sg-link").forEach(x => x.remove());
-  const label = sz.querySelector("strong");
+  sz.innerHTML = "<strong style='font-size:13px'>SIZE:</strong>";
+
   sizes.forEach(s => {
-    const isUnl = unlimitedMap[s] || false;
-    const st = isUnl ? Infinity : (stockMap[s] || 0);
-    if (!isUnl && st === 0) return;
+    const isUnl = unlimitedMap[s] !== undefined ? unlimitedMap[s] : true;
+    const st = isUnl ? Infinity : (stockMap[s] !== undefined ? stockMap[s] : 10);
+    
     const b = document.createElement("button");
     b.className = "size-btn" + (s === currentSize ? " sel" : "");
     b.textContent = isUnl ? s : s + " (" + st + ")";
-    if (!isUnl && st <= 5 && st > 0) b.style.color = "#c0392b";
+    
     b.onclick = () => {
-      if (!isUnl && st <= 0) return;
       currentSize = s;
       sz.querySelectorAll(".size-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
     };
-    if(label) label.insertAdjacentElement("afterend", b);
-    else sz.appendChild(b);
+    sz.appendChild(b);
   });
+
   const _t=document.createElement("div");
-  _t.innerHTML='<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')">Size Guide</span><span class="sg-link" onclick="shareProduct()">Share</span>';
-  while(_t.firstChild) sz.appendChild(_t.firstChild);
+  _t.style.cssText = "width:100%;margin-top:8px;display:flex;gap:12px;";
+  _t.innerHTML='<span class="sg-link" onclick="document.getElementById(\'sizeGuide\').classList.add(\'show\')" style="cursor:pointer;text-decoration:underline;font-size:12px;">Size Guide</span><span class="sg-link" onclick="shareProduct()" style="cursor:pointer;text-decoration:underline;font-size:12px;">Share</span>';
+  sz.appendChild(_t);
 }
 function openPDP(p){
   (function(){
@@ -2250,14 +2260,18 @@ function fillColorRow(row, color, colorStocks){
 function makeSizeRow(size){
   const row = document.createElement("div");
   row.className = "cr-size-row";
+  row.style.cssText = "display:flex;gap:6px;align-items:center;margin-bottom:6px;background:#f9f9f9;padding:6px;border-radius:6px;";
   row.innerHTML =
-    '<input class="cr-size-name" type="text" placeholder="Size (S/M/L)" value="' + (size ? size.name : "") + '">' +
-    '<input class="cr-size-stock" type="number" min="0" placeholder="Stock" value="' + (size && !size.unlimited && size.stock != null ? size.stock : "") + '">' +
-    '<label class="cr-size-unl"><input type="checkbox" class="cr-size-unl-cb"' + (size && size.unlimited ? " checked" : "") + '>Unlimited</label>' +
-    '<button class="cr-size-del" type="button">✕</button>';
+    '<input class="cr-size-name" type="text" placeholder="Size" value="' + (size ? size.name : "") + '" style="flex:1;margin:0;padding:8px;">' +
+    '<input class="cr-size-stock" type="number" min="0" placeholder="Stock" value="' + (size && !size.unlimited && size.stock != null ? size.stock : "") + '" style="width:80px;margin:0;padding:8px;">' +
+    '<label style="font-size:11px;display:flex;align-items:center;gap:2px;white-space:nowrap;margin:0;"><input type="checkbox" class="cr-size-unl-cb"' + (size && size.unlimited ? " checked" : "") + ' style="width:auto;margin:0;">Unl.</label>' +
+    '<button class="cr-size-del" type="button" style="background:#e74c3c;color:#fff;border:none;border-radius:4px;padding:6px 10px;cursor:pointer;">✕</button>';
+  
   row.querySelector(".cr-size-del").onclick = () => row.remove();
-  row.querySelector(".cr-size-unl-cb").onchange = (e) => { row.querySelector(".cr-size-stock").disabled = e.target.checked; };
-  if (size && size.unlimited) row.querySelector(".cr-size-stock").disabled = true;
+  const stockInp = row.querySelector(".cr-size-stock");
+  const unlCb = row.querySelector(".cr-size-unl-cb");
+  unlCb.onchange = (e) => { stockInp.disabled = e.target.checked; if(e.target.checked) stockInp.value = ""; };
+  if (size && size.unlimited) stockInp.disabled = true;
   return row;
 }
 
@@ -2302,29 +2316,42 @@ function addColorRow(c){
   c.sizes = c.sizes || [];
   const row = document.createElement("div");
   row.className = "cr-row";
+  row.style.cssText = "border:1.5px solid #111;border-radius:8px;padding:12px;margin-bottom:12px;background:#fff;";
   row.innerHTML =
-    '<div class="cr-top">' +
-      '<input class="cr-name" type="text" placeholder="Color name" value="' + (c.name||"") + '">' +
-      '<label class="cr-so-wrap"><input type="checkbox" class="cr-so"' + (c.soldOut ? " checked" : "") + '>Sold Out</label>' +
-      '<button class="cr-add-size" type="button">+ Add Size</button>' +
-      '<button class="cr-del" type="button">✕</button>' +
+    '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">' +
+      '<input class="cr-name" type="text" placeholder="Color name (e.g. Black)" value="' + (c.name||"") + '" style="flex:1;margin:0;padding:10px;">' +
+      '<label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0"><input type="checkbox" class="cr-so"' + (c.soldOut ? " checked" : "") + ' style="width:auto;margin:0">Sold Out</label>' +
+      '<button class="cr-del" type="button" style="background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:bold;">DELETE COLOR</button>' +
     '</div>' +
-    '<div class="cr-imgs">' + [0,1,2,3,4].map(i =>
-      '<input class="cr-img-' + i + '" type="text" placeholder="Image ' + (i+1) + ' URL" value="' + (c.images[i]||"") + '">'
+    '<div style="font-size:12px;font-weight:700;margin:6px 0 4px;">Image URLs:</div>' +
+    '<div style="display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:8px">' + [0,1,2,3,4].map(i =>
+      '<input class="cr-img-' + i + '" type="text" placeholder="Image ' + (i+1) + ' URL" value="' + (c.images[i]||"") + '" style="margin:0;padding:8px;font-size:12px;">'
     ).join("") + '</div>' +
-    '<div class="cr-sizes"></div>';
+    '<div style="font-size:12px;font-weight:700;margin:8px 0 4px;">Sizes & Stock for this color:</div>' +
+    '<div class="cr-sizes"></div>' +
+    '<button class="cr-add-size" type="button" style="background:#222;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;margin-top:6px;">+ ADD SIZE</button>';
+  
   const sizesBox = row.querySelector(".cr-sizes");
   c.sizes.forEach(s => sizesBox.appendChild(makeSizeRow(s)));
   row.querySelector(".cr-add-size").onclick = () => sizesBox.appendChild(makeSizeRow(null));
   row.querySelector(".cr-del").onclick = () => row.remove();
   document.getElementById("pfColors").appendChild(row);
-  }
+}
+
+function addColor(){
+  const cat = document.getElementById("pfCat") ? document.getElementById("pfCat").value : "T-SHIRTS";
+  const defSizes = DEFAULT_SIZES[cat] || ["S","M","L","XL","XXL"];
+  const initialSizes = defSizes.map(s => ({ name: s, stock: 10, unlimited: false }));
+  addColorRow({ name: "", sizes: initialSizes });
+}
+
 function openProductForm(p){
   const modal = document.getElementById("productFormModal");
   const catSelect = document.getElementById("pfCat");
   if (catSelect) {
     catSelect.innerHTML = CATEGORIES.map(c => '<option value="' + c + '">' + c + '</option>').join("");
   }
+  
   const pfId = document.getElementById("pfId");
   if (pfId) pfId.value = p ? p.id : "";
 
@@ -2339,11 +2366,17 @@ function openProductForm(p){
   const op = document.getElementById("pfOldPrice"); 
   if (op) op.value = p ? (p.oldPrice || "") : "";
 
+  const imgInp = document.getElementById("pfImage");
+  if (imgInp) imgInp.value = p ? (p.image || "") : "";
+
   const desc = document.getElementById("pfDesc"); 
   if (desc) desc.value = p ? (p.description || "") : "";
 
   const so = document.getElementById("pfSoldOut"); 
   if (so) so.checked = p ? !!p.soldOut : false;
+
+  const unl = document.getElementById("pfUnlimited");
+  if (unl) unl.checked = p ? !!p.unlimited : false;
 
   const msg = document.getElementById("pfMsg");
   if (msg) msg.textContent = "";
@@ -2354,68 +2387,14 @@ function openProductForm(p){
     if (p) {
       normalizeProduct(p); 
       (p.colors || []).forEach(c => addColorRow(c));
+    } else {
+      const cat = catSelect ? catSelect.value : "T-SHIRTS";
+      const defSizes = DEFAULT_SIZES[cat] || ["S","M","L","XL","XXL"];
+      const initialSizes = defSizes.map(s => ({ name: s, stock: 10, unlimited: false }));
+      addColorRow({ name: "Default", sizes: initialSizes });
     }
   }
   modal.classList.add("show");
-}
-function closeProductForm(){ document.getElementById("productFormModal").classList.remove("show"); }
-async function saveProduct(){
-  try {
-    const id = document.getElementById("pfId").value;
-    const name = document.getElementById("pfName").value.trim();
-    const category = document.getElementById("pfCat").value;
-    const price = Number(document.getElementById("pfPrice").value);
-    const oldPrice = Number(document.getElementById("pfOldPrice").value) || 0;
-    const image = document.getElementById("pfImage") ? document.getElementById("pfImage").value.trim() : "";
-    const description = document.getElementById("pfDesc").value.trim();
-    const soldOut = document.getElementById("pfSoldOut").checked;
-    
-    // Har color ke andar sizes, stock aur unlimited flags properly map honge aur deleted items dobara appear nahi honge
-    const colors = Array.from(document.querySelectorAll("#pfColors .cr-row")).map(row => {
-      const cName = row.querySelector(".cr-name").value.trim();
-      if (!cName) return null;
-      const sizes = Array.from(row.querySelectorAll(".cr-size-row")).map(sr => {
-        const sName = sr.querySelector(".cr-size-name").value.trim();
-        if (!sName) return null;
-        return { 
-          name: sName, 
-          stock: sr.querySelector(".cr-size-unl-cb").checked ? 0 : (Number(sr.querySelector(".cr-size-stock").value) || 0), 
-          unlimited: sr.querySelector(".cr-size-unl-cb").checked 
-        };
-      }).filter(Boolean);
-      return { 
-        name: cName, 
-        soldOut: row.querySelector(".cr-so").checked, 
-        images: [0,1,2,3,4].map(i => {
-          const el = row.querySelector(".cr-img-"+i);
-          return el ? el.value.trim() : "";
-        }).filter(Boolean), 
-        sizes 
-      };
-    }).filter(Boolean);
-
-    if (!name || !price) {
-      document.getElementById("pfMsg").textContent = "Naam aur price zaroori hai";
-      return;
-    }
-    
-    let finalImage = image;
-    if (!finalImage && colors.length && colors[0].images.length) {
-      finalImage = colors[0].images[0];
-    }
-
-    const data = { name, category, price, oldPrice, image: finalImage, description, soldOut, colors };
-    if (!id) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    
-    if (id) await db.collection("products").doc(id).update(data);
-    else await db.collection("products").add(data);
-    
-    closeProductForm();
-    loadAdminProducts();
-    renderProducts();
-  } catch(e) {
-    document.getElementById("pfMsg").textContent = "Error: " + e.message;
-  }
 }
 async function delProduct(id){
   if (!confirm("Delete this product?")) return;
