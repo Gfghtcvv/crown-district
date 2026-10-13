@@ -2549,7 +2549,7 @@ function loadOrders(){
         + '<div class="oc-row" style="font-weight:700">Total: ' + fmt(o.total) + '</div>'
         + (o.reply ? '<div class="oc-reply"><strong>Reply:</strong> ' + o.reply + '</div>' : '')
         + '<div class="oc-actions">'
-        + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\', this.value)">'
+        + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\', this.value); window.open(\'https://wa.me/' + String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92") + '?text=\' + encodeURIComponent(\'Hello ' + o.customer + ', your order ' + (o.orderId || o.id) + ' status has been updated to \' + this.value));">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
         + '<button onclick="retryAdminEmail(\'' + o.id + '\')">EMAIL</button>'
