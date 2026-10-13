@@ -3254,7 +3254,7 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
     if (e) e.addEventListener('focus', clearNl);
   });
 })();
-  document.addEventListener("change", function(e) {
+document.addEventListener("change", function(e) {
   if (e.target && e.target.classList.contains("status-select")) {
     const id = e.target.dataset.id;
     const newStatus = e.target.value;
@@ -3262,16 +3262,27 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
     const orderId = e.target.dataset.orderid;
     const phone = e.target.dataset.phone;
 
-    alert("Status changed to: " + newStatus);
-
-    updateStatus(id, newStatus);
+    try {
+      updateStatus(id, newStatus);
+    } catch (err) {
+      alert("Update Error: " + err.message);
+    }
 
     const cleanPhone = String(phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
     const msg = "Hello " + customer + ", your order " + orderId + " status has been updated to " + newStatus;
     const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
-    window.open(url, "_blank");
+
+    try {
+      const win = window.open(url, "_blank");
+      if (!win) {
+        window.location.href = url;
+      }
+    } catch (e) {
+      window.location.href = url;
+    }
   }
 });
+
 
 </script>
   </body>
