@@ -2514,7 +2514,7 @@ async function delProduct(id){
     renderProducts();
   } catch(e) { toast(e.message); }
 }
-  let unsubOrders = null;
+let unsubOrders = null;
 function loadOrders(){
   if (unsubOrders) unsubOrders();
   unsubOrders = db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
@@ -2523,14 +2523,13 @@ function loadOrders(){
     if (!orders.length) { list.innerHTML = '<p class="empty">No orders yet</p>'; return; }
     list.innerHTML = "";
     orders.forEach(o => {
-            const waNum = String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
+      const waNum = String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
       const waItemsStr = (o.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
       const waMsg = "Hello " + o.customer + ", this is JAZB. Your order has been received.\n\nOrder ID: " + (o.orderId || o.id) + "\nItems: " + waItemsStr + "\nTotal: Rs. " + Number(o.total || 0).toLocaleString() + "\n\nWe will contact you shortly.";
       const waLink = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(waMsg);
 
       const d = document.createElement("div");
       d.className = "order-card";
-            const itemsStr = o.items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
       const itemsHtml = (o.items||[]).map(i => {
         const pp = products.find(x => x.id === i.id);
         const im = pp ? (pp.image || "") : "";
@@ -2549,7 +2548,7 @@ function loadOrders(){
         + '<div class="oc-row" style="font-weight:700">Total: ' + fmt(o.total) + '</div>'
         + (o.reply ? '<div class="oc-reply"><strong>Reply:</strong> ' + o.reply + '</div>' : '')
         + '<div class="oc-actions">'
-        + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\', this.value); window.open(\'https://wa.me/' + String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92") + '?text=\' + encodeURIComponent(\'Hello ' + o.customer + ', your order ' + (o.orderId || o.id) + ' status has been updated to \' + this.value));">'
+        + '<select id="st_' + o.id + '" onchange="updateStatus(\'' + o.id + '\', this.value)">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
         + '<button onclick="retryAdminEmail(\'' + o.id + '\')">EMAIL</button>'
@@ -2562,6 +2561,7 @@ function loadOrders(){
       list.appendChild(d);
     });
   });
+
 async function restockOrder(o){
   for (const it of (o.items || [])) {
     const p = products.find(x => x.id === it.id);
@@ -3254,6 +3254,14 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
     if (e) e.addEventListener('focus', clearNl);
   });
 })();
+  function triggerStatusWhatsApp(id, customerName, orderId, phoneNum, newStatus) {
+  updateStatus(id, newStatus);
+  const cleanPhone = String(phoneNum || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
+  const msg = "Hello " + customerName + ", your order " + orderId + " status has been updated to " + newStatus;
+  const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
+  window.open(url, "_blank");
+}
+
 </script>
   </body>
   
