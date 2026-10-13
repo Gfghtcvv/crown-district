@@ -2319,11 +2319,18 @@ function addColorRow(c){
   row.querySelector(".cr-del").onclick = () => row.remove();
   document.getElementById("pfColors").appendChild(row);
   }
-  function openProductForm(p){
+function openProductForm(p){
   const modal = document.getElementById("productFormModal");
+  
+  // Category dropdown ko properly populate karne ke liye:
+  const catSelect = document.getElementById("pfCat");
+  if (catSelect) {
+    catSelect.innerHTML = CATEGORIES.map(c => '<option value="' + c + '">' + c + '</option>').join("");
+  }
+
   document.getElementById("pfId").value = p ? p.id : "";
   document.getElementById("pfName").value = (p && p.name) ? p.name : "";
-  document.getElementById("pfCat").value = p ? p.category : "T-SHIRTS";
+  if (p && catSelect) catSelect.value = p.category;
   document.getElementById("pfPrice").value = p ? p.price : "";
   const op = document.getElementById("pfOldPrice"); if(op) op.value = p ? (p.oldPrice||"") : "";
   const img = document.getElementById("pfImage"); if(img) img.value = p ? (p.image||"") : "";
@@ -2333,7 +2340,7 @@ function addColorRow(c){
   const box = document.getElementById("pfColors"); box.innerHTML = "";
   if (p) { normalizeProduct(p); (p.colors||[]).forEach(c => addColorRow(c)); }
   modal.classList.add("show");
-  }
+}
 function closeProductForm(){ document.getElementById("productFormModal").classList.remove("show"); }
 async function saveProduct(){
   try {
