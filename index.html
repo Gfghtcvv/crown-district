@@ -3254,13 +3254,24 @@ if (window.location.search.includes('admin') || sessionStorage.getItem('cd_admin
     if (e) e.addEventListener('focus', clearNl);
   });
 })();
-  function triggerStatusWhatsApp(id, customerName, orderId, phoneNum, newStatus) {
-  updateStatus(id, newStatus);
-  const cleanPhone = String(phoneNum || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
-  const msg = "Hello " + customerName + ", your order " + orderId + " status has been updated to " + newStatus;
-  const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
-  window.open(url, "_blank");
-}
+  document.addEventListener("change", function(e) {
+  if (e.target && e.target.classList.contains("status-select")) {
+    const id = e.target.dataset.id;
+    const newStatus = e.target.value;
+    const customer = e.target.dataset.customer;
+    const orderId = e.target.dataset.orderid;
+    const phone = e.target.dataset.phone;
+
+    alert("Status changed to: " + newStatus);
+
+    updateStatus(id, newStatus);
+
+    const cleanPhone = String(phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
+    const msg = "Hello " + customer + ", your order " + orderId + " status has been updated to " + newStatus;
+    const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+  }
+});
 
 </script>
   </body>
