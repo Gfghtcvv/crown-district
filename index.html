@@ -2723,6 +2723,10 @@ async function replyToOrder(id){
     }
   } catch(e) { toast(e.message); }
 }
+  function restockOrder(id) {
+    // Stock management ya restock logic yahan likh sakte hain
+}
+
 async function deleteOrder(id){
   if(!confirm("Delete this order?")) return;
   try {
@@ -3386,6 +3390,7 @@ document.addEventListener("change", function(e) {
     }
   }
 });
+function restockOrder() {}
 
 
 </script>
