@@ -2548,7 +2548,7 @@ function loadOrders(){
         + '<div class="oc-row" style="font-weight:700">Total: ' + fmt(o.total) + '</div>'
         + (o.reply ? '<div class="oc-reply"><strong>Reply:</strong> ' + o.reply + '</div>' : '')
         + '<div class="oc-actions">'
-        + '<select id="st_' + o.id + '" class="status-select" data-id="' + o.id + '" data-customer="' + esc(o.customer) + '" data-orderid="' + (o.orderId || o.id) + '" data-phone="' + o.phone + '">'
+        + '<select id="st_' + o.id + '" class="status-select" data-id="' + o.id + '" data-customer="' + esc(o.customer) + '" data-orderid="' + (o.orderId || o.id) + '" data-phone="' + o.phone + '" data-total="' + fmt(o.total) + '" data-items="' + esc(JSON.stringify(o.items || [])) + '">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
         + '<button onclick="retryAdminEmail(\'' + o.id + '\')">EMAIL</button>'
@@ -3261,26 +3261,37 @@ document.addEventListener("change", function(e) {
     const customer = e.target.dataset.customer;
     const orderId = e.target.dataset.orderid;
     const phone = e.target.dataset.phone;
+    const total = e.target.dataset.total;
+    
+    let itemsText = "";
+    try {
+      const itemsArr = JSON.parse(e.target.dataset.items || "[]");
+      itemsText = itemsArr.map(i => (i.name || "Product") + " (" + (i.color || "-") + ", " + (i.size || "-") + ") x" + (i.qty || 1)).join(", ");
+    } catch (err) {
+      itemsText = "Order Items";
+    }
 
     // 1. Database status update
     try {
-      updateStatus(id, newStatus);
+      if (typeof db !== "undefined") {
+        db.collection("orders").doc(id).update({ status: newStatus });
+      }
     } catch (err) {
-      alert("Update Error: " + err.message);
+      console.error(err);
     }
 
-    // 2. Har status ke liye alag message set karein
+    // 2. Har status ke liye alag aur professional message
     let customMsg = "";
     if (newStatus === "Confirmed") {
-      customMsg = "Hello " + customer + ", good news! Your order " + orderId + " has been confirmed and is being prepared.";
+      customMsg = "JAZB Order Update\n\nOrder ID: " + orderId + "\nStatus: Confirmed\nItems: " + itemsText + "\nTotal: Rs. " + total + "\n\nAapka order confirm ho gaya hai aur tyar kiya ja raha hai.\nShukriya, JAZB";
     } else if (newStatus === "Shipping") {
-      customMsg = "Hello " + customer + ", your order " + orderId + " has been shipped and is on its way to you!";
+      customMsg = "JAZB Order Update\n\nOrder ID: " + orderId + "\nStatus: Shipping\nItems: " + itemsText + "\nTotal: Rs. " + total + "\n\nAapka order dispatch kar diya gaya hai aur raste mein hai!\nShukriya, JAZB";
     } else if (newStatus === "Delivered") {
-      customMsg = "Hello " + customer + ", your order " + orderId + " has been delivered. Thank you for shopping with us!";
+      customMsg = "JAZB Order Update\n\nOrder ID: " + orderId + "\nStatus: Delivered\nItems: " + itemsText + "\nTotal: Rs. " + total + "\n\nAapka order deliver ho chuka hai. Kharidari karne ka shukriya!\nShukriya, JAZB";
     } else if (newStatus === "Cancelled") {
-      customMsg = "Hello " + customer + ", unfortunately your order " + orderId + " has been cancelled. Contact us for details.";
+      customMsg = "JAZB Order Update\n\nOrder ID: " + orderId + "\nStatus: Cancelled\nItems: " + itemsText + "\nTotal: Rs. " + total + "\n\nAapka order cancel kar diya gaya hai. Mazeed malumat ke liye rabta karein.\nShukriya, JAZB";
     } else {
-      customMsg = "Hello " + customer + ", your order " + orderId + " status is now: " + newStatus;
+      customMsg = "JAZB Order Update\n\nOrder ID: " + orderId + "\nStatus: " + newStatus + "\nItems: " + itemsText + "\nTotal: Rs. " + total + "\n\nShukriya, JAZB";
     }
 
     // 3. WhatsApp URL generation & opening
@@ -3297,6 +3308,7 @@ document.addEventListener("change", function(e) {
     }
   }
 });
+
 
 </script>
   </body>
