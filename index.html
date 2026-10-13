@@ -3262,27 +3262,41 @@ document.addEventListener("change", function(e) {
     const orderId = e.target.dataset.orderid;
     const phone = e.target.dataset.phone;
 
+    // 1. Database status update
     try {
       updateStatus(id, newStatus);
     } catch (err) {
       alert("Update Error: " + err.message);
     }
 
+    // 2. Har status ke liye alag message set karein
+    let customMsg = "";
+    if (newStatus === "Confirmed") {
+      customMsg = "Hello " + customer + ", good news! Your order " + orderId + " has been confirmed and is being prepared.";
+    } else if (newStatus === "Shipping") {
+      customMsg = "Hello " + customer + ", your order " + orderId + " has been shipped and is on its way to you!";
+    } else if (newStatus === "Delivered") {
+      customMsg = "Hello " + customer + ", your order " + orderId + " has been delivered. Thank you for shopping with us!";
+    } else if (newStatus === "Cancelled") {
+      customMsg = "Hello " + customer + ", unfortunately your order " + orderId + " has been cancelled. Contact us for details.";
+    } else {
+      customMsg = "Hello " + customer + ", your order " + orderId + " status is now: " + newStatus;
+    }
+
+    // 3. WhatsApp URL generation & opening
     const cleanPhone = String(phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
-    const msg = "Hello " + customer + ", your order " + orderId + " status has been updated to " + newStatus;
-    const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(msg);
+    const url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(customMsg);
 
     try {
       const win = window.open(url, "_blank");
       if (!win) {
         window.location.href = url;
       }
-    } catch (e) {
+    } catch (err) {
       window.location.href = url;
     }
   }
 });
-
 
 </script>
   </body>
