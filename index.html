@@ -2619,7 +2619,9 @@ async function updateStatus(id, status){
       if (phone.startsWith("0")) phone = "92" + phone.slice(1);
       if (phone) {
         const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\nItems: " + (d.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ") + "\nTotal: Rs. " + Number(d.total || 0).toLocaleString() + "\n\nShukriya, JAZB";
-        location.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg);
+        setTimeout(() => {
+  window.location.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg);
+}, 200);
       }
     }
   }
