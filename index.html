@@ -2345,7 +2345,16 @@ function addColor(){
   addColorRow({ name: "", sizes: initialSizes });
 }
 
+function closeProductForm(){
+  const modal = document.getElementById("productFormModal");
+  if (modal) modal.classList.remove("show");
+  document.body.style.overflow = "";
+}
+
 function openProductForm(p){
+  if (typeof p === "string") {
+    p = products.find(x => x.id === p);
+  }
   const modal = document.getElementById("productFormModal");
   const catSelect = document.getElementById("pfCat");
   if (catSelect) {
@@ -2394,7 +2403,7 @@ function openProductForm(p){
       addColorRow({ name: "Default", sizes: initialSizes });
     }
   }
-  modal.classList.add("show");
+  if (modal) modal.classList.add("show");
 }
 async function delProduct(id){
   if (!confirm("Delete this product?")) return;
