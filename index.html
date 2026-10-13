@@ -2615,20 +2615,12 @@ async function updateStatus(id, status){
     if (status === "Cancelled" && od.exists && od.data().email) {
       sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
     }
-    if (od.exists) {
-      const d = od.data();
-      let phone = String(d.phone || "").replace(/[^0-9]/g, "");
-      if (phone.startsWith("0")) phone = "92" + phone.slice(1);
-      if (phone) {
-        const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\nItems: " + (d.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ") + "\nTotal: Rs. " + Number(d.total || 0).toLocaleString() + "\n\nShukriya, JAZB";
-        toast("Status updated successfully ✅");
-        window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg), "_blank");
-      }
-    }
+    
+    toast("Status updated successfully! ✅");
+    loadOrders();
   }
   catch(e) { toast(e.message); }
 }
-
 
 }
 async function replyToOrder(id){
