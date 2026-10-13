@@ -2586,7 +2586,9 @@ async function updateStatus(id, status){
   try {
     const od = await db.collection("orders").doc(id).get();
     if (status === "Cancelled" && od.exists && ["Confirmed","Shipping","Delivered"].includes(od.data().status)) await restockOrder(od.data());
+    
     await db.collection("orders").doc(id).update({ status });
+
     if (status === "Confirmed") {
       for (const it of (od.data().items || [])) {
         const p = products.find(x => x.id === it.id);
@@ -2619,14 +2621,14 @@ async function updateStatus(id, status){
       if (phone.startsWith("0")) phone = "92" + phone.slice(1);
       if (phone) {
         const msg = "JAZB Order Update\n\nOrder ID: " + (d.orderId || id) + "\nStatus: " + status + "\nItems: " + (d.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ") + "\nTotal: Rs. " + Number(d.total || 0).toLocaleString() + "\n\nShukriya, JAZB";
-        setTimeout(() => {
-  window.location.href = "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg);
-}, 200);
+        toast("Status updated successfully ✅");
+        window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg), "_blank");
       }
     }
   }
   catch(e) { toast(e.message); }
 }
+
 
 }
 async function replyToOrder(id){
