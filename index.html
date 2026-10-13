@@ -2104,14 +2104,25 @@ function getSelectedSizes(){
 }
 function getStockForColor(p, colorName){
   if (p.unlimited) return null;
+  if (p.colors && p.colors.length) {
+    const c = p.colors.find(x => x.name.toLowerCase() === String(colorName || "").toLowerCase()) || p.colors[0];
+    if (c && c.sizes) {
+      const map = {};
+      c.sizes.forEach(sz => {
+        if (typeof sz === "string") map[sz] = 10;
+        else if (sz && sz.name) map[sz.name] = sz.unlimited ? 9999 : (sz.stock != null ? sz.stock : 0);
+      });
+      return map;
+    }
+  }
   const s = p.stock || {};
-  if (!(p.colors && p.colors.length)) return s;
   if (!colorName) return {};
   if (s[colorName] && typeof s[colorName] === "object") return s[colorName];
   const key = Object.keys(s).find(k => k.toLowerCase() === String(colorName).toLowerCase());
   if (key) return s[key];
   return {};
 }
+
 function colorSoldOut(p, colorName){
   const s = getStockForColor(p, colorName);
   if (!s) return false;
@@ -2545,16 +2556,28 @@ function loadOrders(){
       list.appendChild(d);
     });
   });
-}async function restockOrder(o){
+async function restockOrder(o){
   for (const it of (o.items || [])) {
     const p = products.find(x => x.id === it.id);
-    if (!p || p.unlimited || !p.stock) continue;
-    const cs = getStockForColor(p, it.color) || {};
-    if (Object.keys(cs).length > 0) {
-      cs[it.size] = (cs[it.size] || 0) + (it.qty || 1);
-      await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
-    } else if (p.stock[it.size] !== undefined) {
-      await db.collection("products").doc(it.id).update({ ["stock." + it.size]: firebase.firestore.FieldValue.increment(it.qty) });
+    if (!p || p.unlimited) continue;
+    if (p.colors && p.colors.length) {
+      const newColors = JSON.parse(JSON.stringify(p.colors));
+      const col = newColors.find(c => c.name.toLowerCase() === String(it.color || "").toLowerCase()) || newColors[0];
+      if (col && col.sizes) {
+        const sz = col.sizes.find(s => s.name === it.size);
+        if (sz && !sz.unlimited) {
+          sz.stock = (Number(sz.stock) || 0) + (it.qty || 1);
+          await db.collection("products").doc(it.id).update({ colors: newColors });
+        }
+      }
+    } else if (p.stock) {
+      const cs = getStockForColor(p, it.color) || {};
+      if (Object.keys(cs).length > 0) {
+        cs[it.size] = (cs[it.size] || 0) + (it.qty || 1);
+        await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
+      } else if (p.stock[it.size] !== undefined) {
+        await db.collection("products").doc(it.id).update({ ["stock." + it.size]: firebase.firestore.FieldValue.increment(it.qty) });
+      }
     }
   }
 }
@@ -2567,11 +2590,23 @@ async function updateStatus(id, status){
     if (status === "Confirmed") {
       for (const it of (od.data().items || [])) {
         const p = products.find(x => x.id === it.id);
-        if (!p || p.unlimited || !p.stock) continue;
-        const cs = getStockForColor(p, it.color) || {};
-        if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
-          cs[it.size] = cs[it.size] - (it.qty || 1);
-          await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
+        if (!p || p.unlimited) continue;
+        if (p.colors && p.colors.length) {
+          const newColors = JSON.parse(JSON.stringify(p.colors));
+          const col = newColors.find(c => c.name.toLowerCase() === String(it.color || "").toLowerCase()) || newColors[0];
+          if (col && col.sizes) {
+            const sz = col.sizes.find(s => s.name === it.size);
+            if (sz && !sz.unlimited && (Number(sz.stock) || 0) >= (it.qty || 1)) {
+              sz.stock = Number(sz.stock) - (it.qty || 1);
+              await db.collection("products").doc(it.id).update({ colors: newColors });
+            }
+          }
+        } else if (p.stock) {
+          const cs = getStockForColor(p, it.color) || {};
+          if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
+            cs[it.size] = cs[it.size] - (it.qty || 1);
+            await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
+          }
         }
       }
     }
@@ -2590,6 +2625,9 @@ async function updateStatus(id, status){
   }
   catch(e) { toast(e.message); }
 }
+
+}
+
 async function replyToOrder(id){
   const box = document.getElementById("rb_" + id);
   const msg = box.value.trim();
