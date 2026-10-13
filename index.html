@@ -2523,10 +2523,10 @@ function loadOrders(){
     if (!orders.length) { list.innerHTML = '<p class="empty">No orders yet</p>'; return; }
     list.innerHTML = "";
     orders.forEach(o => {
-            const num = String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
-      const itemsStr = (o.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
-      const waMsg = "Hello " + o.customer + ", this is JAZB. Your order has been received.\n\nOrder ID: " + (o.orderId || o.id) + "\nItems: " + itemsStr + "\nTotal: Rs. " + Number(o.total || 0).toLocaleString() + "\n\nWe will contact you shortly.";
-      const waLink = "https://wa.me/" + num + "?text=" + encodeURIComponent(waMsg);
+            const waNum = String(o.phone || "").replace(/[^0-9]/g, "").replace(/^0/, "92");
+      const waItemsStr = (o.items || []).map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
+      const waMsg = "Hello " + o.customer + ", this is JAZB. Your order has been received.\n\nOrder ID: " + (o.orderId || o.id) + "\nItems: " + waItemsStr + "\nTotal: Rs. " + Number(o.total || 0).toLocaleString() + "\n\nWe will contact you shortly.";
+      const waLink = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(waMsg);
 
       const d = document.createElement("div");
       d.className = "order-card";
@@ -2556,7 +2556,7 @@ function loadOrders(){
         + '<button onclick="replyToOrder(\'' + o.id + '\')">REPLY</button>'
 
         + '<button onclick="deleteOrder(\'' + o.id + '\')" style="border-color:#c0392b;color:#c0392b">DELETE</button>'
-                + '<a href="' + waLink + '" target="_blank" style="padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #ccc;background:#fff;color:#111;text-decoration:none;display:inline-block;font-family:Oswald,sans-serif;">WHATSAPP</a>'
+                        + '<a href="' + waLink + '" target="_blank" style="padding:8px 12px;font-size:11px;letter-spacing:1px;border:1px solid #ccc;background:#fff;color:#111;text-decoration:none;display:inline-block;font-family:Oswald,sans-serif;">WHATSAPP</a>'
 
         + '</div>'
         + '<textarea id="rb_' + o.id + '" class="oc-reply-box" placeholder="Type reply to customer (emailed to them)"></textarea>';
