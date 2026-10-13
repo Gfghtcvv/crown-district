@@ -2673,29 +2673,27 @@ async function updateStatus(id, status){
     
     await db.collection("orders").doc(id).update({ status });
 
-    if (status === "Confirmed") {
-      for (const it of (od.data().items || [])) {
-        const p = products.find(x => x.id === it.id);
-        if (!p || p.unlimited) continue;
-        if (p.colors && p.colors.length) {
-          const newColors = JSON.parse(JSON.stringify(p.colors));
-          const col = newColors.find(c => c.name.toLowerCase() === String(it.color || "").toLowerCase()) || newColors[0];
-          if (col && col.sizes) {
-            const sz = col.sizes.find(s => s.name === it.size);
-            if (sz && !sz.unlimited && (Number(sz.stock) || 0) >= (it.qty || 1)) {
-              sz.stock = Number(sz.stock) - (it.qty || 1);
-              await db.collection("products").doc(it.id).update({ colors: newColors });
-            }
-          }
-        } else if (p.stock) {
-          const cs = getStockForColor(p, it.color) || {};
-          if (Object.keys(cs).length > 0 && cs[it.size] > 0) {
-            cs[it.size] = cs[it.size] - (it.qty || 1);
-            await db.collection("products").doc(it.id).update({ stock: { ...p.stock, [it.color]: cs } });
-          }
+if (status === "Confirmed") {
+  try {
+    const items = od.data().items || [];
+    for (const item of items) {
+      const prodId = item.id || item.productId;
+      const qty = item.qty || item.quantity || 1;
+      if (prodId) {
+        const prodRef = db.collection("products").doc(prodId);
+        const prodDoc = await prodRef.get();
+        if (prodDoc.exists) {
+          const currentStock = prodDoc.data().stock || 0;
+          const newStock = Math.max(0, currentStock - qty);
+          await prodRef.update({ stock: newStock });
         }
       }
     }
+  } catch (err) {
+    console.log("Stock deduction error:", err);
+  }
+}
+
     if (status === "Cancelled" && od.exists && od.data().email) {
       sendMail(od.data().email, "Aapka JAZB Order Cancelled - " + (od.data().orderId || id), "Order Cancelled\n\nOrder ID: " + (od.data().orderId || id) + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
     }
