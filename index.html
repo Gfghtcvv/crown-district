@@ -670,17 +670,18 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     mix-blend-mode: screen;
 }
 
-/* Light mode header logo (White background ke liye black logo) */
+/* Light mode header logo - Background transparent aur logo bilkul saaf black */
 #logoImg {
-    filter: invert(1);
+    mix-blend-mode: multiply;
     background-color: transparent !important;
+    filter: none;
 }
 
-/* Dark mode header logo (Dark background ke liye white logo with transparent background) */
+/* Dark mode header logo - Background transparent aur logo bilkul saaf white */
 body.dark #logoImg {
-    filter: none;
     mix-blend-mode: screen;
     background-color: transparent !important;
+    filter: brightness(0) invert(1);
 }
 
 
