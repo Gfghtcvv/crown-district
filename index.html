@@ -671,20 +671,13 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 }
 
 /* Light Mode Logo Styling */
+/* Clean Logo Styling for Both Modes */
 #logoImg {
-    background-color: #ffffff !important;
-    padding: 4px 8px;
-    border-radius: 4px;
-    mix-blend-mode: multiply;
+  transition: filter 0.3s ease;
+  background: transparent !important;
 }
-
-/* Dark Mode Logo Styling */
 body.dark #logoImg {
-    background-color: #111111 !important;
-    padding: 4px 8px;
-    border-radius: 4px;
-    filter: brightness(0) invert(1);
-    mix-blend-mode: screen;
+  filter: brightness(0) invert(1);
 }
 
 
@@ -3335,15 +3328,17 @@ function applySettings(s){
   window.siteSettings = s;
   const isDark = document.body.classList.contains("dark");
   
-  // Logo Update
+  // Logo Update (Multiple Fallbacks)
   const logoImg = document.getElementById("logoImg");
   if (logoImg) {
-    const activeLogo = isDark ? (s.darkLogo || s.logo) : s.logo;
-    if (activeLogo && activeLogo.trim() !== "") {
-      logoImg.src = activeLogo;
+    const mainLogo = s.logo || s.siteLogo || s.logoUrl || s.darkLogo;
+    if (mainLogo && mainLogo.trim() !== "") {
+      logoImg.src = mainLogo;
       logoImg.style.display = "block";
     }
   }
+
+
 
   // Hero & WaFloat
   if (s.hero && document.getElementById("heroImg")) {
