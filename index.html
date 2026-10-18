@@ -3223,6 +3223,7 @@ async function saveSetting(key){
     }
     
     try {
+        const docRef = db.collection("settings").doc("site"); // <-- Yeh line lazmi honi chahiye!
         await docRef.set(data, { merge: true });
         
         applySettings(data);
@@ -3232,8 +3233,6 @@ async function saveSetting(key){
         toast("Error: " + e.message);
     }
 }
-
-
 
 function fillFlashDropdown(){
   const fs=document.getElementById("setFlash");
