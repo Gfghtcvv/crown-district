@@ -3223,13 +3223,7 @@ async function saveSetting(key){
     }
     
     try {
-        const docRef = db.collection("settings").doc("site");
-        const doc = await docRef.get();
-        if (doc.exists) {
-            await docRef.update(data);
-        } else {
-            await docRef.set(data);
-        }
+        await docRef.set(data, { merge: true });
         
         applySettings(data);
         toast("Setting saved successfully ✅");
