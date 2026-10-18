@@ -3332,33 +3332,66 @@ function removeFlashProduct(){
   }).catch(e=>toast("Error: "+e.message));
 }
 function applySettings(s){
-    window.siteSettings = s;
-    const isDark = document.body.classList.contains("dark");
-    const logoImg = document.getElementById("logoImg");
-    if (logoImg) {
-        const activeLogo = isDark ? (s.darkLogo || s.logo) : (s.logo || s.darkLogo);
-        if (activeLogo && activeLogo.trim() !== "") {
-            logoImg.src = activeLogo;
-            logoImg.style.display = "block";
-        } else {
-            logoImg.src = "https://i.ibb.co/tMjw7kCJ/file-3.png"; 
-        }
+  window.siteSettings = s;
+  const isDark = document.body.classList.contains("dark");
+  
+  // Logo Update
+  const logoImg = document.getElementById("logoImg");
+  if (logoImg) {
+    const activeLogo = isDark ? (s.darkLogo || s.logo) : s.logo;
+    if (activeLogo && activeLogo.trim() !== "") {
+      logoImg.src = activeLogo;
+      logoImg.style.display = "block";
+    }
+  }
 
-    if (s.hero) document.getElementById("heroImg").src = s.hero;
-    if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
-    if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
-    applyBundle(s);
-    if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); } else if(s.flashProduct === null){ localStorage.removeItem("cd_flash"); renderFlashSale(); } 
-    for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
-    renderInstaGrid();
+  // Hero & WaFloat
+  if (s.hero && document.getElementById("heroImg")) {
+    document.getElementById("heroImg").src = s.hero;
+  }
+  if (s.waNumber && document.getElementById("waFloat")) {
+    document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
+  }
+
+  // 1. FOCUS IMAGES MAP & RENDER
+  if (typeof focusImages !== 'undefined') {
+    if (s.focusT) focusImages["T-SHIRTS"] = s.focusT;
+    if (s.focusTrousers) focusImages["TROUSERS"] = s.focusTrousers;
+    if (s.focusShorts) focusImages["SHORTS"] = s.focusShorts;
+    if (typeof renderFocus === 'function') renderFocus();
+  }
+
+  // 2. CATALOG / TABS IMAGES MAP & RENDER
+  if (typeof catImages !== 'undefined') {
+    if (s.catT) catImages["T-SHIRTS"] = s.catT;
+    if (s.catTrackSuit) catImages["TRACKSUITS"] = s.catTrackSuit;
+    if (s.catShirts) catImages["SHIRTS"] = s.catShirts;
+    if (s.catTrousers) catImages["TROUSERS"] = s.catTrousers;
+    if (s.catShorts) catImages["SHORTS"] = s.catShorts;
+    if (s.catHoodies) catImages["HOODIES"] = s.catHoodies;
+    if (s.catJackets) catImages["JACKETS"] = s.catJackets;
+    if (s.catJeans) catImages["JEANS"] = s.catJeans;
+    
+    // Agar tabs/catalog render karne ka function hai
+    if (typeof renderCatTabs === 'function') renderCatTabs();
+    if (typeof renderCatalog === 'function') renderCatalog();
+  }
+  
+  // Direct DOM Image Updating (agar images par Specific IDs/Classes hain)
+  const tabKeys = {
+    catT: "catImg-T",
+    catTrackSuit: "catImg-TrackSuit",
+    catShirts: "catImg-Shirts",
+    catTrousers: "catImg-Trousers",
+    catShorts: "catImg-Shorts"
+  };
+  
+  Object.keys(tabKeys).forEach(k => {
+    const el = document.getElementById(tabKeys[k]);
+    if (el && s[k]) el.src = s[k];
+  });
 }
 
-
-    applyBundle(s);
-  if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); } else if(s.flashProduct === null){ localStorage.removeItem("cd_flash"); renderFlashSale(); } 
-  for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
-  renderInstaGrid();
-}
 async function loadSettings(){
   try {
     const doc = await db.collection("settings").doc("site").get();
