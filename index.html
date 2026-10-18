@@ -3354,16 +3354,17 @@ async function loadSettings(){
     if (doc.exists) {
       const s = doc.data();
       applySettings(s);
-      if (s.logo) document.getElementById("setLogo").value = s.logo;
-      if (s.darkLogo) document.getElementById("setDarkLogo").value = s.darkLogo;
+      document.getElementById("setLogo").value = s.logo || "";
+      document.getElementById("setDarkLogo").value = s.darkLogo || "";
       if (s.hero) document.getElementById("setHero").value = s.hero;
       if (s.phone) document.getElementById("setPhone").value = s.phone;
-            if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
-            if (s.insta) document.getElementById("setInsta").value = s.insta;
+      if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
+      if (s.insta) document.getElementById("setInsta").value = s.insta;
     }
   } catch(e) { console.log(e); }
 }
-  function toggleDrawer(){
+
+function toggleDrawer(){
   document.getElementById("drawer").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("show");
 }
@@ -3379,9 +3380,14 @@ function toggleDark(){
     const isDark = document.body.classList.contains("dark");
     const logoImg = document.getElementById("logoImg");
     if (logoImg && window.siteSettings) {
-        logoImg.src = (isDark && window.siteSettings.darkLogo) ? window.siteSettings.darkLogo : (window.siteSettings.logo || window.siteSettings.darkLogo);
+        if (isDark) {
+            logoImg.src = window.siteSettings.darkLogo || window.siteSettings.logo || "https://i.ibb.co/tMjw7kCJ/file-3.png";
+        } else {
+            logoImg.src = window.siteSettings.logo || window.siteSettings.darkLogo || "https://i.ibb.co/tMjw7kCJ/file-3.png";
+        }
     }
 }
+
 function applyAutoDark(){
   const saved = localStorage.getItem("cd_dark");
   if (saved === "1") document.body.classList.add("dark");
