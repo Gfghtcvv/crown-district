@@ -3365,27 +3365,29 @@ async function loadSettings(){
     if (doc.exists) {
       const s = doc.data();
       applySettings(s);
-      const setLogoEl = document.getElementById("setLogo");
-      if (setLogoEl) setLogoEl.value = s.logo || "";
-      if (s.hero) {
-        const hEl = document.getElementById("setHero");
-        if (hEl) hEl.value = s.hero;
-      }
-      if (s.phone) {
-        const pEl = document.getElementById("setPhone");
-        if (pEl) pEl.value = s.phone;
-      }
-      if (s.waNumber) {
-        const wEl = document.getElementById("setWaNumber");
-        if (wEl) wEl.value = s.waNumber;
-      }
-      if (s.insta) {
-        const iEl = document.getElementById("setInsta");
-        if (iEl) iEl.value = s.insta;
-      }
+      
+      // Inputs mein saved values wapas fill karne ke liye:
+      if (document.getElementById("setLogo")) document.getElementById("setLogo").value = s.logo || "";
+      if (document.getElementById("setHero")) document.getElementById("setHero").value = s.hero || "";
+      if (document.getElementById("setPhone")) document.getElementById("setPhone").value = s.phone || "";
+      if (document.getElementById("setWaNumber")) document.getElementById("setWaNumber").value = s.waNumber || "";
+      if (document.getElementById("setInsta")) document.getElementById("setInsta").value = s.insta || "";
+      
+      // Focus Images inputs
+      if (document.getElementById("setFocusT")) document.getElementById("setFocusT").value = s.focusT || "";
+      if (document.getElementById("setFocusTrousers")) document.getElementById("setFocusTrousers").value = s.focusTrousers || "";
+      if (document.getElementById("setFocusShorts")) document.getElementById("setFocusShorts").value = s.focusShorts || "";
+      
+      // Catalog / Tab Images inputs
+      const tabsList = ["T", "TrackSuit", "Shirts", "Trousers", "Shorts", "Hoodies", "Jackets", "Jeans"];
+      tabsList.forEach(t => {
+        const el = document.getElementById("setCat" + t);
+        if (el && s["cat" + t]) el.value = s["cat" + t];
+      });
     }
   } catch(e) { console.log(e); }
 }
+
 
 
 function toggleDrawer(){
