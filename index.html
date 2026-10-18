@@ -1019,11 +1019,13 @@ body.dark #logoImg {
         <input id="setLogo" placeholder="Light Logo URL" style="margin:0; flex:1;">
         <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
         <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+        <button type="button" class="full-btn" onclick="document.getElementById('setLogo').value='';" style="background:#d9534f;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">❌ Clear</button>
     </div>
     <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
         <input id="setDarkLogo" placeholder="Dark Logo URL" style="margin:0; flex:1;">
         <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setDarkLogo')">
         <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+        <button type="button" class="full-btn" onclick="document.getElementById('setDarkLogo').value='';" style="background:#d9534f;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">❌ Clear</button>
     </div>
     <button class="full-btn" onclick="saveSetting('logo')">SAVE LOGO</button>
 
