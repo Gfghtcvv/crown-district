@@ -666,6 +666,15 @@ body.dark ::-webkit-scrollbar-track{background:#1a1a1a}
 body.dark ::-webkit-scrollbar-thumb{background:#444}
 </style>
   <style>
+    #logoImg {
+    filter: none;
+    transition: filter 0.3s ease;
+}
+
+body.dark #logoImg {
+    filter: brightness(0) invert(1);
+}
+
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
 .fade-in.visible{opacity:1;transform:translateY(0)}
   </style>
@@ -761,7 +770,8 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 <header class="header">
   <div class="header-inner">
     <button class="icon-btn" onclick="toggleDrawer()">&#9776;</button>
-    <img id="logoImg" class="logo" src="https://i.ibb.co/gMqDCZSJ/aelius-a-brand-logo-design-for-a.png" alt="JAZB">
+    <img id="logoImg" class="logo" src="https://i.ibb.co/tMjw7kCJ/file-3.png" alt="JAZB">
+
     <div>
 <button class="icon-btn" onclick="toggleSearch()">&#128269;</button>
       
