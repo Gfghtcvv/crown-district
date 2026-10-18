@@ -672,7 +672,9 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
 }
 
 body.dark #logoImg {
-    filter: brightness(0) invert(1);
+    background-color: #000000;
+    padding: 4px;
+    border-radius: 4px;
 }
 
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
@@ -3322,27 +3324,28 @@ function removeFlashProduct(){
   }).catch(e=>toast("Error: "+e.message));
 }
 function applySettings(s){
-      window.siteSettings = s;
-    if (s.logo || s.darkLogo) {
-        const isDark = document.body.classList.contains("dark");
-        document.getElementById("logoImg").src = (isDark && s.darkLogo) ? s.darkLogo : (s.logo || s.darkLogo);
-    }
+    window.siteSettings = s;
+    const isDark = document.body.classList.contains("dark");
+    const logoImg = document.getElementById("logoImg");
+    if (logoImg) {
+        const activeLogo = isDark ? (s.darkLogo || s.logo) : (s.logo || s.darkLogo);
+        if (activeLogo && activeLogo.trim() !== "") {
+            logoImg.src = activeLogo;
+            logoImg.style.display = "block";
+        } else {
+            logoImg.src = "https://i.ibb.co/tMjw7kCJ/file-3.png"; 
+        }
+
     if (s.hero) document.getElementById("heroImg").src = s.hero;
-  if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
-  if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
-  const catMap = {catT:"T-SHIRTS",catTrackSuit:"TRACK SUIT",catShirts:"SHIRTS",catTrousers:"TROUSERS",catShorts:"SHORTS",catHoodies:"HOODIES",catJackets:"JACKETS",catJeans:"JEANS",catCaps:"CAPS",catAccessories:"ACCESSORIES"};
-  const focusMap = {focusT:"T-SHIRTS",focusTrousers:"TROUSERS",focusShorts:"SHORTS"};
-  for (const k in catMap) { if (s[k]) { catImages[catMap[k]] = s[k]; const el = document.getElementById("set" + k[0].toUpperCase() + k.slice(1)); if (el) el.value = s[k]; } }
-  for (const k in focusMap) { if (s[k]) { focusImages[focusMap[k]] = s[k]; const el = document.getElementById("set" + k[0].toUpperCase() + k.slice(1)); if (el) el.value = s[k]; } }
-  if (Object.keys(catMap).some(k => s[k])) renderTabs();
-  if (Object.keys(focusMap).some(k => s[k])) renderFocus();
-  if (s.phone) {
-    document.getElementById("supportPhone").textContent = s.phone;
-    const clean = s.phone.replace(/[^0-9]/g, "");
-    const num = clean.startsWith("0") ? "92" + clean.slice(1) : clean;
-    document.getElementById("callBtn").onclick = () => location.href = "tel:" + s.phone;
-    document.getElementById("waBtn").onclick = () => location.href = "https://wa.me/" + num;
-  }
+    if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
+    if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
+    applyBundle(s);
+    if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); } else if(s.flashProduct === null){ localStorage.removeItem("cd_flash"); renderFlashSale(); } 
+    for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
+    renderInstaGrid();
+}
+
+
     applyBundle(s);
   if(s.flashProduct){ localStorage.setItem("cd_flash",s.flashProduct); renderFlashSale(); } else if(s.flashProduct === null){ localStorage.removeItem("cd_flash"); renderFlashSale(); } 
   for(let i=1;i<=6;i++){ if(s["insta"+i]){ instaImgs["insta"+i]=s["insta"+i]; const el=document.getElementById("setInsta"+i); if(el) el.value=s["insta"+i]; } }
@@ -3376,17 +3379,18 @@ function toggleDark(){
     document.body.classList.toggle("dark");
     localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
     updateDarkBtn();
-
+    
     const isDark = document.body.classList.contains("dark");
     const logoImg = document.getElementById("logoImg");
     if (logoImg && window.siteSettings) {
-        if (isDark) {
-            logoImg.src = window.siteSettings.darkLogo || window.siteSettings.logo || "https://i.ibb.co/tMjw7kCJ/file-3.png";
-        } else {
-            logoImg.src = window.siteSettings.logo || window.siteSettings.darkLogo || "https://i.ibb.co/tMjw7kCJ/file-3.png";
+        const activeLogo = isDark ? (window.siteSettings.darkLogo || window.siteSettings.logo) : (window.siteSettings.logo || window.siteSettings.darkLogo);
+        if (activeLogo && activeLogo.trim() !== "") {
+            logoImg.src = activeLogo;
+            logoImg.style.display = "block";
         }
     }
 }
+
 
 function applyAutoDark(){
   const saved = localStorage.getItem("cd_dark");
