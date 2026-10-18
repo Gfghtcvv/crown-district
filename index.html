@@ -3364,7 +3364,14 @@ function applySettings(s){
   // 2. CATALOG / TABS IMAGES MAP & RENDER
   if (typeof catImages !== 'undefined') {
     if (s.catT) { catImages["T-SHIRTS"] = s.catT; catImages["T"] = s.catT; catImages["t-shirts"] = s.catT; }
-    if (s.catTrackSuit) { catImages["TRACKSUITS"] = s.catTrackSuit; catImages["TrackSuit"] = s.catTrackSuit; catImages["tracksuit"] = s.catTrackSuit; }
+        if (s.catTrackSuit) { 
+        catImages["TRACKSUITS"] = s.catTrackSuit; 
+        catImages["TrackSuit"] = s.catTrackSuit; 
+        catImages["tracksuit"] = s.catTrackSuit; 
+        catImages["TRACK SUIT"] = s.catTrackSuit; 
+        catImages["Track Suit"] = s.catTrackSuit; 
+    }
+
     if (s.catShirts) { catImages["SHIRTS"] = s.catShirts; catImages["shirts"] = s.catShirts; }
     if (s.catTrousers) { catImages["TROUSERS"] = s.catTrousers; catImages["trousers"] = s.catTrousers; }
     if (s.catShorts) { catImages["SHORTS"] = s.catShorts; catImages["shorts"] = s.catShorts; }
@@ -3413,6 +3420,10 @@ async function loadSettings(){
       if (document.getElementById("setFocusShorts")) document.getElementById("setFocusShorts").value = s.focusShorts || "";
       
       // Catalog / Tab Images inputs
+      if (document.getElementById("setCatTrackSuit")) {
+        document.getElementById("setCatTrackSuit").value = s.catTrackSuit || "";
+      }
+      
       const tabsList = ["T", "TrackSuit", "Shirts", "Trousers", "Shorts", "Hoodies", "Jackets", "Jeans"];
       tabsList.forEach(t => {
         const el = document.getElementById("setCat" + t);
