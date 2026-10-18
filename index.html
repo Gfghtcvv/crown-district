@@ -3223,7 +3223,7 @@ async function saveSetting(key){
     }
     
     try {
-        const docRef = db.collection("settings").doc("site"); // <-- Yeh line lazmi honi chahiye!
+        const docRef = db.collection("settings").doc("site");
         await docRef.set(data, { merge: true });
         
         applySettings(data);
