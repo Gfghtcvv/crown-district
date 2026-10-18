@@ -1014,11 +1014,16 @@ body.dark #logoImg {
 <div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
     
-    <!-- Logo -->
+    <!-- Logo Section -->
     <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
-      <input id="setLogo" placeholder="Logo image URL" style="margin:0; flex:1;">
-      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
-      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+        <input id="setLogo" placeholder="Light Logo URL" style="margin:0; flex:1;">
+        <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
+        <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+        <input id="setDarkLogo" placeholder="Dark Logo URL" style="margin:0; flex:1;">
+        <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setDarkLogo')">
+        <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
     </div>
     <button class="full-btn" onclick="saveSetting('logo')">SAVE LOGO</button>
 
@@ -3196,17 +3201,27 @@ function whatsappOrder(id){
     location.href = "https://wa.me/" + num + "?text=" + encodeURIComponent(msg);
   });
 }
-  async function saveSetting(key){
-  const val = document.getElementById("set" + key[0].toUpperCase() + key.slice(1)).value.trim();
-  if (!val) { toast("Enter a value"); return; }
-  try {
-    const doc = await db.collection("settings").doc("site").get();
-    if (doc.exists) await db.collection("settings").doc("site").update({ [key]: val });
-    else await db.collection("settings").doc("site").set({ [key]: val });
-    applySettings({ [key]: val });
-    toast("Setting saved ✅");
-  } catch(e) { toast(e.message); }
+async function saveSetting(key){
+    let data = {};
+    if (key === 'logo') {
+        const lightVal = document.getElementById("setLogo").value;
+        const darkVal = document.getElementById("setDarkLogo").value;
+        if (!lightVal && !darkVal) { toast("Enter a value"); return; }
+        data = { logo: lightVal, darkLogo: darkVal };
+    } else {
+        const val = document.getElementById("set" + key[0].toUpperCase() + key.slice(1)).value;
+        if (!val) { toast("Enter a value"); return; }
+        data = { [key]: val };
+    }
+    try {
+        const doc = await db.collection("settings").doc("site").get();
+        if (doc.exists) await db.collection("settings").doc("site").update(data);
+        else await db.collection("settings").doc("site").set(data);
+        applySettings(data);
+        toast("Setting saved ✅");
+    } catch(e) { toast(e.message); }
 }
+
 function fillFlashDropdown(){
   const fs=document.getElementById("setFlash");
   if(!fs) return;
@@ -3305,8 +3320,12 @@ function removeFlashProduct(){
   }).catch(e=>toast("Error: "+e.message));
 }
 function applySettings(s){
-  if (s.logo) document.getElementById("logoImg").src = s.logo;
-  if (s.hero) document.getElementById("heroImg").src = s.hero;
+      window.siteSettings = s;
+    if (s.logo || s.darkLogo) {
+        const isDark = document.body.classList.contains("dark");
+        document.getElementById("logoImg").src = (isDark && s.darkLogo) ? s.darkLogo : (s.logo || s.darkLogo);
+    }
+    if (s.hero) document.getElementById("heroImg").src = s.hero;
   if (s.waNumber) document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
   if (s.insta) { const ia = document.querySelector(".f-support a"); if (ia) { ia.href = "https://instagram.com/" + s.insta; ia.textContent = "Instagram: @" + s.insta; } }
   const catMap = {catT:"T-SHIRTS",catTrackSuit:"TRACK SUIT",catShirts:"SHIRTS",catTrousers:"TROUSERS",catShorts:"SHORTS",catHoodies:"HOODIES",catJackets:"JACKETS",catJeans:"JEANS",catCaps:"CAPS",catAccessories:"ACCESSORIES"};
@@ -3334,6 +3353,7 @@ async function loadSettings(){
       const s = doc.data();
       applySettings(s);
       if (s.logo) document.getElementById("setLogo").value = s.logo;
+      if (s.darkLogo) document.getElementById("setDarkLogo").value = s.darkLogo;
       if (s.hero) document.getElementById("setHero").value = s.hero;
       if (s.phone) document.getElementById("setPhone").value = s.phone;
             if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
@@ -3350,9 +3370,15 @@ function updateDarkBtn(){
   if (b) b.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
 }
 function toggleDark(){
-  document.body.classList.toggle("dark");
-  localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
-  updateDarkBtn();
+    document.body.classList.toggle("dark");
+    localStorage.setItem("cd_dark", document.body.classList.contains("dark") ? "1" : "0");
+    updateDarkBtn();
+
+    const isDark = document.body.classList.contains("dark");
+    const logoImg = document.getElementById("logoImg");
+    if (logoImg && window.siteSettings) {
+        logoImg.src = (isDark && window.siteSettings.darkLogo) ? window.siteSettings.darkLogo : (window.siteSettings.logo || window.siteSettings.darkLogo);
+    }
 }
 function applyAutoDark(){
   const saved = localStorage.getItem("cd_dark");
