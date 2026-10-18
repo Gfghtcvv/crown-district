@@ -666,16 +666,23 @@ body.dark ::-webkit-scrollbar-track{background:#1a1a1a}
 body.dark ::-webkit-scrollbar-thumb{background:#444}
 </style>
   <style>
-    #logoImg {
-    filter: none;
-    transition: filter 0.3s ease;
+#heroImg {
+    mix-blend-mode: screen;
 }
 
-body.dark #logoImg {
-    background-color: #000000;
-    padding: 4px;
-    border-radius: 4px;
+/* Light mode header logo (White background ke liye black logo) */
+#logoImg {
+    filter: invert(1);
+    background-color: transparent !important;
 }
+
+/* Dark mode header logo (Dark background ke liye white logo with transparent background) */
+body.dark #logoImg {
+    filter: none;
+    mix-blend-mode: screen;
+    background-color: transparent !important;
+}
+
 
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
 .fade-in.visible{opacity:1;transform:translateY(0)}
