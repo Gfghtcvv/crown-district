@@ -3372,15 +3372,28 @@ async function loadSettings(){
     if (doc.exists) {
       const s = doc.data();
       applySettings(s);
-      document.getElementById("setLogo").value = s.logo || "";
-      document.getElementById("setDarkLogo").value = s.darkLogo || "";
-      if (s.hero) document.getElementById("setHero").value = s.hero;
-      if (s.phone) document.getElementById("setPhone").value = s.phone;
-      if (s.waNumber) document.getElementById("setWaNumber").value = s.waNumber;
-      if (s.insta) document.getElementById("setInsta").value = s.insta;
+      const setLogoEl = document.getElementById("setLogo");
+      if (setLogoEl) setLogoEl.value = s.logo || "";
+      if (s.hero) {
+        const hEl = document.getElementById("setHero");
+        if (hEl) hEl.value = s.hero;
+      }
+      if (s.phone) {
+        const pEl = document.getElementById("setPhone");
+        if (pEl) pEl.value = s.phone;
+      }
+      if (s.waNumber) {
+        const wEl = document.getElementById("setWaNumber");
+        if (wEl) wEl.value = s.waNumber;
+      }
+      if (s.insta) {
+        const iEl = document.getElementById("setInsta");
+        if (iEl) iEl.value = s.insta;
+      }
     }
   } catch(e) { console.log(e); }
 }
+
 
 function toggleDrawer(){
   document.getElementById("drawer").classList.toggle("open");
