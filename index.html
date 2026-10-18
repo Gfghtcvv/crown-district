@@ -3363,20 +3363,21 @@ function applySettings(s){
 
   // 2. CATALOG / TABS IMAGES MAP & RENDER
   if (typeof catImages !== 'undefined') {
-    if (s.catT) catImages["T-SHIRTS"] = s.catT;
-    if (s.catTrackSuit) catImages["TRACKSUITS"] = s.catTrackSuit;
-    if (s.catShirts) catImages["SHIRTS"] = s.catShirts;
-    if (s.catTrousers) catImages["TROUSERS"] = s.catTrousers;
-    if (s.catShorts) catImages["SHORTS"] = s.catShorts;
-    if (s.catHoodies) catImages["HOODIES"] = s.catHoodies;
-    if (s.catJackets) catImages["JACKETS"] = s.catJackets;
-    if (s.catJeans) catImages["JEANS"] = s.catJeans;
-    
-    // Agar tabs/catalog render karne ka function hai
-    if (typeof renderCatTabs === 'function') renderCatTabs();
-    if (typeof renderCatalog === 'function') renderCatalog();
+    if (s.catT) { catImages["T-SHIRTS"] = s.catT; catImages["T"] = s.catT; catImages["t-shirts"] = s.catT; }
+    if (s.catTrackSuit) { catImages["TRACKSUITS"] = s.catTrackSuit; catImages["TrackSuit"] = s.catTrackSuit; catImages["tracksuit"] = s.catTrackSuit; }
+    if (s.catShirts) { catImages["SHIRTS"] = s.catShirts; catImages["shirts"] = s.catShirts; }
+    if (s.catTrousers) { catImages["TROUSERS"] = s.catTrousers; catImages["trousers"] = s.catTrousers; }
+    if (s.catShorts) { catImages["SHORTS"] = s.catShorts; catImages["shorts"] = s.catShorts; }
+    if (s.catHoodies) { catImages["HOODIES"] = s.catHoodies; catImages["hoodies"] = s.catHoodies; }
+    if (s.catJackets) { catImages["JACKETS"] = s.catJackets; catImages["jackets"] = s.catJackets; }
+    if (s.catJeans) { catImages["JEANS"] = s.catJeans; catImages["jeans"] = s.catJeans; }
   }
-  
+
+  if (typeof renderCatTabs === 'function') renderCatTabs();
+  if (typeof renderCatalog === 'function') renderCatalog();
+  if (typeof renderTabs === 'function') renderTabs();
+  if (typeof renderCategoryTabs === 'function') renderCategoryTabs();
+
   // Direct DOM Image Updating (agar images par Specific IDs/Classes hain)
   const tabKeys = {
     catT: "catImg-T",
