@@ -1003,63 +1003,114 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
       </div>
 <div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
-    <input id="setLogo" placeholder="Logo image URL (Imgur / Drive)">
+    
+    <!-- Logo -->
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+      <input id="setLogo" placeholder="Logo image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
     <button class="full-btn" onclick="saveSetting('logo')">SAVE LOGO</button>
-    <input id="setHero" placeholder="Hero image URL" style="margin-top:16px">
+
+    <!-- Hero Image -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;">
+      <input id="setHero" placeholder="Hero image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setHero')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
     <button class="full-btn" onclick="saveSetting('hero')">SAVE HERO IMAGE</button>
+
     <input id="setPhone" placeholder="Support phone (03358134489)" style="margin-top:16px">
     <button class="full-btn" onclick="saveSetting('phone')">SAVE PHONE</button>
         
-          <h3 style="margin:20px 0 10px">WHATSAPP NUMBER</h3>
+    <h3 style="margin:20px 0 10px">WHATSAPP NUMBER</h3>
     <input id="setWaNumber" placeholder="923358134489 (country code ke saath)">
     <button class="full-btn" onclick="saveSetting('waNumber')">SAVE WHATSAPP NUMBER</button>
-          <h3 style="margin:20px 0 10px">INSTAGRAM HANDLE</h3>
+          
+    <h3 style="margin:20px 0 10px">INSTAGRAM HANDLE</h3>
     <input id="setInsta" placeholder="jazb.wear">
     <button class="full-btn" onclick="saveSetting('insta')">SAVE INSTAGRAM</button>
-              <h3 style="margin:20px 0 10px">FOCUS IMAGES (Categories in Focus)</h3>
-    <input id="setFocusT" placeholder="T-Shirts focus image URL">
-    <button class="full-btn" onclick="saveSetting('focusT')">SAVE T-SHIRTS FOCUS</button>
-    <input id="setFocusTrousers" placeholder="Trousers focus image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('focusTrousers')">SAVE TROUSERS FOCUS</button>
-    <input id="setFocusShorts" placeholder="Shorts focus image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('focusShorts')">SAVE SHORTS FOCUS</button>
-        <h3 style="margin:20px 0 10px">CATALOG IMAGES (Tabs)</h3>
-    <input id="setCatT" placeholder="T-Shirts tab image URL">
-    <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS TAB</button>
-    <input id="setCatTrackSuit" placeholder="Track Suit tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catTrackSuit')">SAVE TRACK SUIT TAB</button>
-    <input id="setCatShirts" placeholder="Shirts tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catShirts')">SAVE SHIRTS TAB</button>
-    <input id="setCatTrousers" placeholder="Trousers tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catTrousers')">SAVE TROUSERS TAB</button>
-    <input id="setCatShorts" placeholder="Shorts tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catShorts')">SAVE SHORTS TAB</button>
-    <input id="setCatHoodies" placeholder="Hoodies tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catHoodies')">SAVE HOODIES TAB</button>
-    <input id="setCatJackets" placeholder="Jackets tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catJackets')">SAVE JACKETS TAB</button>
-    <input id="setCatJeans" placeholder="Jeans tab image URL" style="margin-top:16px">
-    <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
+
+    <h3 style="margin:20px 0 10px">FOCUS IMAGES (Categories in Focus)</h3>
     
-    <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS IMAGE</button>
-          <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
+    <!-- Focus T-Shirts -->
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+      <input id="setFocusT" placeholder="T-Shirts focus image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setFocusT')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
+    <button class="full-btn" onclick="saveSetting('focusT')">SAVE T-SHIRTS FOCUS</button>
+
+    <!-- Focus Trousers -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;">
+      <input id="setFocusTrousers" placeholder="Trousers focus image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setFocusTrousers')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
+    <button class="full-btn" onclick="saveSetting('focusTrousers')">SAVE TROUSERS FOCUS</button>
+
+    <!-- Focus Shorts -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;">
+      <input id="setFocusShorts" placeholder="Shorts focus image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setFocusShorts')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
+    <button class="full-btn" onclick="saveSetting('focusShorts')">SAVE SHORTS FOCUS</button>
+
+    <h3 style="margin:20px 0 10px">CATALOG IMAGES (Tabs)</h3>
+    
+    <!-- T-Shirts Tab -->
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setCatT" placeholder="T-Shirts tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatT')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS TAB</button>
+
+    <!-- Track Suit Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatTrackSuit" placeholder="Track Suit tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatTrackSuit')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catTrackSuit')">SAVE TRACK SUIT TAB</button>
+
+    <!-- Shirts Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatShirts" placeholder="Shirts tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatShirts')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catShirts')">SAVE SHIRTS TAB</button>
+
+    <!-- Trousers Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatTrousers" placeholder="Trousers tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatTrousers')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catTrousers')">SAVE TROUSERS TAB</button>
+
+    <!-- Shorts Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatShorts" placeholder="Shorts tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatShorts')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catShorts')">SAVE SHORTS TAB</button>
+
+    <!-- Hoodies Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatHoodies" placeholder="Hoodies tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatHoodies')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catHoodies')">SAVE HOODIES TAB</button>
+
+    <!-- Jackets Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatJackets" placeholder="Jackets tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatJackets')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catJackets')">SAVE JACKETS TAB</button>
+
+    <!-- Jeans Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatJeans" placeholder="Jeans tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatJeans')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
+
+    <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
     <select id="setFlash" style="margin-bottom:8px"></select>
     <button class="full-btn" onclick="setFlashProduct()">SET FLASH SALE</button>
-  <button onclick="removeFlashProduct()" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
-      <h3 style="margin:20px 0 10px">INSTAGRAM IMAGES (6 posts)</h3>
-    <input id="setInsta1" placeholder="Instagram image 1 URL">
-    <input id="setInsta2" placeholder="Instagram image 2 URL" style="margin-top:8px">
-    <input id="setInsta3" placeholder="Instagram image 3 URL" style="margin-top:8px">
-    <input id="setInsta4" placeholder="Instagram image 4 URL" style="margin-top:8px">
-    <input id="setInsta5" placeholder="Instagram image 5 URL" style="margin-top:8px">
-    <input id="setInsta6" placeholder="Instagram image 6 URL" style="margin-top:8px">
-    <button class="full-btn" onclick="saveInstaImages()">SAVE INSTAGRAM IMAGES</button>
-      <h3 style="margin:20px 0 10px">BUNDLE DEAL</h3>
+    <button onclick="removeFlashProduct()" style="width:100%;margin-top:8px;background:none;border:1px solid #c0392b;color:#c0392b;padding:12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE FLASH SALE</button>
+      
+    <h3 style="margin:20px 0 10px">INSTAGRAM IMAGES (6 posts)</h3>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta1" placeholder="Instagram image 1 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta1')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta2" placeholder="Instagram image 2 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta2')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta3" placeholder="Instagram image 3 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta3')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta4" placeholder="Instagram image 4 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta4')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta5" placeholder="Instagram image 5 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta5')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setInsta6" placeholder="Instagram image 6 URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setInsta6')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveInstaImages()" style="margin-top:10px;">SAVE INSTAGRAM IMAGES</button>
+      
+    <h3 style="margin:20px 0 10px">BUNDLE DEAL</h3>
     <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="setBundleOn" style="width:auto;margin:0" checked> BUNDLE DEAL ON</label>
     <input id="setBundlePrice" type="number" placeholder="Bundle price (Rs. 3500)">
     <button class="full-btn" onclick="saveBundle()">SAVE BUNDLE DEAL</button>
-          
-  </div>
+</div>
+
 </div>
 <div id="confirmModal" class="modal">
   <div class="modal-card" style="text-align:center">
@@ -2469,6 +2520,51 @@ function addColorRow(c){
   row.querySelector(".cr-add-size").onclick = () => sizesBox.appendChild(makeSizeRow(null));
   row.querySelector(".cr-del").onclick = () => row.remove();
   document.getElementById("pfColors").appendChild(row);
+}
+function uploadSettingImage(fileInput, targetId) {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      const MAX_WIDTH = 800;
+      const MAX_HEIGHT = 800;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+      const targetInput = document.getElementById(targetId);
+      if (targetInput) {
+        targetInput.value = compressedDataUrl;
+        toast("Setting image attached! ✅");
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function uploadDirectImage(fileInput, targetClass, parentRow) {
