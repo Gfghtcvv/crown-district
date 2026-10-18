@@ -3221,18 +3221,29 @@ async function saveSetting(key){
         if (!lightVal && !darkVal) { toast("Enter a value"); return; }
         data = { logo: lightVal, darkLogo: darkVal };
     } else {
-        const val = document.getElementById("set" + key[0].toUpperCase() + key.slice(1)).value;
+        const el = document.getElementById("set" + key[0].toUpperCase() + key.slice(1));
+        const val = el ? el.value.trim() : "";
         if (!val) { toast("Enter a value"); return; }
         data = { [key]: val };
     }
+    
     try {
-        const doc = await db.collection("settings").doc("site").get();
-        if (doc.exists) await db.collection("settings").doc("site").update(data);
-        else await db.collection("settings").doc("site").set(data);
+        const docRef = db.collection("settings").doc("site");
+        const doc = await docRef.get();
+        if (doc.exists) {
+            await docRef.update(data);
+        } else {
+            await docRef.set(data);
+        }
+        
         applySettings(data);
-        toast("Setting saved ✅");
-    } catch(e) { toast(e.message); }
+        toast("Setting saved successfully ✅");
+    } catch(e) {
+        console.error("Save setting error:", e);
+        toast("Error: " + e.message);
+    }
 }
+
 
 function fillFlashDropdown(){
   const fs=document.getElementById("setFlash");
