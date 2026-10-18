@@ -3468,12 +3468,30 @@ function toggleDark(){
 
 function applyAutoDark(){
   const saved = localStorage.getItem("cd_dark");
-  if (saved === "1") document.body.classList.add("dark");
-  else if (saved === "0") document.body.classList.remove("dark");
-  else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) document.body.classList.add("dark");
-  else document.body.classList.remove("dark");
+  if (saved === "1") {
+    document.body.classList.add("dark");
+  } else if (saved === "0") {
+    document.body.classList.remove("dark");
+  } else {
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }
   updateDarkBtn();
 }
+
+if (window.matchMedia) {
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+    if (!localStorage.getItem("cd_dark")) {
+      if (e.matches) document.body.classList.add("dark");
+      else document.body.classList.remove("dark");
+      updateDarkBtn();
+    }
+  });
+}
+
 if(document.body){ applyAutoDark(); }
 else { document.addEventListener("DOMContentLoaded", applyAutoDark); }
 
