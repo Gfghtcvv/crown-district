@@ -2474,16 +2474,51 @@ function addColorRow(c){
 function uploadDirectImage(fileInput, targetClass, parentRow) {
   const file = fileInput.files[0];
   if (!file) return;
+
   const reader = new FileReader();
   reader.onload = function(e) {
-    const targetInput = parentRow.querySelector('.' + targetClass);
-    if (targetInput) {
-      targetInput.value = e.target.result;
-      toast("Image attached successfully! ✅");
-    }
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      // Image size ko optimize karne ke liye max dimensions
+      const MAX_WIDTH = 800;
+      const MAX_HEIGHT = 800;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Photo ko high-quality lightweight JPEG mein compress karega
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+      const targetInput = parentRow.querySelector('.' + targetClass);
+      if (targetInput) {
+        targetInput.value = compressedDataUrl;
+        toast("Image compressed & attached! ✅");
+      }
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
+
 
 
 function addColor(){
