@@ -2546,50 +2546,49 @@ function addColorRow(c){
   document.getElementById("pfColors").appendChild(row);
 }
 function uploadSettingImage(fileInput, targetId) {
-  const file = fileInput.files[0];
-  if (!file) return;
+    const file = fileInput.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
 
-      const MAX_WIDTH = 800;
-      const MAX_HEIGHT = 800;
+            const MAX_WIDTH = 400;
+            const MAX_HEIGHT = 400;
 
-      if (width > height) {
-        if (width > MAX_WIDTH) {
-          height *= MAX_WIDTH / width;
-          width = MAX_WIDTH;
-        }
-      } else {
-        if (height > MAX_HEIGHT) {
-          width *= MAX_HEIGHT / height;
-          height = MAX_HEIGHT;
-        }
-      }
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
 
-      canvas.width = width;
-      canvas.height = height;
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
 
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-      const targetInput = document.getElementById(targetId);
-      if (targetInput) {
-        targetInput.value = compressedDataUrl;
-        toast("Setting image attached! ✅");
-      }
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            const targetInput = document.getElementById(targetId);
+            if (targetInput) {
+                targetInput.value = compressedDataUrl;
+                toast("Image compressed & attached! ✅");
+            }
+        };
+        img.src = e.target.result;
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
 }
+
 
 function uploadDirectImage(fileInput, targetClass, parentRow) {
   const file = fileInput.files[0];
