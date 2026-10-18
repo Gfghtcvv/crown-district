@@ -3347,6 +3347,11 @@ function applySettings(s){
   if (s.waNumber && document.getElementById("waFloat")) {
     document.getElementById("waFloat").href = "https://wa.me/" + s.waNumber;
   }
+  // Instagram Images Mapping
+  for (let i = 1; i <= 6; i++) {
+    if (s["insta" + i]) instaImgs["insta" + i] = s["insta" + i];
+  }
+  if (typeof renderInstaGrid === 'function') renderInstaGrid();
 
   // 1. FOCUS IMAGES MAP & RENDER
   if (typeof focusImages !== 'undefined') {
@@ -3413,6 +3418,12 @@ async function loadSettings(){
       if (document.getElementById("setFocusT")) document.getElementById("setFocusT").value = s.focusT || "";
       if (document.getElementById("setFocusTrousers")) document.getElementById("setFocusTrousers").value = s.focusTrousers || "";
       if (document.getElementById("setFocusShorts")) document.getElementById("setFocusShorts").value = s.focusShorts || "";
+      
+      // Instagram Images inputs
+      for(let i = 1; i <= 6; i++) {
+        const el = document.getElementById("setInsta" + i);
+        if (el && s["insta" + i]) el.value = s["insta" + i];
+      }
       
       // Catalog / Tab Images inputs
       if (document.getElementById("setCatTrackSuit")) {
