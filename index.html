@@ -2440,16 +2440,26 @@ function addColorRow(c){
   const row = document.createElement("div");
   row.className = "cr-row";
   row.style.cssText = "border:1.5px solid #111;border-radius:8px;padding:12px;margin-bottom:12px;background:#fff;";
+  
+  let imgInputsHtml = '';
+  for(let i = 0; i < 5; i++) {
+    imgInputsHtml += `
+      <div style="display:flex; gap:6px; margin-bottom:6px; align-items:center;">
+        <input class="cr-img-${i}" type="text" placeholder="Image ${i+1} URL" value="${c.images[i]||''}" style="margin:0;padding:8px;font-size:12px;flex:1;">
+        <input type="file" accept="image/*" style="display:none;" onchange="uploadDirectImage(this, 'cr-img-${i}', this.closest('.cr-row'))">
+        <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:8px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+      </div>
+    `;
+  }
+
   row.innerHTML =
     '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">' +
       '<input class="cr-name" type="text" placeholder="Color name (e.g. Black)" value="' + (c.name||"") + '" style="flex:1;margin:0;padding:10px;">' +
       '<label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0"><input type="checkbox" class="cr-so"' + (c.soldOut ? " checked" : "") + ' style="width:auto;margin:0">Sold Out</label>' +
       '<button class="cr-del" type="button" style="background:#e74c3c;color:#fff;border:none;border-radius:6px;padding:8px 12px;cursor:pointer;font-weight:bold;">DELETE COLOR</button>' +
     '</div>' +
-    '<div style="font-size:12px;font-weight:700;margin:6px 0 4px;">Image URLs:</div>' +
-    '<div style="display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:8px">' + [0,1,2,3,4].map(i =>
-      '<input class="cr-img-' + i + '" type="text" placeholder="Image ' + (i+1) + ' URL" value="' + (c.images[i]||"") + '" style="margin:0;padding:8px;font-size:12px;">'
-    ).join("") + '</div>' +
+    '<div style="font-size:12px;font-weight:700;margin:6px 0 4px;">Upload Images / Photos:</div>' +
+    '<div>' + imgInputsHtml + '</div>' +
     '<div style="font-size:12px;font-weight:700;margin:8px 0 4px;">Sizes & Stock for this color:</div>' +
     '<div class="cr-sizes"></div>' +
     '<button class="cr-add-size" type="button" style="background:#222;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;margin-top:6px;">+ ADD SIZE</button>';
@@ -2460,6 +2470,21 @@ function addColorRow(c){
   row.querySelector(".cr-del").onclick = () => row.remove();
   document.getElementById("pfColors").appendChild(row);
 }
+
+function uploadDirectImage(fileInput, targetClass, parentRow) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const targetInput = parentRow.querySelector('.' + targetClass);
+    if (targetInput) {
+      targetInput.value = e.target.result;
+      toast("Image attached successfully! ✅");
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 
 function addColor(){
   const cat = document.getElementById("pfCat") ? document.getElementById("pfCat").value : "T-SHIRTS";
