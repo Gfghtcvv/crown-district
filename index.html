@@ -670,19 +670,23 @@ body.dark ::-webkit-scrollbar-thumb{background:#444}
     mix-blend-mode: screen;
 }
 
-/* Light mode header logo - Background transparent aur logo bilkul saaf black */
+/* Light Mode Logo Styling */
 #logoImg {
+    background-color: #ffffff !important;
+    padding: 4px 8px;
+    border-radius: 4px;
     mix-blend-mode: multiply;
-    background-color: transparent !important;
-    filter: none;
 }
 
-/* Dark mode header logo - Background transparent aur logo bilkul saaf white */
+/* Dark Mode Logo Styling */
 body.dark #logoImg {
-    mix-blend-mode: screen;
-    background-color: transparent !important;
+    background-color: #111111 !important;
+    padding: 4px 8px;
+    border-radius: 4px;
     filter: brightness(0) invert(1);
+    mix-blend-mode: screen;
 }
+
 
 
 .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
@@ -1023,21 +1027,14 @@ body.dark #logoImg {
       </div>
 <div id="adminSettings" class="atab-body" style="display:none">
     <h3 style="margin-bottom:10px">SITE SETTINGS</h3>
-    
-    <!-- Logo Section -->
+        <!-- Logo Section -->
     <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
-        <input id="setLogo" placeholder="Light Logo URL" style="margin:0; flex:1;">
-        <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
-        <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
-        <button type="button" class="full-btn" onclick="document.getElementById('setLogo').value='';" style="background:#d9534f;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">❌ Clear</button>
-    </div>
-    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
-        <input id="setDarkLogo" placeholder="Dark Logo URL" style="margin:0; flex:1;">
-        <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setDarkLogo')">
-        <button type="button" class="full-btn" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
-        <button type="button" class="full-btn" onclick="document.getElementById('setDarkLogo').value='';" style="background:#d9534f;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;">❌ Clear</button>
+      <input id="setLogo" placeholder="Logo image URL" style="margin:0; flex:1;">
+      <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setLogo')">
+      <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
     </div>
     <button class="full-btn" onclick="saveSetting('logo')">SAVE LOGO</button>
+
 
     <!-- Hero Image -->
     <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;">
@@ -3216,10 +3213,9 @@ function whatsappOrder(id){
 async function saveSetting(key){
     let data = {};
     if (key === 'logo') {
-        const lightVal = document.getElementById("setLogo").value;
-        const darkVal = document.getElementById("setDarkLogo").value;
-        if (!lightVal && !darkVal) { toast("Enter a value"); return; }
-        data = { logo: lightVal, darkLogo: darkVal };
+        const val = document.getElementById("setLogo").value.trim();
+        if (!val) { toast("Enter a value"); return; }
+        data = { logo: val, darkLogo: val };
     } else {
         const el = document.getElementById("set" + key[0].toUpperCase() + key.slice(1));
         const val = el ? el.value.trim() : "";
@@ -3243,6 +3239,7 @@ async function saveSetting(key){
         toast("Error: " + e.message);
     }
 }
+
 
 
 function fillFlashDropdown(){
