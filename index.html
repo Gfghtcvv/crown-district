@@ -3402,15 +3402,13 @@ function applySettings(s){
     if (el && s[k]) el.src = s[k];
   });
 }
-  applyBundle(s);
-
 async function loadSettings(){
   try {
     const doc = await db.collection("settings").doc("site").get();
     if (doc.exists) {
       const s = doc.data();
       applySettings(s);
-      
+      applyBundle(s);
       // Inputs mein saved values wapas fill karne ke liye:
       if (document.getElementById("setLogo")) document.getElementById("setLogo").value = s.logo || "";
       if (document.getElementById("setHero")) document.getElementById("setHero").value = s.hero || "";
