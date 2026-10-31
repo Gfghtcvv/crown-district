@@ -22,23 +22,23 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.png">
 <meta property="og:image" content="https://jazb.wear/logo.png">
-<title>JAZB | Premium Streetwear — Men's T-Shirts, Track Suits & More</title>
-<meta property="og:title" content="JAZB - Premium Streetwear">
-<meta property="og:description" content="Premium streetwear from Pakistan. T-shirts, trousers, shorts. Order online with easy tracking.">
+<title>JAZB | Premium Streetwear — Men's & Women's Apparel & Men's Shoes</title>
+  <meta property="og:title" content="JAZB - Premium Streetwear">
+<meta property="og:description" content="JAZB is a premium Pakistani streetwear brand for men and women. Shop oversized T-shirts, track suits, trousers, shorts, hoodies, jackets and men's shoes in bold original designs.">
 <meta property="og:site_name" content="JAZB">
 <meta property="og:url" content="https://jazb.wear/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="JAZB - Premium Streetwear">
-<meta name="twitter:description" content="Premium streetwear from Pakistan. T-shirts, track suits, shorts. Order online with easy tracking.">
+<meta name="twitter:description" content="JAZB is a premium Pakistani streetwear brand for men and women. Shop oversized T-shirts, track suits, trousers, shorts, hoodies, jackets and men's shoes in bold original designs.">
 <meta name="twitter:image" content="https://jazb.wear/logo.png">
 <link rel="canonical" href="https://jazb.wear/">
-  <meta name="description" content="JAZB is a premium Pakistani streetwear brand for men. Shop oversized T-shirts, track suits, trousers, shorts, hoodies and jackets in bold original designs. Made in Pakistan, Pakistan-wide delivery.">
+<meta name="description" content="JAZB is a premium Pakistani streetwear brand for men and women. Shop oversized T-shirts, track suits, trousers, shorts, hoodies, jackets and men's shoes in bold original designs. Made in Pakistan, Pakistan-wide delivery.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "JAZB",
-  "alternateName": ["JAZB Streetwear", "JAZB Mens Wear", "JAZB Men's Wear"],
+  "alternateName": ["JAZB Streetwear", "JAZB Men's & Women's Wear", "JAZB Streetwear PK"],
   "logo": "https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/40737094-64b8-48fa-8716-0838c61f8ed7.png",
   "url": "https://jazb.wear/"
 }
@@ -73,7 +73,32 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo+Black&display=swap');
+.gender-switch-container {
+  display: flex;
+  background: #1a1a1a;
+  padding: 4px;
+  border-radius: 35px;
+  border: 1px solid #333;
+}
+.gender-btn {
+  background: transparent !important;
+  color: #888 !important;
+  border: none !important;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+.gender-btn.active {
+  background: #fff !important;
+  color: #000 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
 *{margin:0;padding:0;box-sizing:border-box;letter-spacing:0.3px}
   html{scroll-behavior:smooth;scrollbar-gutter:stable}
 body{font-family:'Inter',sans-serif;background:#fff;color:#111}
@@ -98,7 +123,27 @@ img{display:block}
   .tab.active::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#c0392b}
 body.dark .tab.active{border-color:#fff}
 .tab img{width:100%;height:130px;object-fit:cover;display:block}
-.tab span{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);background:none;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.6);text-align:center;font-size:13px;letter-spacing:1px}
+.tab span{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 2px;
+  line-height: 1.2;
+  display: -webkit-box;
+    display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .tab.all-tab span{background:none;color:#111;text-shadow:none;font-size:11px}
 .drawer{position:fixed;top:0;left:-280px;width:280px;height:100%;background:#fff;z-index:300;transition:left .25s;padding:20px;overflow-y:auto}
 .drawer.open{left:0}
@@ -117,6 +162,11 @@ body.dark .tab.active{border-color:#fff}
 .focus-card{position:relative;aspect-ratio:3/4;overflow:hidden;background:#f5f5f5;cursor:pointer}
 .focus-card img{width:100%;height:100%;object-fit:cover}
 .focus-card span{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,.9);text-align:center;padding:10px;font-size:13px;letter-spacing:2px}
+.gender-switch{display:flex;justify-content:center;gap:12px;padding:10px 16px;background:#111;border-bottom:1px solid #222}
+.gender-switch button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#ccc;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;padding:10px 24px;border-radius:30px;transition:all .3s ease}
+.gender-switch button.active{background:#fff !important;color:#000 !important;border-color:#fff;font-weight:700;box-shadow:0 4px 15px rgba(255,255,255,.2)}
+.gender-switch button.active *{color:#000 !important;}
+
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px 30px}
   @media(min-width:768px){.grid{grid-template-columns:repeat(4,1fr);gap:16px;padding:0 24px 40px}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -666,6 +716,8 @@ body.dark ::-webkit-scrollbar-track{background:#1a1a1a}
 body.dark ::-webkit-scrollbar-thumb{background:#444}
 </style>
   <style>
+    .social-proof { color: #111; }
+body.dark .social-proof { color: #eee !important; }
 #heroImg {
     mix-blend-mode: screen;
 }
@@ -693,83 +745,101 @@ body.dark #logoImg {
   <div id="loader"><div class="spinner"></div><p>JAZB</p></div>
   <div id="toast"></div>
   <button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-  <div id="sizeGuide">
+<div id="sizeGuide">
   <div class="sg-box">
     <h3>SIZE GUIDE</h3>
     
-    <!-- T-Shirts & Shirts -->
-    <h4 style="margin-top:10px;font-size:13px;color:#333;">T-SHIRTS &amp; SHIRTS</h4>
-    <table>
-      <tr>
-        <th>Size</th>
-        <th>Chest</th>
-        <th>Length</th>
-      </tr>
-      <tr><td>S</td><td>96 cm</td><td>68 cm</td></tr>
-      <tr><td>M</td><td>102 cm</td><td>70 cm</td></tr>
-      <tr><td>L</td><td>108 cm</td><td>72 cm</td></tr>
-      <tr><td>XL</td><td>114 cm</td><td>74 cm</td></tr>
-      <tr><td>XXL</td><td>120 cm</td><td>76 cm</td></tr>
-    </table>
-    <p style="font-size:11px;color:#999;margin-top:6px">Measurements in cm. For a relaxed fit, size up.</p>
+    <!-- MEN'S SECTION -->
+    <div id="sgMenSection">
+      <h4 style="margin-top:10px;font-size:14px;color:#c0392b;border-bottom:1px solid #ddd;padding-bottom:4px;">MEN'S WEAR</h4>
+      <h5 style="margin-top:8px;font-size:12px;font-weight:700;">T-SHIRTS, SHIRTS &amp; HOODIES</h5>
+      <table>
+        <tr><th>Size</th><th>Chest</th><th>Length</th></tr>
+        <tr><td>S</td><td>96 - 100 cm</td><td>68 - 70 cm</td></tr>
+        <tr><td>M</td><td>102 - 106 cm</td><td>70 - 72 cm</td></tr>
+        <tr><td>L</td><td>108 - 112 cm</td><td>72 - 74 cm</td></tr>
+        <tr><td>XL</td><td>114 - 118 cm</td><td>74 - 76 cm</td></tr>
+        <tr><td>XXL</td><td>120 - 124 cm</td><td>76 - 78 cm</td></tr>
+      </table>
 
-    <!-- Hoodies & Jackets -->
-    <h4 style="margin-top:14px;font-size:13px;color:#333;">HOODIES &amp; JACKETS</h4>
-    <table>
-      <tr>
-        <th>Size</th>
-        <th>Chest</th>
-        <th>Length</th>
-      </tr>
-      <tr><td>S</td><td>100 cm</td><td>70 cm</td></tr>
-      <tr><td>M</td><td>106 cm</td><td>72 cm</td></tr>
-      <tr><td>L</td><td>112 cm</td><td>74 cm</td></tr>
-      <tr><td>XL</td><td>118 cm</td><td>76 cm</td></tr>
-      <tr><td>XXL</td><td>124 cm</td><td>78 cm</td></tr>
-    </table>
-    <p style="font-size:11px;color:#999;margin-top:6px">Outerwear measurements in cm (room for layering).</p>
+      <h5 style="margin-top:12px; font-size:12px; font-weight:700;">TROUSERS, SHORTS, JEANS & TRACKSUITS (Men):</h5>
+      <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px; color:#fff;">
+        <tr style="background:#222;"><th style="border:1px solid #444; padding:6px;">Size</th><th style="border:1px solid #444; padding:6px;">Waist (inch)</th></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">S / 30</td><td style="border:1px solid #444; padding:6px; text-align:center;">28 - 30 in</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">M / 32</td><td style="border:1px solid #444; padding:6px; text-align:center;">32 in</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">L / 34</td><td style="border:1px solid #444; padding:6px; text-align:center;">34 in</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">XL / 36</td><td style="border:1px solid #444; padding:6px; text-align:center;">36 in</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">XXL / 38</td><td style="border:1px solid #444; padding:6px; text-align:center;">38 in</td></tr>
+      </table>
+      <div style="font-size:11px; color:#aaa; margin-top:4px;">* Tracksuits include standard matching upper and lower sizes.</div>
 
-    <!-- Tracksuits -->
-    <h4 style="margin-top:14px;font-size:13px;color:#333;">TRACKSUITS</h4>
-    <table>
-      <tr>
-        <th>Size</th>
-        <th>Chest (Hoodie/Top)</th>
-        <th>Waist (Trouser)</th>
-      </tr>
-      <tr><td>S</td><td>100 cm</td><td>28 - 30 in</td></tr>
-      <tr><td>M</td><td>106 cm</td><td>32 in</td></tr>
-      <tr><td>L</td><td>112 cm</td><td>34 in</td></tr>
-      <tr><td>XL</td><td>118 cm</td><td>36 in</td></tr>
-      <tr><td>XXL</td><td>124 cm</td><td>38 in</td></tr>
-    </table>
+      <h5 style="margin-top:12px; font-size:12px; font-weight:700;">SHOES / FOOTWEAR (Men):</h5>
+      <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px; color:#fff;">
+        <tr style="background:#222;"><th style="border:1px solid #444; padding:6px;">UK / PK</th><th style="border:1px solid #444; padding:6px;">US</th><th style="border:1px solid #444; padding:6px;">Euro</th></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">7</td><td style="border:1px solid #444; padding:6px; text-align:center;">8</td><td style="border:1px solid #444; padding:6px; text-align:center;">41</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">8</td><td style="border:1px solid #444; padding:6px; text-align:center;">9</td><td style="border:1px solid #444; padding:6px; text-align:center;">42</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">9</td><td style="border:1px solid #444; padding:6px; text-align:center;">10</td><td style="border:1px solid #444; padding:6px; text-align:center;">43</td></tr>
+        <tr><td style="border:1px solid #444; padding:6px; text-align:center;">10</td><td style="border:1px solid #444; padding:6px; text-align:center;">11</td><td style="border:1px solid #444; padding:6px; text-align:center;">44</td></tr>
+      </table>
 
-    <!-- Trousers, Shorts & Jeans -->
-    <h3 style="margin-top:16px">TROUSERS, SHORTS &amp; JEANS</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Size</th>
-          <th>Waist (inch)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>S</td><td>28 - 30 in</td></tr>
-        <tr><td>M</td><td>32 in</td></tr>
-        <tr><td>L</td><td>34 in</td></tr>
-        <tr><td>XL</td><td>36 in</td></tr>
-        <tr><td>XXL</td><td>38 in</td></tr>
-        <tr><td>30</td><td>30 in</td></tr>
-        <tr><td>32</td><td>32 in</td></tr>
-        <tr><td>34</td><td>34 in</td></tr>
-        <tr><td>36</td><td>36 in</td></tr>
-        <tr><td>38</td><td>38 in</td></tr>
-      </tbody>
-    </table>
-    <p style="font-size:11px;color:#999;margin-top:8px">Size = waist size in inches. Apni natural waist measure karo.</p>
+
+      <table>
+        <tr><th>Size</th><th>Waist (inch)</th></tr>
+        <tr><td>S / 30</td><td>28 - 30 in</td></tr>
+        <tr><td>M / 32</td><td>32 in</td></tr>
+        <tr><td>L / 34</td><td>34 in</td></tr>
+        <tr><td>XL / 36</td><td>36 in</td></tr>
+        <tr><td>XXL / 38</td><td>38 in</td></tr>
+      </table>
+      <div style="font-size:11px; color:#aaa; margin-top:4px;">* Tracksuits include standard matching upper and lower sizes.</div>
+    </div>
+
+    <!-- WOMEN'S SECTION -->
+    <div id="sgWomenSection" style="display:none;">
+      <h4 style="margin-top:10px;font-size:14px;color:#c0392b;border-bottom:1px solid #ddd;padding-bottom:4px;">WOMEN'S WEAR</h4>
+      <h5 style="margin-top:8px;font-size:12px;font-weight:700;">T-SHIRTS &amp; OVERSIZED TEES</h5>
+      <table>
+        <tr><th>Size</th><th>Chest</th><th>Length</th></tr>
+        <tr><td>S</td><td>90 cm</td><td>64 cm</td></tr>
+        <tr><td>M</td><td>95 cm</td><td>66 cm</td></tr>
+        <tr><td>L</td><td>100 cm</td><td>68 cm</td></tr>
+        <tr><td>XL</td><td>106 cm</td><td>70 cm</td></tr>
+      </table>
+
+      <h5 style="margin-top:12px;font-size:12px;font-weight:700;">TROUSERS, SHORTS, JEANS &amp; TRACKSUITS (Women)</h5>
+      <table>
+        <tr><th>Size</th><th>Waist (inch)</th></tr>
+        <tr><td>S / 26</td><td>26 in</td></tr>
+        <tr><td>M / 28</td><td>28 in</td></tr>
+        <tr><td>L / 30</td><td>30 in</td></tr>
+        <tr><td>XL / 32</td><td>32 in</td></tr>
+        <tr><td>XXL / 34</td><td>34 in</td></tr>
+      </table>
+      <div style="font-size:11px; color:#aaa; margin-top:4px;">* Tracksuits include standard matching upper and lower sizes.</div>
+    </div>
     
     <button class="sg-close" onclick="document.getElementById('sizeGuide').classList.remove('show')">CLOSE</button>
   </div>
+</div>
+
+<script>
+// Ye script khud detect karegi ke user men section mein hai ya women mein aur wahi size guide dikhayegi
+const originalOpenSizeGuide = window.openSizeGuide || function() {};
+document.addEventListener("click", function(e) {
+  if (e.target && e.target.classList && e.target.classList.contains("sg-link")) {
+    const menSec = document.getElementById("sgMenSection");
+    const womenSec = document.getElementById("sgWomenSection");
+    if (typeof currentGender !== 'undefined' && currentGender === 'women') {
+      if (menSec) menSec.style.display = "none";
+      if (womenSec) womenSec.style.display = "block";
+    } else {
+      if (menSec) menSec.style.display = "block";
+      if (womenSec) womenSec.style.display = "none";
+    }
+  }
+});
+</script>
+
 </div>
 
 
@@ -790,6 +860,16 @@ body.dark #logoImg {
     <input id="searchInput" placeholder="Search products..." oninput="renderProducts()">
   </div>
   <nav class="tabs" id="catTabs"></nav>
+
+
+<div style="display:flex; justify-content:center; padding:10px; background:#111; border-bottom:1px solid #222;">
+  <div class="gender-switch-container">
+    <button id="btnMen" class="gender-btn active" onclick="filterGender('men')">MEN'S COLLECTION</button>
+    <button id="btnWomen" class="gender-btn" onclick="filterGender('women')">WOMEN'S COLLECTION</button>
+  </div>
+</div>
+
+
 </header>
 <div id="drawer" class="drawer">
   <div class="drawer-head"><span>MENU</span><button onclick="toggleDrawer()">&#10005;</button></div>
@@ -915,7 +995,7 @@ body.dark #logoImg {
       <div>
         <div class="pdp-images" id="pdpSwipe"><div class="pdp-track" id="pdpTrack"></div><div class="pdp-counter" id="pdpCounter">1 / 1</div><button onclick="expandPdpImg()" style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer">⤢</button></div>
       </div>
-      <div>
+
         <p class="pdp-cat" id="pdpCat"></p>
 <h1 class="pdp-name" id="pdpName"></h1>
 <div class="pdp-price" id="pdpPrice"></div>
@@ -923,10 +1003,91 @@ body.dark #logoImg {
         <div class="pdp-sizes" id="pdpColors"></div>
         <div class="pdp-sizes" id="pdpSizes"></div>
         <p class="pdp-desc" id="pdpDesc"></p>
-        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button><div class="acc-body"><div style="margin:0 0 12px;padding:12px;background:#f5f5f5;border-radius:10px"><p style="margin:0 0 8px;font-weight:700;font-size:14px">Find Your Size</p><div style="display:flex;gap:8px"><input type="number" id="sgChest" placeholder="Chest (inch)" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px"><button onclick="sgRecommend()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px">GO</button></div><div id="sgResult" style="margin-top:10px;font-weight:700;font-size:16px"></div></div>S: 38-40 inch chest<br>M: 40-42 inch chest<br>L: 42-44 inch chest<br>XL: 44-46 inch chest<br>XXL: 46-48 inch chest</div></div>
-        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">PRODUCT DETAILS</button><div class="acc-body">Premium quality fabric. Pre-shrunk. Machine wash cold. Made in Pakistan.</div></div>
-        <div class="acc-item"><button onclick="this.parentNode.classList.toggle('open')">DELIVERY INFO</button><div class="acc-body">Cash on delivery all over Pakistan. Delivery 2-5 working days. Free delivery above Rs. 5000.</div></div>
+<div class="acc-item" id="pdpSizeGuideAcc">
+  <button onclick="this.parentNode.classList.toggle('open')">SIZE GUIDE</button>
+  <div class="acc-body">
+    <div style="margin:0 0 12px;padding:12px;background:#f5f5f5;border-radius:10px">
+      <p style="margin:0 0 8px;font-weight:700;font-size:14px">Find Your Size</p>
+      <div style="display:flex;gap:8px">
+        <input type="number" id="sgChest" placeholder="Chest/Waist (inch)" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+        <button onclick="sgRecommend()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:14px">GO</button>
       </div>
+      <div id="sgResult" style="margin-top:10px;font-weight:700;font-size:16px"></div>
+    </div>
+    
+    <!-- MEN'S SIZE CHART -->
+    <div id="pdpMensSizeGuide">
+      <strong style="color:#c0392b;">MEN'S SIZE CHART</strong><br><br>
+      <strong>T-Shirts, Shirts & Hoodies:</strong><br>
+      S: 96 - 100 cm (Chest)<br>
+      M: 102 - 106 cm (Chest)<br>
+      L: 108 - 112 cm (Chest)<br>
+      XL: 114 - 118 cm (Chest)<br>
+      XXL: 120 - 124 cm (Chest)<br><br>
+      <strong>Trousers, Shorts, Jeans & Tracksuits (Men):</strong><br>
+      S / 30: 28 - 30 in (Waist)<br>
+      M / 32: 32 in (Waist)<br>
+      L / 34: 34 in (Waist)<br>
+      XL / 36: 36 in (Waist)<br>
+      XXL / 38: 38 in (Waist)<br>
+      *(Sizes 30, 32, 34, 36, 38 available)*
+    </div>
+
+    <!-- WOMEN'S SIZE CHART -->
+    <div id="pdpWomensSizeGuide" style="display:none;">
+      <strong style="color:#c0392b;">WOMEN'S SIZE CHART</strong><br><br>
+      <strong>T-Shirts & Oversized Tees:</strong><br>
+      S: 90 cm (Chest)<br>
+      M: 95 cm (Chest)<br>
+      L: 100 cm (Chest)<br>
+      XL: 106 cm (Chest)<br><br>
+      <strong>Trousers, Shorts, Jeans, Tracksuits & Leggings (Women):</strong><br>
+      S / 26: 26 in (Waist)<br>
+      M / 28: 28 in (Waist)<br>
+      L / 30: 30 in (Waist)<br>
+      XL / 32: 32 in (Waist)<br>
+      XXL / 34: 34 in (Waist)<br>
+      *(Sizes 26, 28, 30, 32, 34 available)*
+    </div>
+  </div>
+</div>
+
+<div class="acc-item">
+  <button onclick="this.parentNode.classList.toggle('open')">PRODUCT DETAILS</button>
+  <div class="acc-body">Premium quality fabric. Pre-shrunk. Machine wash cold. Made in Pakistan.</div>
+</div>
+
+<div class="acc-item">
+  <button onclick="this.parentNode.classList.toggle('open')">DELIVERY INFO</button>
+  <div class="acc-body">Cash on delivery all over Pakistan. Delivery 2-5 working days. Free delivery above Rs. 5000.</div>
+</div>
+
+<script>
+// Continuous background observer jo khud detect kar lega
+setInterval(function() {
+  const menSG = document.getElementById("pdpMensSizeGuide");
+  const womenSG = document.getElementById("pdpWomensSizeGuide");
+  if (!menSG || !womenSG) return;
+
+  const catEl = document.getElementById("pdpCat");
+  const nameEl = document.getElementById("pdpName");
+  
+  const catText = catEl ? catEl.textContent.toLowerCase() : "";
+  const nameText = nameEl ? nameEl.textContent.toLowerCase() : "";
+
+  if (catText.includes("women") || catText.includes("woman") || catText.includes("ladies") || catText.includes("female") ||
+      nameText.includes("women") || nameText.includes("woman") || nameText.includes("ladies") || nameText.includes("female")) {
+    menSG.style.display = "none";
+    womenSG.style.display = "block";
+  } else {
+    menSG.style.display = "block";
+    womenSG.style.display = "none";
+  }
+}, 300);
+</script>
+
+
+
     </div>
     <div class="pdp-related">
       <div id="pdpReviews"></div>
@@ -940,7 +1101,7 @@ body.dark #logoImg {
 </div>
 <div class="brand-strip">
 <div class="bt">JAZB</div>
-<div class="bs">Streetwear made in Pakistan. Limited drops, bold designs, no restocks. Once it's gone, it's gone.</div>
+<div class="bs">Streetwear made in Pakistan for men and women. Oversized tees, track suits, trousers, shorts, hoodies, jackets and men's shoes. Limited drops, no restocks.</div>
 </div>
     </div>
   </div>
@@ -1105,10 +1266,18 @@ body.dark #logoImg {
     <!-- Jackets Tab -->
     <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatJackets" placeholder="Jackets tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatJackets')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
     <button class="full-btn" onclick="saveSetting('catJackets')">SAVE JACKETS TAB</button>
+<div id="adminCatalogFocusContainer"></div>
 
     <!-- Jeans Tab -->
     <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;"><input id="setCatJeans" placeholder="Jeans tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatJeans')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
     <button class="full-btn" onclick="saveSetting('catJeans')">SAVE JEANS TAB</button>
+    <!-- Shoes Tab -->
+    <div style="display:flex; gap:6px; margin-top:16px; margin-bottom:8px; align-items:center;">
+        <input id="setCatShoes" placeholder="Shoes tab image URL" style="margin:0; flex:1;">
+        <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatShoes')">
+        <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+    </div>
+    <button class="full-btn" onclick="saveSetting('catShoes')">SAVE SHOES TAB</button>
 
     <h3 style="margin:20px 0 10px">FLASH SALE PRODUCT</h3>
     <select id="setFlash" style="margin-bottom:8px"></select>
@@ -1214,7 +1383,7 @@ const firebaseConfig = {
   messagingSenderId: "206237211893",
   appId: "1:206237211893:web:56b74db12ce91829dc39bc"
 };
-const CATEGORIES = ["T-SHIRTS","TRACK SUIT","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS"];
+  const CATEGORIES = ["T-SHIRTS","TRACK SUIT","SHIRTS","TROUSERS","SHORTS","HOODIES","JACKETS","JEANS","SHOES"];
 const DEFAULT_SIZES = {
   "T-SHIRTS":["S","M","L","XL","XXL"],
   "SHIRTS":["S","M","L","XL","XXL"],
@@ -1225,7 +1394,13 @@ const DEFAULT_SIZES = {
   "SHORTS":["30","32","34","36","38"],
     "TRACK SUIT":["S","M","L","XL","XXL"],
   "CAPS":["One Size"],
-  "ACCESSORIES":["One Size"]
+  "ACCESSORIES":["One Size"],
+    "WOMEN T-SHIRTS": ["S", "M", "L", "XL"],
+    "WOMEN OVERSIZED TEES": ["S", "M", "L", "XL"],
+    "WOMEN TROUSERS": ["26", "28", "30", "32", "34"],
+    "WOMEN BAGGY JEANS": ["26", "28", "30", "32", "34"],
+    "WOMEN SETS & SUITS": ["S", "M", "L", "XL", "XXL"],
+
 };
   firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -1251,65 +1426,150 @@ return m[n]||'#999';}
 
 function fmt(n){ return "Rs. " + Number(n).toLocaleString(); }
 function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); } 
+let currentGender = 'men';
+
+function filterGender(g) {
+  currentGender = g;
+  currentCat = "ALL";
+  
+  const btnMen = document.getElementById('btnMen');
+  const btnWomen = document.getElementById('btnWomen');
+  
+  if (btnMen && btnWomen) {
+    if (g === 'men') {
+      btnMen.classList.add('active');
+      btnWomen.classList.remove('active');
+    } else {
+      btnWomen.classList.add('active');
+      btnMen.classList.remove('active');
+    }
+  }
+  
+  // Zero lag rendering
+  setTimeout(() => {
+    renderTabs();
+    renderDrawer();
+    renderProducts();
+    renderNewArrivals();
+    renderRecentlyViewed();
+  }, 5);
+}
+
+
+
+const WOMEN_CATEGORIES = ["WOMEN T-SHIRTS", "WOMEN OVERSIZED TEES", "WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"];
+
+function getActiveCategories() {
+  return currentGender === 'women' ? WOMEN_CATEGORIES : CATEGORIES;
+}
+
+
 function renderTabs(){
   const t = document.getElementById("catTabs");
+  if(!t) return;
   t.innerHTML = "";
-  ["ALL", ...CATEGORIES].forEach(c => {
+  
+  const activeCats = getActiveCategories();
+
+  // ALL Tab
+  const allBtn = document.createElement("button");
+  allBtn.className = "tab " + (currentCat === "ALL" ? "active" : "");
+  let allImg = (catImages && catImages['ALL']) ? catImages['ALL'] : 'https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9eaa081f-6e95-485d-9609-56ce253b2221.png';
+  let imgTag = '<img src="' + allImg + '" onerror="this.src=\'https://placehold.co/200x140?text=ALL\'">';
+  allBtn.innerHTML = imgTag + '<span>ALL</span>';
+  allBtn.onclick = () => setCat("ALL");
+  t.appendChild(allBtn);
+
+  // Category Tabs
+  activeCats.forEach(c => {
     const b = document.createElement("button");
-    b.className = "tab" + (c === currentCat ? " active" : "");
-    if (c === "ALL") {
-            b.classList.add("all-tab");
-      b.innerHTML = '<img id="allCatImg" src="https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9eaa081f-6e95-485d-9609-56ce253b2221.png" style="width:100%;height:100%;object-fit:contain">';
-    } else {
-            let img = (catImages[c] || "https://placehold.co/200x140?text=" + c).replace(/"/g, "");
-      b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/200x140?text=' + c + '\'"><span>' + c + '</span>';
-    }
+    b.className = "tab " + (c === currentCat ? "active" : "");
+    let img = (catImages && catImages[c]) ? catImages[c] : "https://placehold.co/200x140?text=" + c;
+    b.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/200x140?text=' + c + '\'"><span>' + c + '</span>';
     b.onclick = () => setCat(c);
     t.appendChild(b);
   });
 }
-function setCat(c){ currentCat = c; renderTabs(); renderProducts(); }
+
+function setCat(c){ 
+  currentCat = c; 
+  renderTabs(); 
+  renderProducts(); 
+}
+
 function renderDrawer(){
   const d = document.getElementById("drawerLinks");
+  if(!d) return;
   d.innerHTML = "";
-  ["ALL", ...CATEGORIES].forEach(c => {
+  
+  const activeCats = getActiveCategories();
+
+  ["ALL", ...activeCats].forEach(c => {
     const a = document.createElement("a");
     a.textContent = c === "ALL" ? "ALL PRODUCTS" : c;
     a.onclick = () => { setCat(c); toggleDrawer(); };
     d.appendChild(a);
   });
-    const a1 = document.createElement("a");
+
+  const a1 = document.createElement("a");
   a1.textContent = "TRACK ORDER";
   a1.onclick = () => { openTrack(); toggleDrawer(); };
   d.appendChild(a1);
+
   const a2 = document.createElement("a");
-a2.textContent = "❤️ WISHLIST";
-a2.onclick = () => { openWishlist(); toggleDrawer(); };
-d.appendChild(a2);
+  a2.textContent = "❤️ WISHLIST";
+  a2.onclick = () => { openWishlist(); toggleDrawer(); };
+  d.appendChild(a2);
+
   [["ABOUT US","about"],["SHOPPING GUIDE","guide"],["EXCHANGE & RETURNS","returns"],["SHIPPING & DELIVERY","shipping"],["CONTACT US","contact"]].forEach(x => {
     const a = document.createElement("a");
     a.textContent = x[0];
     a.onclick = () => { openInfoPage(x[1]); toggleDrawer(); };
     d.appendChild(a);
   });
-}window.addEventListener("load", () => {
+}
+
+window.addEventListener("load", () => {
   const l = document.getElementById("loader");
   if (l) l.style.display = "none";
 });
 setTimeout(() => { const l = document.getElementById("loader"); if (l) l.style.display = "none"; }, 3000);
-  function renderNewArrivals(){
+function renderNewArrivals(){
   const g = document.getElementById("newArrivals");
-  if (!g) return;
-  const list = [...products].filter(p => p.createdAt).sort((a,b) => b.createdAt.toDate() - a.createdAt.toDate()).slice(0,4);
-  g.innerHTML = list.length ? "" : '<p class="empty">New drops coming soon.</p>';
+  if(!g) return;
+  g.innerHTML = "";
+  
+    const activeCats = getActiveCategories();
+  const list = products.filter(p => activeCats.includes(p.category)).sort((a, b) => {
+    const timeA = a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().getTime() : 0;
+    const timeB = b.createdAt && typeof b.createdAt.toDate === 'function' ? b.createdAt.toDate().getTime() : 0;
+    return timeB - timeA;
+  }).slice(0, 4);
+
+  if (list.length === 0) {
+    g.innerHTML = '<p class="empty" style="text-align:center; padding:20px; color:#aaa;">No new arrivals for this category.</p>';
+    return;
+  }
+
   list.forEach(p => {
     const d = document.createElement("div");
     d.className = "p-card";
+    const isNew = p.createdAt && (Date.now() - p.createdAt.toDate().getTime()) < 7 * 24 * 60 * 60 * 1000;
+    if (isNew) { const nb = document.createElement("span"); nb.className = "new-badge"; nb.textContent = "NEW"; d.appendChild(nb); }
     d.onclick = () => openPDP(p);
-    d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=JAZB\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + fmt(p.price) + '</div>';
+
+    let priceHtml = fmt(p.price);
+    if (p.oldPrice > p.price) {
+      const disc = Math.round((1 - p.price / p.oldPrice) * 100);
+      priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
+    }
+    if (!p.image && p.colors && p.colors.length){ const f = (p.colors[0].images || []).find(u => u); if (f) p.image = f; }
+
+    d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
     g.appendChild(d);
   });
 }
+
   // ===== SORT =====
 let currentSort = 'default';
 function toggleSort() {
@@ -1331,7 +1591,16 @@ document.addEventListener('click', function(e) {
 function renderProducts(){
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const grid = document.getElementById("productGrid");
-  const list = products.filter(p => (currentCat === "ALL" || p.category === currentCat) && (!q || p.name.toLowerCase().includes(q)));
+    const activeCats = currentGender === 'women' 
+    ? ["WOMEN T-SHIRTS", "WOMEN OVERSIZED TEES", "WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"]
+    : CATEGORIES;
+
+  const list = products.filter(p => {
+    const matchCat = (currentCat === "ALL" ? activeCats.includes(p.category) : p.category === currentCat);
+    const matchSearch = (!q || p.name.toLowerCase().includes(q));
+    return matchCat && matchSearch;
+  });
+
       let finalList = list;
     if (currentSort === 'low') finalList = list.slice().sort(function(a, b) { return a.price - b.price; });
     if (currentSort === 'high') finalList = list.slice().sort(function(a, b) { return b.price - a.price; });
@@ -1366,8 +1635,9 @@ let focusImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
 function renderFocus(){
   const g = document.getElementById("focusGrid");
   g.innerHTML = "";
-  ["T-SHIRTS","TROUSERS","SHORTS"].forEach(c => {
-        let img = (focusImages[c] || "https://placehold.co/300x400?text=" + c).replace(/"/g, "");
+    const focusCats = currentGender === 'women' ? ["WOMEN T-SHIRTS", "WOMEN TROUSERS", "WOMEN SETS & SUITS"] : ["T-SHIRTS", "TROUSERS", "SHOES"];
+focusCats.forEach(c => {
+          let img = (focusImages[c] || "https://placehold.co/300x400?text=" + c).replace(/"/g, "");
     const d = document.createElement("div");
     d.className = "focus-card";
     d.onclick = () => { setCat(c); document.getElementById("shop").scrollIntoView({behavior:"smooth"}); };
@@ -1436,8 +1706,9 @@ function renderFlashSale(){
 function renderRecentlyViewed(){
   const g=document.getElementById("recentlyGrid");
   if(!g) return;
-  const ids=JSON.parse(localStorage.getItem("cd_recent")||"[]");
-  const list=ids.map(id=>products.find(x=>x.id===id)).filter(Boolean);
+    const activeCats = getActiveCategories();
+  const ids = JSON.parse(localStorage.getItem("cd_recent") || "[]");
+  const list = ids.map(id => products.find(x => x.id === id)).filter(p => p && activeCats.includes(p.category));
   if(!list.length){ document.getElementById("recentlyViewed").style.display="none"; return; }
   document.getElementById("recentlyViewed").style.display="block";
   g.innerHTML="";
@@ -1862,11 +2133,12 @@ d.onclick = () => { closeAll(); openPDP(products.find(x => x.id === w.id)); };
     let total = 0;
     cart.forEach((c, i) => {
       const p = products.find(x => x.id === c.id);
+      const catName = (p && p.category) ? p.category : (c.category || "-");
       const fp = (isFlashItem(c.id) && p) ? flashPrice(p) : c.price;
       total += fp * c.qty;
       const d = document.createElement("div");
       d.className = "cart-item";
-      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ FLASH</span>' : '') + '</div><div class="ci-size">Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(fp * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
+      d.innerHTML = '<img src="' + c.image + '"><div class="ci-info"><div class="ci-name">' + c.name + (isFlashItem(c.id) ? ' <span style="color:#c0392b;font-size:11px">⚡ FLASH</span>' : '') + '</div><div class="ci-size">Category: ' + catName + ' | Size: ' + c.size + ' | Color: ' + (c.color || "-") + '</div><div class="ci-price">' + fmt(fp * c.qty) + '</div><div class="ci-qty"><button onclick="chQty(' + i + ',-1)">-</button><span>' + c.qty + '</span><button onclick="chQty(' + i + ',1)">+</button><button onclick="rmItem(' + i + ')" style="margin-left:10px">REMOVE</button></div></div>';
       items.appendChild(d);
     });
     document.getElementById("cartTotal").textContent = fmt(total);
@@ -2057,11 +2329,16 @@ for (const it of items) {
     document.getElementById("confOrderId").textContent = docId;
     document.getElementById("confTotal").textContent = fmt(grandTotal);
     document.getElementById("confirmModal").classList.add("show");
-    const itemsStr = items.map(i => i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty).join(", ");
+    const itemsStr = items.map(i => {
+  const p = products.find(x => x.id === i.id);
+  const catName = (p && p.category) ? p.category : "";
+  const prefix = catName.toUpperCase().includes("WOMEN") ? "Women's" : "Men's";
+  return prefix + " - " + i.name + " (" + (i.color || "") + ", " + i.size + ") x" + i.qty;
+}).join(", ");
     notifyAdmin(docId, name, phone, email, address + ", " + finalCity, itemsStr, grandTotal);
     lastOrder = { id: docId, items: itemsStr, total: fmt(grandTotal) };
     const confirmMsg = "Your order has been placed successfully.\n\nOrder ID: " + docId + "\nPhone: " + phone + "\nAddress: " + address + ", " + city + "\nItems: " + itemsStr + "\nTotal: " + fmt(grandTotal) + "\n\nWe will contact you shortly.";
-   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazb.wear (apna Order ID daalein)");
+   sendMail(email, "Aapka JAZB Order - " + docId, "Shukriya " + name + "!\n\nAapka JAZB order place ho gaya hai.\n\nOrder ID: " + docId + "\nTotal: Rs. " + grandTotal + "\nAddress: " + address + ", " + finalCity + "\nPhone: " + phone + "\n\nItems:\n" + itemsStr + "\n\nOrder track karein: https://jazbwear.pk (apna Order ID daalein)");
   } catch(e) {
     document.getElementById("coMessage").textContent = "Error: " + e.message;
   } finally {
@@ -2108,9 +2385,96 @@ function adminTab(t){
   if (t === "orders") loadOrders();
   if (t === "stats") loadStats();
   if (t === "customers") loadCustomers();
-  if (t === "settings") fillFlashDropdown();
+    if (t === "settings") {
+    fillFlashDropdown();
+    renderCatalogFocusAdmin();
+  }
+
     if (t === "subscribers") renderSubscribers();
 }
+function renderCatalogFocusAdmin() {
+  const container = document.getElementById("adminCatalogFocusContainer");
+  if (!container) return;
+
+  // Women Categories
+  let html = `<h3 style="margin:20px 0 10px; color:#fff;">WOMEN CATALOG IMAGES (TABS)</h3>`;
+  WOMEN_CATEGORIES.forEach(cat => {
+    let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+    let key = "cat" + safeKey;
+    let val = (catImages && catImages[cat]) || "";
+    html += `
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; color:#aaa; display:block; margin-bottom:4px;">${cat}</label>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input id="set${key}" value="${val}" placeholder="${cat} tab image URL" style="margin:0; flex:1;">
+          <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'set${key}')">
+          <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+        </div>
+        <button class="full-btn" onclick="saveSetting('${key}')" style="margin-top:6px;">SAVE ${cat} TAB</button>
+      </div>`;
+  });
+
+  html += `<h3 style="margin:20px 0 10px; color:#fff;">WOMEN FOCUS IMAGES</h3>`;
+  WOMEN_CATEGORIES.forEach(cat => {
+    let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+    let key = "Focus" + safeKey;
+    let val = (focusImages && focusImages[cat]) || "";
+    html += `
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; color:#aaa; display:block; margin-bottom:4px;">${cat} Focus</label>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input id="set${key}" value="${val}" placeholder="${cat} focus image URL" style="margin:0; flex:1;">
+          <input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'set${key}')">
+          <button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button>
+        </div>
+        <button class="full-btn" onclick="saveSetting('${key}')" style="margin-top:6px;">SAVE ${cat} FOCUS</button>
+      </div>`;
+  });
+
+  // Men Catalog Images (Tabs - Shorts included)
+  html += `<h3 style="margin:20px 0 10px; color:#fff;">MEN CATALOG IMAGES (TABS)</h3>`;
+  CATEGORIES.forEach(cat => {
+    let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+    let key = "cat" + safeKey;
+    let val = (catImages && catImages[cat]) || "";
+    html += `
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; color:#aaa; display:block; margin-bottom:4px;">${cat} tab image URL</label>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input id="set${key}" value="${val}" placeholder="${cat} tab image URL" style="flex:1; padding:8px; background:#111; border:1px solid #333; color:#fff; border-radius:4px;">
+          <input type="file" accept="image/*" style="display:none" onchange="uploadSettingImage(this, 'set${key}')">
+          <button type="button" onclick="this.previousElementSibling.click()" style="padding:8px 12px; background:#222; border:1px solid #444; color:#fff; border-radius:4px; cursor:pointer;">📁</button>
+        </div>
+        <button class="full-btn" onclick="saveSetting('${key}')" style="margin-top:6px;">SAVE ${cat} TAB</button>
+      </div>
+    `;
+  });
+
+  // Men Focus Images (Only T-Shirts, Trousers, Shoes)
+  html += `<h3 style="margin:20px 0 10px; color:#fff;">MEN FOCUS IMAGES</h3>`;
+  const menFocusList = ["T-SHIRTS", "TROUSERS", "SHOES"];
+  menFocusList.forEach(cat => {
+    let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+    let key = "Focus" + safeKey;
+    let val = (focusImages && (focusImages[cat] || focusImages[safeKey])) || "";
+    html += `
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; color:#aaa; display:block; margin-bottom:4px;">Focus ${cat}</label>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <input id="set${key}" value="${val}" placeholder="Image URL" style="flex:1; padding:8px; background:#111; border:1px solid #333; color:#fff; border-radius:4px;">
+          <input type="file" accept="image/*" style="display:none" onchange="uploadSettingImage(this, 'set${key}')">
+          <button type="button" onclick="this.previousElementSibling.click()" style="padding:8px 12px; background:#222; border:1px solid #444; color:#fff; border-radius:4px; cursor:pointer;">📁</button>
+        </div>
+        <button class="full-btn" onclick="saveSetting('${key}')" style="margin-top:6px;">Save Focus ${cat}</button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+
+
 function loadCustomers(){
   const list = document.getElementById("customerList");
   db.collection("orders").get().then(snap => {
@@ -2593,6 +2957,7 @@ function uploadSettingImage(fileInput, targetId) {
 }
 
 
+
 function uploadDirectImage(fileInput, targetClass, parentRow) {
   const file = fileInput.files[0];
   if (!file) return;
@@ -2662,9 +3027,11 @@ function openProductForm(p){
   }
   const modal = document.getElementById("productFormModal");
   const catSelect = document.getElementById("pfCat");
-  if (catSelect) {
-    catSelect.innerHTML = CATEGORIES.map(c => '<option value="' + c + '">' + c + '</option>').join("");
-  }
+    if (catSelect) {
+      const allCats = [...CATEGORIES, ...WOMEN_CATEGORIES];
+      catSelect.innerHTML = allCats.map(c => '<option value="' + c + '">' + c + '</option>').join("");
+    }
+
   
   const pfId = document.getElementById("pfId");
   if (pfId) pfId.value = p ? p.id : "";
@@ -2952,9 +3319,10 @@ async function deleteOrder(id){
   const INFO_PAGES = {
   about: {
     title: "ABOUT JAZB",
-    body: '<p>JAZB is a premium streetwear brand from Pakistan. We design bold, original pieces — oversized tees, track suits, trousers and shorts — built for the streets. Every drop is limited. Every design is ours.</p><p>Premium quality fabric, clean fits, made in Pakistan. Delivered to your door, anywhere in the country.</p><h3>OUR PROMISE</h3><p>Original designs — no copies. Quality fabric you can feel. Fair prices. Fast delivery with easy tracking.</p><p style="font-weight:700;color:#000">Follow the movement: @jazb.wear</p>'
+    body: '<p>JAZB is a premium streetwear brand from Pakistan for men and women. We design bold, original pieces — oversized tees, track suits, trousers, shorts and men\'s shoes — built for the streets. Every drop is limited. Every design is ours.</p><p>Premium quality fabric, clean fits, made in Pakistan. Delivered to your door, anywhere in the country.</p><h3>OUR PROMISE</h3><p>Original designs — no copies. Quality fabric you can feel. Fair prices. Fast delivery with easy tracking.</p><p style="font-weight:700;color:#000">Follow the movement: @jazb.wear</p>'
   },
-  guide: {
+
+    guide: {
     title: "SHOPPING GUIDE",
     body: '<div class="info-step"><div class="num">1</div><div><strong>Choose Your Product</strong>Pick a style, select your size and color. Size guide check karo agar unsure ho.</div></div><div class="info-step"><div class="num">2</div><div><strong>Add to Cart</strong>Tap "Add to Cart". Ek order mein multiple items add kar sakte ho.</div></div><div class="info-step"><div class="num">3</div><div><strong>Checkout</strong>Apna name, phone, email aur full delivery address daalo.</div></div><div class="info-step"><div class="num">4</div><div><strong>We Confirm on WhatsApp</strong>Hamari team aapko WhatsApp pe call/message kar ke order confirm karegi.</div></div><div class="info-step"><div class="num">5</div><div><strong>Delivery in 2-5 Days</strong>Cash on delivery. Apne Order ID se order track karo jab bhi.</div></div>'
   },
@@ -3213,29 +3581,31 @@ function whatsappOrder(id){
   });
 }
 async function saveSetting(key){
-    let data = {};
-    if (key === 'logo') {
-        const val = document.getElementById("setLogo").value.trim();
-        if (!val) { toast("Enter a value"); return; }
-        data = { logo: val, darkLogo: val };
+  let data = {};
+  if (key === 'logo') {
+    const val = document.getElementById("setLogo").value.trim();
+    if (!val) { toast("Enter a value"); return; }
+    data = { logo: val, darkLogo: val };
     } else {
-        const el = document.getElementById("set" + key[0].toUpperCase() + key.slice(1));
+        const el = document.getElementById("set" + key) || document.getElementById("set" + key.charAt(0).toUpperCase() + key.slice(1)) || document.getElementById(key);
         const val = el ? el.value.trim() : "";
         if (!val) { toast("Enter a value"); return; }
         data = { [key]: val };
     }
+
+
+  try {
+    const docRef = db.collection("settings").doc("site");
+    await docRef.set(data, { merge: true });
     
-    try {
-        const docRef = db.collection("settings").doc("site");
-        await docRef.set(data, { merge: true });
-        
-        applySettings(data);
-        toast("Setting saved successfully ✅");
-    } catch(e) {
-        console.error("Save setting error:", e);
-        toast("Error: " + e.message);
-    }
+    applySettings(data);
+    toast("Setting saved successfully ✅");
+  } catch(e) {
+    console.error("Save setting error:", e);
+    toast("Error: " + e.message);
+  }
 }
+
 
 function fillFlashDropdown(){
   const fs=document.getElementById("setFlash");
@@ -3336,6 +3706,15 @@ function removeFlashProduct(){
 }
 function applySettings(s){
   window.siteSettings = s;
+      // Women/Catalog categories dynamic mapping
+    if (typeof WOMEN_CATEGORIES !== 'undefined' && typeof catImages !== 'undefined') {
+        WOMEN_CATEGORIES.forEach(cat => {
+            let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+            if (s["cat" + safeKey]) catImages[cat] = s["cat" + safeKey];
+            if (s["Focus" + safeKey]) focusImages[cat] = s["Focus" + safeKey];
+        });
+    }
+
   const isDark = document.body.classList.contains("dark");
   
   // Logo Update (Multiple Fallbacks)
@@ -3365,30 +3744,63 @@ function applySettings(s){
 
   // 1. FOCUS IMAGES MAP & RENDER
   if (typeof focusImages !== 'undefined') {
-    if (s.focusT) focusImages["T-SHIRTS"] = s.focusT;
-    if (s.focusTrousers) focusImages["TROUSERS"] = s.focusTrousers;
-    if (s.focusShorts) focusImages["SHORTS"] = s.focusShorts;
+    const menFocusList = ["T-SHIRTS", "TROUSERS", "SHOES"];
+    menFocusList.forEach(cat => {
+      let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+      if (s["Focus" + safeKey]) focusImages[cat] = s["Focus" + safeKey];
+    });
     if (typeof renderFocus === 'function') renderFocus();
   }
 
   // 2. CATALOG / TABS IMAGES MAP & RENDER
   if (typeof catImages !== 'undefined') {
     if (s.catT) { catImages["T-SHIRTS"] = s.catT; catImages["T"] = s.catT; catImages["t-shirts"] = s.catT; }
-        if (s.catTrackSuit) { 
+    if (s.catTrackSuit) { 
         catImages["TRACKSUITS"] = s.catTrackSuit; 
         catImages["TrackSuit"] = s.catTrackSuit; 
         catImages["tracksuit"] = s.catTrackSuit; 
         catImages["TRACK SUIT"] = s.catTrackSuit; 
         catImages["Track Suit"] = s.catTrackSuit; 
     }
-
     if (s.catShirts) { catImages["SHIRTS"] = s.catShirts; catImages["shirts"] = s.catShirts; }
     if (s.catTrousers) { catImages["TROUSERS"] = s.catTrousers; catImages["trousers"] = s.catTrousers; }
     if (s.catShorts) { catImages["SHORTS"] = s.catShorts; catImages["shorts"] = s.catShorts; }
     if (s.catHoodies) { catImages["HOODIES"] = s.catHoodies; catImages["hoodies"] = s.catHoodies; }
     if (s.catJackets) { catImages["JACKETS"] = s.catJackets; catImages["jackets"] = s.catJackets; }
     if (s.catJeans) { catImages["JEANS"] = s.catJeans; catImages["jeans"] = s.catJeans; }
+    // Direct DOM binding for shoes image to survive page reloads
+    Object.keys(s).forEach(key => {
+        if (key.toLowerCase().includes('shoe')) {
+            catImages["SHOES"] = s[key];
+            catImages["Shoes"] = s[key];
+            catImages["shoes"] = s[key];
+            const shoesImgEl = document.getElementById("catImg-Shoes") || document.getElementById("catImg-SHOES");
+            if (shoesImgEl && s[key]) {
+                shoesImgEl.src = s[key];
+            }
+        }
+    });
+
+    const allActiveCats = [...CATEGORIES, ...WOMEN_CATEGORIES, "SHOES", "Shoes", "shoes"];
+    allActiveCats.forEach(cat => {
+        let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+        if (s["cat" + safeKey]) {
+            catImages[cat] = s["cat" + safeKey];
+            catImages[cat.toLowerCase()] = s["cat" + safeKey];
+            catImages[cat.toUpperCase()] = s["cat" + safeKey];
+        }
+    });
+
+
+    const tabsList = ["T", "TrackSuit", "Shirts", "Trousers", "Shorts", "Hoodies", "Jackets", "Jeans", "Shoes"];
+    tabsList.forEach(t => {
+        if (s["cat" + t]) {
+            catImages[t] = s["cat" + t];
+            catImages[t.toUpperCase()] = s["cat" + t];
+        }
+    });
   }
+
 
   if (typeof renderCatTabs === 'function') renderCatTabs();
   if (typeof renderCatalog === 'function') renderCatalog();
@@ -3401,7 +3813,8 @@ function applySettings(s){
     catTrackSuit: "catImg-TrackSuit",
     catShirts: "catImg-Shirts",
     catTrousers: "catImg-Trousers",
-    catShorts: "catImg-Shorts"
+    catShorts: "catImg-Shorts",
+    catShoes: "catImg-Shoes",
   };
   
   Object.keys(tabKeys).forEach(k => {
@@ -3415,6 +3828,14 @@ async function loadSettings(){
     if (doc.exists) {
       const s = doc.data();
       applySettings(s);
+          // Force direct render for shoes image on load
+    Object.keys(s).forEach(k => {
+        if (k.toLowerCase().includes('shoe') && s[k]) {
+            const el = document.getElementById("catImg-Shoes") || document.getElementById("catImg-SHOES");
+            if (el) el.src = s[k];
+        }
+    });
+
       applyBundle(s);
       // Inputs mein saved values wapas fill karne ke liye:
       if (document.getElementById("setLogo")) document.getElementById("setLogo").value = s.logo || "";
@@ -3422,7 +3843,16 @@ async function loadSettings(){
       if (document.getElementById("setPhone")) document.getElementById("setPhone").value = s.phone || "";
       if (document.getElementById("setWaNumber")) document.getElementById("setWaNumber").value = s.waNumber || "";
       if (document.getElementById("setInsta")) document.getElementById("setInsta").value = s.insta || "";
-      
+      if (typeof WOMEN_CATEGORIES !== 'undefined') {
+    WOMEN_CATEGORIES.forEach(cat => {
+        let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+        ["cat", "Focus"].forEach(prefix => {
+            const el = document.getElementById("set" + prefix + safeKey);
+            if (el && s[prefix + safeKey]) el.value = s[prefix + safeKey];
+        });
+    });
+}
+
       // Focus Images inputs
       if (document.getElementById("setFocusT")) document.getElementById("setFocusT").value = s.focusT || "";
       if (document.getElementById("setFocusTrousers")) document.getElementById("setFocusTrousers").value = s.focusTrousers || "";
@@ -3439,14 +3869,15 @@ async function loadSettings(){
         document.getElementById("setCatTrackSuit").value = s.catTrackSuit || "";
       }
       
-      const tabsList = ["T", "TrackSuit", "Shirts", "Trousers", "Shorts", "Hoodies", "Jackets", "Jeans"];
-      tabsList.forEach(t => {
+const tabsList = ["T", "TrackSuit", "Shirts", "Trousers", "Shorts", "Hoodies", "Jackets", "Jeans", "Shoes"];
+tabsList.forEach(t => {
         const el = document.getElementById("setCat" + t);
         if (el && s["cat" + t]) el.value = s["cat" + t];
       });
     }
   } catch(e) { console.log(e); }
 }
+
 
 
 
@@ -3728,5 +4159,6 @@ document.addEventListener("change", function(e) {
 });
 function restockOrder() {}
 </script>
+
 </body>
 </html>
