@@ -1457,7 +1457,7 @@ function filterGender(g) {
 
 
 
-const WOMEN_CATEGORIES = ["WOMEN T-SHIRTS", "WOMEN OVERSIZED TEES", "WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"];
+const WOMEN_CATEGORIES = ["WOMEN T-SHIRTS", "WOMEN HOODIES & JACKETS", "WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"];
 
 function getActiveCategories() {
   return currentGender === 'women' ? WOMEN_CATEGORIES : CATEGORIES;
@@ -1592,7 +1592,7 @@ function renderProducts(){
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const grid = document.getElementById("productGrid");
     const activeCats = currentGender === 'women' 
-    ? ["WOMEN T-SHIRTS", "WOMEN OVERSIZED TEES", "WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"]
+    ? ["WOMEN T-SHIRTS", "WOMEN HOODIES & JACKETS","WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"]
     : CATEGORIES;
 
   const list = products.filter(p => {
