@@ -3706,14 +3706,29 @@ function removeFlashProduct(){
 }
 function applySettings(s){
   window.siteSettings = s;
-      // Women/Catalog categories dynamic mapping
-    if (typeof WOMEN_CATEGORIES !== 'undefined' && typeof catImages !== 'undefined') {
-        WOMEN_CATEGORIES.forEach(cat => {
-            let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
-            if (s["cat" + safeKey]) catImages[cat] = s["cat" + safeKey];
-            if (s["Focus" + safeKey]) focusImages[cat] = s["Focus" + safeKey];
-        });
-    }
+  
+  // 1. Women/Catalog categories dynamic mapping
+  if (typeof WOMEN_CATEGORIES !== 'undefined' && typeof catImages !== 'undefined') {
+    WOMEN_CATEGORIES.forEach(cat => {
+      let safeKey = cat.replace(/[^a-zA-Z0-9]/g, '');
+      if (s["cat" + safeKey]) catImages[cat] = s["cat" + safeKey];
+      if (s["Focus" + safeKey]) focusImages[cat] = s["Focus" + safeKey];
+    });
+  }
+
+  // 2. Men categories mapping
+  if (typeof catImages !== 'undefined') {
+    if (s.catT) catImages["T-SHIRTS"] = s.catT;
+    if (s.catTrackSuit) catImages["TRACK SUIT"] = s.catTrackSuit;
+    if (s.catShirts) catImages["SHIRTS"] = s.catShirts;
+    if (s.catTrousers) catImages["TROUSERS"] = s.catTrousers;
+    if (s.catShorts) catImages["SHORTS"] = s.catShorts;
+    if (s.catHoodies) catImages["HOODIES"] = s.catHoodies;
+    if (s.catJackets) catImages["JACKETS"] = s.catJackets;
+    if (s.catJeans) catImages["JEANS"] = s.catJeans;
+    if (s.catShoes) catImages["SHOES"] = s.catShoes;
+  }
+
 
   const isDark = document.body.classList.contains("dark");
   
