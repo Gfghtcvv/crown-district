@@ -1405,6 +1405,31 @@ const DEFAULT_SIZES = {
   firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let products = [];
+try {
+  const cachedProd = localStorage.getItem("cd_cached_products");
+  if (cachedProd) products = JSON.parse(cachedProd) || [];
+} catch (e) {
+  products = [];
+}
+window.catImages = window.catImages || { 
+  "ALL": "",
+  "T-SHIRTS": "", 
+  "TRACK SUIT": "", 
+  "SHIRTS": "", 
+  "TROUSERS": "", 
+  "SHORTS": "", 
+  "HOODIES": "", 
+  "JACKETS": "", 
+  "JEANS": "",
+  "SHOES": ""
+};
+
+window.focusImages = window.focusImages || { 
+  "T-SHIRTS": "", 
+  "TROUSERS": "", 
+  "SHOES": "" 
+};
+
 let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
@@ -4044,14 +4069,29 @@ document.addEventListener("DOMContentLoaded", () => {
   renderInstaGrid();
   saveCart();
   loadSettings();
+
+  // 1. Cache se foran products render karo taake zero delay ho
+  if (products.length > 0) {
+    renderProducts();
+    renderNewArrivals();
+    renderRecentlyViewed();
+    renderFlashSale();
+  }
+
+  // 2. Live Firestore Sync & Cache Update
   db.collection("products").onSnapshot(snap => {
     products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    try {
+      localStorage.setItem("cd_cached_products", JSON.stringify(products));
+    } catch(e) {}
+    
     renderProducts();
     renderNewArrivals();
     renderRecentlyViewed();
     renderFlashSale();
     if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
-      });
+  });
+
   if (new URLSearchParams(location.search).has("admin")) {
     if (isAdmin) {
       openAdmin();
