@@ -2997,9 +2997,8 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       let width = img.width;
       let height = img.height;
 
-      // Image size ko optimize karne ke liye max dimensions
-      const MAX_WIDTH = 800;
-      const MAX_HEIGHT = 800;
+      const MAX_WIDTH = 400;
+      const MAX_HEIGHT = 400;
 
       if (width > height) {
         if (width > MAX_WIDTH) {
@@ -3019,19 +3018,19 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Photo ko high-quality lightweight JPEG mein compress karega
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
 
       const targetInput = parentRow.querySelector('.' + targetClass);
       if (targetInput) {
         targetInput.value = compressedDataUrl;
-        toast("Image compressed & attached! ✅");
+        toast("Image compressed & optimized! ✅");
       }
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
+
 
 
 
