@@ -2951,8 +2951,8 @@ function uploadSettingImage(fileInput, targetId) {
             let width = img.width;
             let height = img.height;
 
-            const MAX_WIDTH = 250;
-            const MAX_HEIGHT = 250;
+            const MAX_WIDTH = 350;
+            const MAX_HEIGHT = 350;
 
             if (width > height) {
                 if (width > MAX_WIDTH) {
@@ -2971,7 +2971,7 @@ function uploadSettingImage(fileInput, targetId) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.4);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
             const targetInput = document.getElementById(targetId);
             if (targetInput) {
                 targetInput.value = compressedDataUrl;
@@ -2997,8 +2997,8 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       let width = img.width;
       let height = img.height;
 
-      const MAX_WIDTH = 250;
-      const MAX_HEIGHT = 250;
+      const MAX_WIDTH = 350;
+      const MAX_HEIGHT = 350;
 
       if (width > height) {
         if (width > MAX_WIDTH) {
@@ -3018,7 +3018,7 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.4);
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
 
       const targetInput = parentRow.querySelector('.' + targetClass);
       if (targetInput) {
