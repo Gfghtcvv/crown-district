@@ -1404,6 +1404,7 @@ const DEFAULT_SIZES = {
 };
   firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+  let displayedProductsCount = 16;
 let products = [];
 let currentCat = "ALL";
 let currentProduct = null;
@@ -1458,7 +1459,8 @@ let currentGender = 'men';
 function filterGender(g) {
   currentGender = g;
   currentCat = "ALL";
-  
+  displayedProductsCount = 16;
+
   const btnMen = document.getElementById('btnMen');
   const btnWomen = document.getElementById('btnWomen');
   
@@ -1520,6 +1522,7 @@ function renderTabs(){
 
 function setCat(c){ 
   currentCat = c; 
+  displayedProductsCount = 16; 
   renderTabs(); 
   renderProducts(); 
 }
@@ -1615,11 +1618,12 @@ document.addEventListener('click', function(e) {
     document.getElementById('sortMenu').style.display = 'none';
 });
 // ===== END SORT =====
-function renderProducts(){
+
+function renderProducts() {
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const grid = document.getElementById("productGrid");
-    const activeCats = currentGender === 'women' 
-    ? ["WOMEN T-SHIRTS", "WOMEN HOODIES & JACKETS","WOMEN TROUSERS", "WOMEN BAGGY JEANS", "WOMEN SETS & SUITS"]
+  const activeCats = currentGender === 'women' 
+    ? WOMEN_CATEGORIES 
     : CATEGORIES;
 
   const list = products.filter(p => {
@@ -1628,35 +1632,106 @@ function renderProducts(){
     return matchCat && matchSearch;
   });
 
-      let finalList = list;
-    if (currentSort === 'low') finalList = list.slice().sort(function(a, b) { return a.price - b.price; });
-    if (currentSort === 'high') finalList = list.slice().sort(function(a, b) { return b.price - a.price; });
-  grid.innerHTML = list.length ? "" : '<p class="empty">No products yet. Admin can add products.</p>';
-      finalList.forEach(p => {
+  let finalList = list;
+  if (currentSort === 'low') finalList = list.slice().sort((a, b) => a.price - b.price);
+  if (currentSort === 'high') finalList = list.slice().sort((a, b) => b.price - a.price);
+
+  grid.innerHTML = finalList.length ? "" : '<p class="empty">No products found.</p>';
+  
+  // Pagination (16 products per load)
+  const paginatedList = finalList.slice(0, displayedProductsCount);
+
+  paginatedList.forEach(p => {
     const d = document.createElement("div");
     d.className = "p-card";
-        const isNew = p.createdAt && (Date.now() - p.createdAt.toDate().getTime()) < 7 * 24 * 60 * 60 * 1000;
-    if (isNew) { const nb = document.createElement("span"); nb.className = "new-badge"; nb.textContent = "NEW"; d.appendChild(nb); }
     d.onclick = () => openPDP(p);
+    
     let priceHtml = fmt(p.price);
     if (p.oldPrice > p.price) {
       const disc = Math.round((1 - p.price / p.oldPrice) * 100);
       priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
     }
-                if (!p.image && p.colors && p.colors.length){ const f = (p.colors[0].images || []).find(u => u); if (f) p.image = f; }
-    d.innerHTML = '<img class="p-img" src="' + p.image + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'"><div class="p-name">' + p.name + '</div><div class="p-cat">' + p.category + '</div><div class="p-price">' + priceHtml + '</div>';
-    if (productSoldOut(p)) { const sb = document.createElement("span"); sb.className = "sold-badge"; sb.style.cssText = "position:absolute;top:48px;left:10px;z-index:2"; sb.textContent = "SOLD OUT"; d.appendChild(sb); }
-    const wb = document.createElement("button");
-wb.className = "wish-btn";
-wb.dataset.id = p.id;
-wb.textContent = wishlist.some(w => w.id === p.id) ? "❤️" : "🤍";
-wb.style.cssText = "position:absolute;top:10px;left:10px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;z-index:2";
-wb.onclick = (e) => { e.stopPropagation(); toggleWish(p.id); };
-d.appendChild(wb);
+
+    const thumbImg = p.thumbnail || p.image || 'https://placehold.co/300x400?text=No+Image';
+
+    d.innerHTML = '<img class="p-img" src="' + thumbImg + '" alt="' + esc(p.name) + '" loading="lazy"><div class="p-name">' + esc(p.name) + '</div><div class="p-cat">' + esc(p.category) + '</div><div class="p-price">' + priceHtml + '</div>';
     grid.appendChild(d);
   });
-  renderFocus();
+
+  // Load More Button Handle
+  let loadMoreContainer = document.getElementById("loadMoreContainer");
+  if (!loadMoreContainer) {
+    loadMoreContainer = document.createElement("div");
+    loadMoreContainer.id = "loadMoreContainer";
+    loadMoreContainer.style.cssText = "text-align:center;padding:20px;grid-column:1/-1;";
+    grid.parentNode.appendChild(loadMoreContainer);
+  }
+
+    // Load More button visibility update
+    const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
+    if (loadMoreBtn) {
+        if (typeof hasMoreProducts !== "undefined" && !hasMoreProducts) {
+            loadMoreBtn.classList.add("hidden");
+        } else {
+            loadMoreBtn.classList.remove("hidden");
+        }
+    }
 }
+
+// State variables for Real Firestore Pagination
+let lastVisibleDoc = null;
+const PRODUCTS_PER_PAGE = 16;
+let hasMoreProducts = true;
+
+// New Firestore Cursor-Based Load More Function
+async function loadMoreProducts() {
+    try {
+        const productGrid = document.getElementById("product-grid");
+        const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
+        
+        if (!lastVisibleDoc) return;
+        if (loadMoreBtn) loadMoreBtn.innerText = "Loading...";
+
+        let queryRef = db.collection("products");
+
+        // Active gender filter match karein agar mojood ho
+        if (typeof currentGender !== "undefined" && currentGender) {
+            queryRef = queryRef.where("gender", "==", currentGender);
+        }
+
+        queryRef = queryRef.orderBy("createdAt", "desc").startAfter(lastVisibleDoc).limit(PRODUCTS_PER_PAGE);
+
+        const snapshot = await queryRef.get();
+
+        if (snapshot.empty) {
+            hasMoreProducts = false;
+            if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
+            return;
+        }
+
+        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+
+        snapshot.forEach(doc => {
+            const product = doc.data();
+            product.id = doc.id;
+            renderProductCard(product); // Aapka existing card render function
+        });
+
+        if (snapshot.docs.length < PRODUCTS_PER_PAGE) {
+            hasMoreProducts = false;
+            if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
+        } else {
+            if (loadMoreBtn) loadMoreBtn.innerText = "Load More Products";
+        }
+
+    } catch (error) {
+        console.error("Error loading more products:", error);
+        const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
+        if (loadMoreBtn) loadMoreBtn.innerText = "Load More Products";
+    }
+}
+
+
 let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "SHIRTS":"", "TROUSERS":"", "SHORTS":"", "HOODIES":"", "JACKETS":"", "JEANS":"" };
 let focusImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
 function renderFocus(){
