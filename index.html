@@ -1478,6 +1478,7 @@ function filterGender(g) {
   setTimeout(() => {
     renderTabs();
     renderDrawer();
+    renderFocus();
     renderProducts();
     renderNewArrivals();
     renderRecentlyViewed();
@@ -1736,17 +1737,27 @@ let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "SHIRTS":"", "TROUSERS":"", "S
 let focusImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
 function renderFocus(){
   const g = document.getElementById("focusGrid");
+  if (!g) return;
   g.innerHTML = "";
-    const focusCats = currentGender === 'women' ? ["WOMEN T-SHIRTS", "WOMEN TROUSERS", "WOMEN SETS & SUITS"] : ["T-SHIRTS", "TROUSERS", "SHOES"];
-focusCats.forEach(c => {
-          let img = (focusImages[c] || "https://placehold.co/300x400?text=" + c).replace(/"/g, "");
+  
+  const focusCats = currentGender === 'women' 
+    ? ["WOMEN T-SHIRTS", "WOMEN TROUSERS", "WOMEN SETS & SUITS"] 
+    : ["T-SHIRTS", "TROUSERS", "SHOES"];
+
+  focusCats.forEach(c => {
+    let img = (focusImages && focusImages[c] ? focusImages[c] : "https://placehold.co/300x400?text=" + encodeURIComponent(c)).replace(/"/g, "");
     const d = document.createElement("div");
     d.className = "focus-card";
-    d.onclick = () => { setCat(c); document.getElementById("shop").scrollIntoView({behavior:"smooth"}); };
-    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/300x400?text=' + c + '\'"><span>' + c + '</span>';
+    d.onclick = () => { 
+      setCat(c); 
+      const shopEl = document.getElementById("shop");
+      if(shopEl) shopEl.scrollIntoView({behavior:"smooth"}); 
+    };
+    d.innerHTML = '<img src="' + img + '" onerror="this.src=\'https://placehold.co/300x400?text=' + encodeURIComponent(c) + '\'"><span>' + c + '</span>';
     g.appendChild(d);
   });
 }
+
 function getColors(p){
   if (p.colors && p.colors.length) return p.colors;
   const imgs = [p.image, p.image2, p.image3, p.image4, p.image5].filter(Boolean);
