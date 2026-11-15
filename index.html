@@ -16,9 +16,7 @@
 <meta name="google-site-verification" content="w-CZ99R7EDELhpLegr5j5uFBZwVlDgHJd1GSor7s74M" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.png">
 <meta property="og:image" content="https://jazb.wear/logo.png">
@@ -67,6 +65,9 @@
   gtag('config', 'G-2P6KXSXH0T');
 </script>
 <link rel="preload" as="image" href="https://i.ibb.co/tMjW7kCJ/file-0000000035ac8210af8b13b8a80e3af8-2.png" fetchpriority="high">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -857,7 +858,7 @@ document.addEventListener("click", function(e) {
     </div>
   </div>
   <div id="searchBar" class="search-bar">
-    <input id="searchInput" placeholder="Search products..." oninput="renderProducts()">
+    <input id="searchInput" placeholder="Search products..." oninput="debouncedSearch()">
   </div>
   <nav class="tabs" id="catTabs"></nav>
 
@@ -923,7 +924,8 @@ document.addEventListener("click", function(e) {
           </div>
         </div>
         </div>
-  <div class="grid" id="productGrid"></div>
+    <div class="grid" id="productGrid"><p class="empty" style="grid-column:1/-1">Loading products...</p></div>
+    <div style="text-align:center;padding:0 16px 24px"><button id="loadMoreBtn" class="full-btn" style="max-width:320px;display:none" onclick="loadMore()">LOAD MORE</button></div>
   <div class="social-proof"><strong>500+</strong> Happy Customers Across Pakistan</div>
 <section id="recentlyViewed">
   <h2 class="sec-title">RECENTLY VIEWED</h2>
@@ -1172,6 +1174,8 @@ setInterval(function() {
   </div>
   <div id="adminProducts" class="atab-body">
     <button class="full-btn" onclick="openProductForm()">+ ADD PRODUCT</button>
+        <button class="full-btn" style="background:#25D366;margin-top:8px" onclick="rebuildCatalog()">⚡ REBUILD FAST CATALOG</button>
+    <p id="catMsg" style="font-size:12px;margin-top:6px"></p>
     <div id="adminProductList" style="margin-top:14px"></div>
   </div>
   <div id="adminOrders" class="atab-body" style="display:none"><div id="orderList"></div></div>
@@ -1404,8 +1408,229 @@ const DEFAULT_SIZES = {
 };
   firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+  try { db.enablePersistence({ synchronizeTabs: true }).catch(function(){}); } catch(e) {}
   let displayedProductsCount = 16;
 let products = [];
+  /* ===== FAST CATALOG ===== */
+const CLOUDINARY_CLOUD = "";   // apna Cloudinary cloud name
+const CLOUDINARY_PRESET = "";  // unsigned upload preset ka naam
+const CATALOG_SHARDS = 8;
+let catalogMode = false;
+let catalogBuilt = false;
+const fullCache = {};
+
+function shardOf(id){ let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0; return "s" + (h % CATALOG_SHARDS); }
+
+function thumbUrl(u){
+  u = String(u || "");
+  if (u.indexOf("res.cloudinary.com") > -1 && u.indexOf("/upload/") > -1 && u.indexOf("/upload/w_") === -1 && u.indexOf("/upload/f_") === -1) return u.replace("/upload/", "/upload/w_450,q_auto,f_auto/");
+  return u;
+}
+
+function productLite(d){
+  let img = d.image || (d.colors && d.colors[0] && d.colors[0].images && d.colors[0].images[0]) || "";
+  let heavy = false;
+  if (String(img).indexOf("data:") === 0) { heavy = true; img = ""; }
+  const cols = d.colors || [];
+  let low = false, allOut = false;
+  if (!d.unlimited && cols.length) {
+    low = cols.some(c => (c.sizes || []).some(z => !z.unlimited && Number(z.stock) > 0 && Number(z.stock) <= 5));
+    allOut = cols.every(c => c.soldOut || ((c.sizes || []).length > 0 && (c.sizes || []).every(z => !z.unlimited && Number(z.stock) <= 0)));
+  }
+  return {
+    name: String(d.name || ""),
+    category: String(d.category || ""),
+    gender: String(d.gender || ""),
+    price: Number(d.price) || 0,
+    oldPrice: Number(d.oldPrice) || 0,
+    image: img,
+    heavy: heavy,
+    soldOut: !!d.soldOut || allOut,
+    unlimited: !!d.unlimited,
+    low: low,
+    ca: (d.createdAt && typeof d.createdAt.toMillis === "function") ? d.createdAt.toMillis() : 0
+  };
+}
+
+const thumbCache = {}, thumbTried = {};
+let thumbQueue = [], thumbTimer = null, rerenderTimer = null;
+
+function makeThumb(src, w){
+  return new Promise(function(res){
+    const im = new Image();
+    im.onload = function(){
+      const r = Math.min(1, w / im.width);
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(im.width * r));
+      c.height = Math.max(1, Math.round(im.height * r));
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", 0.6));
+    };
+    im.onerror = function(){ res(""); };
+    im.src = src;
+  });
+}
+async function saveThumb(id, d){
+  const src = d.image || (d.colors && d.colors[0] && d.colors[0].images && d.colors[0].images[0]) || "";
+  if (String(src).indexOf("data:") !== 0) { try { await db.collection("thumbs").doc(id).delete(); } catch (e) {} return; }
+  const t = await makeThumb(src, 320);
+  if (t) await db.collection("thumbs").doc(id).set({ t: t });
+}
+function queueThumb(p){
+  if (thumbTried[p.id]) return;
+  thumbTried[p.id] = 1;
+  thumbQueue.push(p);
+  if (!thumbTimer) thumbTimer = setTimeout(flushThumbs, 30);
+}
+async function flushThumbs(){
+  thumbTimer = null;
+  const batch = thumbQueue; thumbQueue = [];
+  await Promise.all(batch.map(async function(p){
+    try {
+      const s = await db.collection("thumbs").doc(p.id).get();
+      if (s.exists && s.data().t) { thumbCache[p.id] = s.data().t; return; }
+      await fetchFullInto(p);
+      const im = p.peekImage() || (p.colors && p.colors[0] && p.colors[0].images && p.colors[0].images[0]);
+      if (im) thumbCache[p.id] = im;
+    } catch (e) { console.error("thumb load", p.id, e); }
+  }));
+  clearTimeout(rerenderTimer);
+  rerenderTimer = setTimeout(function(){
+    [renderProducts, renderNewArrivals, renderRecentlyViewed, renderFlashSale].forEach(function(fn){ try { fn(); } catch (e) { console.error(fn.name, e); } });
+  }, 40);
+}
+
+function liteToProduct(id, l){
+  const p = Object.assign({ id: id, _lite: true }, l);
+  let own = l.image || "";
+  delete p.image;
+  Object.defineProperty(p, "image", {
+    enumerable: true, configurable: true,
+    get: function(){ if (own) return own; if (thumbCache[id]) return thumbCache[id]; if (l.heavy) queueThumb(p); return ""; },
+    set: function(v){ if (v) own = v; }
+  });
+  Object.defineProperty(p, "peekImage", { enumerable: false, value: function(){ return own || thumbCache[id] || ""; } });
+  p.createdAt = l.ca ? { toDate: function(){ return new Date(l.ca); } } : null;
+  return p;
+}
+
+async function catalogUpsert(id, d){
+  try {
+    const ref = db.collection("catalog").doc(shardOf(id));
+    const lite = productLite(d);
+    try { await ref.update({ ["items." + id]: lite }); }
+    catch (e) { if (e.code === "not-found") await ref.set({ items: { [id]: lite } }); else throw e; }
+  } catch (e) { console.error("catalog upsert", e); toast("Catalog update fail: " + e.message); }
+}
+async function catalogRemove(id){
+  try { await db.collection("catalog").doc(shardOf(id)).update({ ["items." + id]: firebase.firestore.FieldValue.delete() }); }
+  catch (e) { console.error("catalog remove", e); }
+}
+
+async function rebuildCatalog(){
+  if (!isAdmin) { toast("Admin login zaroori hai"); return; }
+  const msg = document.getElementById("catMsg");
+  if (msg) msg.textContent = "Building... (sab products padh raha hoon)";
+  try {
+    const snap = await db.collection("products").get();
+    const shards = {};
+    for (let i = 0; i < CATALOG_SHARDS; i++) shards["s" + i] = {};
+    let heavy = 0, n = 0;
+    snap.forEach(doc => { const l = productLite(doc.data()); if (l.heavy) heavy++; shards[shardOf(doc.id)][doc.id] = l; n++; });
+        const heavyDocs = snap.docs.filter(d => productLite(d.data()).heavy);
+    let tb = db.batch(), inB = 0, made = 0;
+    for (const doc of heavyDocs) {
+      const d = doc.data();
+      const src = d.image || (d.colors && d.colors[0] && d.colors[0].images && d.colors[0].images[0]) || "";
+      const t = await makeThumb(src, 320);
+      if (t) { tb.set(db.collection("thumbs").doc(doc.id), { t: t }); inB++; made++; }
+      if (inB >= 100) { await tb.commit(); tb = db.batch(); inB = 0; }
+      if (msg) msg.textContent = "Thumbnails ban rahe hain: " + made + " / " + heavyDocs.length;
+    }
+    if (inB) await tb.commit();
+    const batch = db.batch();
+    Object.keys(shards).forEach(k => batch.set(db.collection("catalog").doc(k), { items: shards[k] }));
+    batch.set(db.collection("catalog").doc("_meta"), { built: true, count: n, at: Date.now() });
+    await batch.commit();
+    if (msg) msg.textContent = "Done: " + n + " products catalog mein." + (heavy ? " " + heavy + " products ki image base64 hai (Cloudinary/URL se dobara upload karein, tab sab se fast hoga)." : "");
+    toast("Fast catalog ready ✅");
+  } catch (e) {
+    console.error(e);
+    if (msg) msg.textContent = "Error: " + e.message + " (Firestore rules mein catalog allow karein)";
+  }
+}
+
+async function fetchFullInto(p, fresh){
+  const c = fullCache[p.id];
+  let data;
+  if (!fresh && c && Date.now() - c.t < 300000) data = c.data;
+  else {
+    const snap = await db.collection("products").doc(p.id).get();
+    if (!snap.exists) throw new Error("Product nahi mila");
+    data = snap.data();
+    fullCache[p.id] = { t: Date.now(), data: data };
+  }
+  Object.assign(p, data);
+  p._lite = false;
+  return p;
+}
+
+const _openPDPOrig = openPDP;
+openPDP = function(p){
+  if (!p) return;
+  if (!p._lite) return _openPDPOrig(p);
+  toast("Loading...");
+  fetchFullInto(p).then(function(){ _openPDPOrig(p); }).catch(function(e){ console.error(e); toast("Product load nahi hua, dobara try karein"); });
+};
+
+function applyProducts(list){
+  products = list;
+  [renderProducts, renderNewArrivals, renderRecentlyViewed, renderFlashSale].forEach(function(fn){ try { fn(); } catch (e) { console.error(fn.name, e); } });
+  if (isAdmin) { try { loadAdminProducts(); fillFlashDropdown(); } catch (e) { console.error(e); } }
+}
+let legacyUnsub = null;
+function startLegacyListener(){
+  if (legacyUnsub) return;
+  legacyUnsub = db.collection("products").onSnapshot(
+    function(snap){ catalogMode = false; applyProducts(snap.docs.map(function(d){ return Object.assign({ id: d.id }, d.data()); })); },
+    function(err){ console.error("Products error:", err); toast("Products load nahi hue: " + err.message); }
+  );
+}
+function startProductsListener(){
+  db.collection("catalog").onSnapshot(
+    function(snap){
+      let built = false; const items = [];
+      snap.forEach(function(doc){
+        if (doc.id === "_meta") { built = true; return; }
+        const m = (doc.data() || {}).items || {};
+        Object.keys(m).forEach(function(id){ items.push(liteToProduct(id, m[id])); });
+      });
+      catalogBuilt = built;
+      if (!built) { startLegacyListener(); return; }
+      if (legacyUnsub) { legacyUnsub(); legacyUnsub = null; }
+      catalogMode = true;
+      applyProducts(items);
+    },
+    function(err){ console.warn("Catalog unavailable, fallback:", err.message); startLegacyListener(); }
+  );
+}
+
+async function pushToCloud(dataUrl, input){
+  input.value = dataUrl;
+    if (!CLOUDINARY_CLOUD || !CLOUDINARY_PRESET) { toast("Image attached ✅"); return; }
+  toast("Uploading image...");
+  try {
+    const fd = new FormData();
+    fd.append("file", dataUrl);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+    const r = await fetch("https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/image/upload", { method: "POST", body: fd });
+    const j = await r.json();
+    if (!j.secure_url) throw new Error((j.error && j.error.message) || "upload failed");
+    input.value = j.secure_url;
+    toast("Image uploaded ✅");
+  } catch (e) { toast("Cloud upload fail: " + e.message + " (base64 use hoga)"); }
+}
+/* ===== END FAST CATALOG ===== */
 let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
@@ -1571,7 +1796,7 @@ function renderNewArrivals(){
   g.innerHTML = "";
   
     const activeCats = getActiveCategories();
-  const list = products.filter(p => activeCats.includes(p.category)).sort((a, b) => {
+    const list = products.filter(p => { const pg = getProductGender(p); return pg === currentGender || pg === "both"; }).sort((a, b) => {
     const timeA = a.createdAt && typeof a.createdAt.toDate === 'function' ? a.createdAt.toDate().getTime() : 0;
     const timeB = b.createdAt && typeof b.createdAt.toDate === 'function' ? b.createdAt.toDate().getTime() : 0;
     return timeB - timeA;
@@ -1585,7 +1810,7 @@ function renderNewArrivals(){
   list.forEach(p => {
     const d = document.createElement("div");
     d.className = "p-card";
-    const isNew = p.createdAt && (Date.now() - p.createdAt.toDate().getTime()) < 7 * 24 * 60 * 60 * 1000;
+    const isNew = p.createdAt && typeof p.createdAt.toDate === "function" && (Date.now() - p.createdAt.toDate().getTime()) < 7 * 24 * 60 * 60 * 1000;
     if (isNew) { const nb = document.createElement("span"); nb.className = "new-badge"; nb.textContent = "NEW"; d.appendChild(nb); }
     d.onclick = () => openPDP(p);
 
@@ -1620,118 +1845,86 @@ document.addEventListener('click', function(e) {
 });
 // ===== END SORT =====
 
-function renderProducts() {
-  const q = (document.getElementById("searchInput").value || "").toLowerCase();
-  const grid = document.getElementById("productGrid");
-  const activeCats = currentGender === 'women' 
-    ? WOMEN_CATEGORIES 
-    : CATEGORIES;
+/* ===== SAFE CLIENT-SIDE FILTER + PAGINATION ===== */
+const PAGE_SIZE = 16;
+const normStr = v => String(v == null ? "" : v).trim().toUpperCase().replace(/\s+/g, " ");
+
+function getProductGender(p) {
+  const g = String(p.gender == null ? "" : p.gender).trim().toLowerCase();
+  if (["women", "woman", "female", "ladies", "girls"].includes(g)) return "women";
+  if (["men", "man", "male", "boys", "gents"].includes(g)) return "men";
+  if (g === "unisex") return "both";
+  return normStr(p.category).startsWith("WOMEN") ? "women" : "men";
+}
+
+function getFilteredProducts() {
+  const si = document.getElementById("searchInput");
+  const q = (si ? si.value : "").trim().toLowerCase();
+  const cat = normStr(currentCat);
 
   const list = products.filter(p => {
-    const matchCat = (currentCat === "ALL" ? activeCats.includes(p.category) : p.category === currentCat);
-    const matchSearch = (!q || p.name.toLowerCase().includes(q));
-    return matchCat && matchSearch;
+    const pg = getProductGender(p);
+    if (pg !== currentGender && pg !== "both") return false;
+    if (cat !== "ALL" && normStr(p.category) !== cat) return false;
+    if (q && !String(p.name || "").toLowerCase().includes(q)) return false;
+    return true;
   });
 
-  let finalList = list;
-  if (currentSort === 'low') finalList = list.slice().sort((a, b) => a.price - b.price);
-  if (currentSort === 'high') finalList = list.slice().sort((a, b) => b.price - a.price);
+  const pr = p => Number(p.price) || 0;
+    const ts = p => (p.createdAt && typeof p.createdAt.toDate === "function") ? p.createdAt.toDate().getTime() : 0;
+  if (currentSort === "low") list.sort((a, b) => pr(a) - pr(b));
+  else if (currentSort === "high") list.sort((a, b) => pr(b) - pr(a));
+  else list.sort((a, b) => ts(b) - ts(a));
+  return list;
+}
+let _searchTimer = null;
+function debouncedSearch(){
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(renderProducts, 200);
+  }
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  if (!grid) return;
 
-  grid.innerHTML = finalList.length ? "" : '<p class="empty">No products found.</p>';
-  
-  // Pagination (16 products per load)
-  const paginatedList = finalList.slice(0, displayedProductsCount);
+  const list = getFilteredProducts();
+  const page = list.slice(0, displayedProductsCount);
 
-  paginatedList.forEach(p => {
-    const d = document.createElement("div");
-    d.className = "p-card";
-    d.onclick = () => openPDP(p);
-    
-    let priceHtml = fmt(p.price);
-    if (p.oldPrice > p.price) {
-      const disc = Math.round((1 - p.price / p.oldPrice) * 100);
-      priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
-    }
+  if (!page.length) {
+    grid.innerHTML = '<p class="empty" style="grid-column:1/-1">No products found.</p>';
+  } else {
+    const frag = document.createDocumentFragment();
+    page.forEach(p => {
+      const d = document.createElement("div");
+      d.className = "p-card";
+            d.dataset.pid = p.id;
+      d.onclick = () => openPDP(p);
 
-    const thumbImg = p.thumbnail || p.image || 'https://placehold.co/300x400?text=No+Image';
+      let priceHtml = fmt(p.price || 0);
+      if (p.oldPrice > p.price) {
+        const disc = Math.round((1 - p.price / p.oldPrice) * 100);
+        priceHtml = '<span class="old-price">' + fmt(p.oldPrice) + '</span>' + fmt(p.price) + '<span class="disc">-' + disc + '%</span>';
+      }
+      const img = p.thumbnail || p.image ||
+        (p.colors && p.colors[0] && p.colors[0].images && p.colors[0].images[0]) ||
+        "https://placehold.co/300x400?text=No+Image";
 
-    d.innerHTML = '<img class="p-img" src="' + thumbImg + '" alt="' + esc(p.name) + '" loading="lazy"><div class="p-name">' + esc(p.name) + '</div><div class="p-cat">' + esc(p.category) + '</div><div class="p-price">' + priceHtml + '</div>';
-    grid.appendChild(d);
-  });
-
-  // Load More Button Handle
-  let loadMoreContainer = document.getElementById("loadMoreContainer");
-  if (!loadMoreContainer) {
-    loadMoreContainer = document.createElement("div");
-    loadMoreContainer.id = "loadMoreContainer";
-    loadMoreContainer.style.cssText = "text-align:center;padding:20px;grid-column:1/-1;";
-    grid.parentNode.appendChild(loadMoreContainer);
+            d.innerHTML = '<img class="p-img" src="' + esc(thumbUrl(img)) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async" onerror="this.src=\'https://placehold.co/300x400?text=No+Image\'">'
+        + '<div class="p-name">' + esc(p.name) + '</div>'
+        + '<div class="p-cat">' + esc(p.category) + '</div>'
+        + '<div class="p-price">' + priceHtml + '</div>';
+      frag.appendChild(d);
+    });
+        grid.replaceChildren(frag);
   }
 
-    // Load More button visibility update
-    const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
-    if (loadMoreBtn) {
-        if (typeof hasMoreProducts !== "undefined" && !hasMoreProducts) {
-            loadMoreBtn.classList.add("hidden");
-        } else {
-            loadMoreBtn.classList.remove("hidden");
-        }
-    }
+  const btn = document.getElementById("loadMoreBtn");
+  if (btn) btn.style.display = list.length > displayedProductsCount ? "inline-block" : "none";
 }
 
-// State variables for Real Firestore Pagination
-let lastVisibleDoc = null;
-const PRODUCTS_PER_PAGE = 16;
-let hasMoreProducts = true;
-
-// New Firestore Cursor-Based Load More Function
-async function loadMoreProducts() {
-    try {
-        const productGrid = document.getElementById("product-grid");
-        const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
-        
-        if (!lastVisibleDoc) return;
-        if (loadMoreBtn) loadMoreBtn.innerText = "Loading...";
-
-        let queryRef = db.collection("products");
-
-        // Active gender filter match karein agar mojood ho
-        if (typeof currentGender !== "undefined" && currentGender) {
-            queryRef = queryRef.where("gender", "==", currentGender);
-        }
-
-        queryRef = queryRef.orderBy("createdAt", "desc").startAfter(lastVisibleDoc).limit(PRODUCTS_PER_PAGE);
-
-        const snapshot = await queryRef.get();
-
-        if (snapshot.empty) {
-            hasMoreProducts = false;
-            if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
-            return;
-        }
-
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-
-        snapshot.forEach(doc => {
-            const product = doc.data();
-            product.id = doc.id;
-            renderProductCard(product); // Aapka existing card render function
-        });
-
-        if (snapshot.docs.length < PRODUCTS_PER_PAGE) {
-            hasMoreProducts = false;
-            if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
-        } else {
-            if (loadMoreBtn) loadMoreBtn.innerText = "Load More Products";
-        }
-
-    } catch (error) {
-        console.error("Error loading more products:", error);
-        const loadMoreBtn = document.getElementById("load-more-btn") || document.getElementById("loadMoreBtn");
-        if (loadMoreBtn) loadMoreBtn.innerText = "Load More Products";
-    }
+function loadMore() {
+  displayedProductsCount += PAGE_SIZE;
+  renderProducts();
 }
-
 
 let catImages = { "T-SHIRTS":"", "TRACK SUIT":"", "SHIRTS":"", "TROUSERS":"", "SHORTS":"", "HOODIES":"", "JACKETS":"", "JEANS":"" };
 let focusImages = { "T-SHIRTS":"", "TROUSERS":"", "SHORTS":"" };
@@ -2405,6 +2598,7 @@ async function placeOrder(){
   const cSaved2 = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
   const grandTotal = total + delivery - Math.max(bSaved, cSaved2);
   const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  if (catalogMode) { try { await Promise.all(items.map(it => { const pp = products.find(x => x.id === it.id); return pp ? fetchFullInto(pp, true) : null; })); } catch (e) { console.error(e); } }
 for (const it of items) {
   const p = products.find(x => x.id === it.id);
   if (p) {
@@ -2653,14 +2847,14 @@ function loadAdminProducts(){
   products.forEach(p => {
     const d = document.createElement("div");
     d.className = "ap-item";
-    let lowStock = false;
+        let lowStock = !!p.low;
     if (!p.unlimited && p.stock) {
       const s = p.stock;
       const colorKeys = Object.keys(s).filter(k => typeof s[k] === "object");
       if (colorKeys.length) lowStock = colorKeys.some(k => Object.values(s[k]).some(v => Number(v) > 0 && Number(v) <= 5));
       else lowStock = Object.values(s).some(v => typeof v === "number" && v > 0 && v <= 5);
     }
-    d.innerHTML = '<img src="' + p.image + '"><div class="ap-info"><div class="ap-name">' + p.name + (lowStock ? ' <span style="color:#c0392b;font-size:10px;font-weight:700">⚠ LOW STOCK</span>' : '') + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
+    d.innerHTML = '<img src="' + (p.peekImage ? p.peekImage() : p.image) + '"><div class="ap-info"><div class="ap-name">' + p.name + (lowStock ? ' <span style="color:#c0392b;font-size:10px;font-weight:700">⚠ LOW STOCK</span>' : '') + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
     list.appendChild(d);
   });
 }
@@ -3037,8 +3231,8 @@ function uploadSettingImage(fileInput, targetId) {
             let width = img.width;
             let height = img.height;
 
-            const MAX_WIDTH = 550;
-            const MAX_HEIGHT = 550;
+           const MAX_WIDTH = CLOUDINARY_CLOUD ? 1000 : 550;
+            const MAX_HEIGHT = CLOUDINARY_CLOUD ? 1000 : 550;
 
             if (width > height) {
                 if (width > MAX_WIDTH) {
@@ -3059,10 +3253,7 @@ function uploadSettingImage(fileInput, targetId) {
 
             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
             const targetInput = document.getElementById(targetId);
-            if (targetInput) {
-                targetInput.value = compressedDataUrl;
-                toast("Image compressed & attached! ✅");
-            }
+            if (targetInput) pushToCloud(compressedDataUrl, targetInput);
         };
         img.src = e.target.result;
     };
@@ -3083,8 +3274,8 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       let width = img.width;
       let height = img.height;
 
-      const MAX_WIDTH = 550;
-      const MAX_HEIGHT = 550;
+      const MAX_WIDTH = CLOUDINARY_CLOUD ? 1000 : 550;
+      const MAX_HEIGHT = CLOUDINARY_CLOUD ? 1000 : 550;
 
       if (width > height) {
         if (width > MAX_WIDTH) {
@@ -3107,10 +3298,7 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
       const targetInput = parentRow.querySelector('.' + targetClass);
-      if (targetInput) {
-        targetInput.value = compressedDataUrl;
-        toast("Image compressed & optimized! ✅");
-      }
+      if (targetInput) pushToCloud(compressedDataUrl, targetInput);
     };
     img.src = e.target.result;
   };
@@ -3137,6 +3325,7 @@ function openProductForm(p){
   if (typeof p === "string") {
     p = products.find(x => x.id === p);
   }
+    if (p && p._lite) { fetchFullInto(p, true).then(() => openProductForm(p)).catch(e => toast("Load error: " + e.message)); return; }
   const modal = document.getElementById("productFormModal");
   const catSelect = document.getElementById("pfCat");
     if (catSelect) {
@@ -3261,13 +3450,18 @@ async function saveProduct(){
 
   try {
     if (msg) msg.textContent = "Saving...";
+    let docId = id;
     if (id) {
       await db.collection("products").doc(id).update(productData);
     } else {
       productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       const newRef = db.collection("products").doc();
       await newRef.set(productData);
+      docId = newRef.id;
     }
+    delete fullCache[docId];
+        try { await saveThumb(docId, productData); } catch (e) { console.error('thumb', e); }
+    if (catalogBuilt) { const fresh = await db.collection("products").doc(docId).get(); await catalogUpsert(docId, fresh.data()); }
     toast("Product saved successfully ✅");
     closeProductForm();
     loadAdminProducts();
@@ -3282,6 +3476,8 @@ async function delProduct(id){
   if (!confirm("Delete this product?")) return;
   try {
     await db.collection("products").doc(id).delete();
+        delete fullCache[id];
+    if (catalogBuilt) await catalogRemove(id);
     loadAdminProducts();
     renderProducts();
   } catch(e) { toast(e.message); }
@@ -4129,14 +4325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderInstaGrid();
   saveCart();
   loadSettings();
-  db.collection("products").onSnapshot(snap => {
-    products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderProducts();
-    renderNewArrivals();
-    renderRecentlyViewed();
-    renderFlashSale();
-    if (isAdmin) { loadAdminProducts(); fillFlashDropdown(); }
-      });
+  startProductsListener();
   if (new URLSearchParams(location.search).has("admin")) {
     if (isAdmin) {
       openAdmin();
