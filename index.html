@@ -1494,6 +1494,7 @@ async function flushThumbs(){
       if (im) thumbCache[p.id] = im;
     } catch (e) { console.error("thumb load", p.id, e); }
   }));
+    batch.forEach(function(p){ const src = thumbCache[p.id]; if (!src) return; document.querySelectorAll('img[data-apid="' + p.id + '"]').forEach(function(im){ im.src = src; }); });
   clearTimeout(rerenderTimer);
   rerenderTimer = setTimeout(function(){
     [renderProducts, renderNewArrivals, renderRecentlyViewed, renderFlashSale].forEach(function(fn){ try { fn(); } catch (e) { console.error(fn.name, e); } });
@@ -2844,6 +2845,10 @@ function loadStats(){
 function loadAdminProducts(){
   const list = document.getElementById("adminProductList");
   list.innerHTML = products.length ? "" : '<p class="empty">No products yet</p>';
+    if (window._adminIO) window._adminIO.disconnect();
+  window._adminIO = ("IntersectionObserver" in window) ? new IntersectionObserver(function(es){
+    es.forEach(function(e){ if (e.isIntersecting && e.target._p) { const p = e.target._p; window._adminIO.unobserve(e.target); void p.image; } });
+  }, { rootMargin: "200px" }) : null;
   products.forEach(p => {
     const d = document.createElement("div");
     d.className = "ap-item";
@@ -2854,8 +2859,9 @@ function loadAdminProducts(){
       if (colorKeys.length) lowStock = colorKeys.some(k => Object.values(s[k]).some(v => Number(v) > 0 && Number(v) <= 5));
       else lowStock = Object.values(s).some(v => typeof v === "number" && v > 0 && v <= 5);
     }
-    d.innerHTML = '<img src="' + (p.peekImage ? p.peekImage() : p.image) + '"><div class="ap-info"><div class="ap-name">' + p.name + (lowStock ? ' <span style="color:#c0392b;font-size:10px;font-weight:700">⚠ LOW STOCK</span>' : '') + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
+    d.innerHTML = '<img data-apid="' + p.id + '" src="' + (p.peekImage ? p.peekImage() : p.image) + '"><div class="ap-info"><div class="ap-name">' + p.name + (lowStock ? ' <span style="color:#c0392b;font-size:10px;font-weight:700">⚠ LOW STOCK</span>' : '') + '</div><div class="ap-meta">' + p.category + ' | ' + fmt(p.price) + '</div></div><button onclick="openProductForm(\'' + p.id + '\')">EDIT</button><button onclick="delProduct(\'' + p.id + '\')">DEL</button>';
     list.appendChild(d);
+        if (window._adminIO && p.heavy && p.peekImage && !p.peekImage()) { d._p = p; window._adminIO.observe(d); }
   });
 }
 function renderSizeButtons(cat, selected, stocks){
