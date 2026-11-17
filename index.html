@@ -332,6 +332,11 @@ body.dark .admin-panel [style*="background:#f8f8f8"]{background:#1a1a1a!importan
 body.dark .admin-panel [style*="background:#f8f8f8"] *{color:#eee!important}
 body.dark .admin-panel .full-btn{background:#222!important;color:#fff!important;border:1px solid #444!important}
 body.dark .admin-panel button[style*="background:#fff"]{background:#222!important;color:#fff!important;border:1px solid #444!important}
+  .addr-btn{flex:1 1 auto;min-width:80px;padding:9px 12px;font-size:12px;letter-spacing:1.5px;font-weight:700;border:1px solid #111!important;border-radius:4px;cursor:pointer;background:#111!important;color:#fff!important;text-align:center}
+.addr-btn.addr-del{background:#c0392b!important;border-color:#c0392b!important;color:#fff!important}
+body.dark .addr-btn{background:#2a2a2a!important;color:#fff!important;border:1px solid #555!important}
+body.dark .addr-btn.addr-del{background:#8e2a20!important;border-color:#a33!important;color:#fff!important}
+body.dark .track-card .addr-btn,body.dark .track-card .addr-btn *{color:#fff!important}
 body.dark .admin-panel select{background:#1a1a1a!important;color:#fff!important;border-color:#444!important}
 body.dark .admin-panel .oc-item{background:#222!important;color:#eee!important}
   body.dark .admin-panel .oc-items{background:#222!important;color:#eee!important}
@@ -1153,6 +1158,70 @@ setInterval(function() {
     <p id="coMessage" class="message"></p>
   </div>
 </div>
+<div id="custAuthModal" class="modal">
+  <div class="modal-card">
+    <div class="modal-head"><h2 id="custAuthTitle">CUSTOMER LOGIN</h2><button onclick="closeCustAuth()">&#10005;</button></div>
+
+    <div id="custLoginView">
+      <input id="custLoginEmail" type="email" placeholder="Email Address">
+      <div style="position:relative">
+        <input id="custLoginPw" type="password" placeholder="Password" style="padding-right:60px">
+        <button type="button" onclick="toggleCustPw('custLoginPw',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:#999;font-size:11px;cursor:pointer">SHOW</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0;cursor:pointer;width:auto"><input id="custRemember" type="checkbox" checked style="width:auto;margin:0;flex:0 0 auto"> <span>Remember Me</span></label>
+      <button class="full-btn" onclick="custLogin()">LOGIN</button>
+      <button class="full-btn" onclick="custGoogle()" style="margin-top:8px">CONTINUE WITH GOOGLE</button>
+      <p style="font-size:13px;margin-top:12px"><a style="cursor:pointer;text-decoration:underline" onclick="showCustView('forgot')">Forgot Password?</a> &nbsp;|&nbsp; <a style="cursor:pointer;text-decoration:underline" onclick="showCustView('signup')">Create Account</a></p>
+      <p id="custLoginMsg" class="message"></p>
+    </div>
+
+    <div id="custSignupView" style="display:none">
+      <input id="custName" placeholder="Full Name">
+      <input id="custPhone" type="tel" placeholder="Phone Number">
+      <input id="custSignEmail" type="email" placeholder="Email Address">
+      <div style="position:relative">
+        <input id="custSignPw" type="password" placeholder="Password" style="padding-right:60px">
+        <button type="button" onclick="toggleCustPw('custSignPw',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:#999;font-size:11px;cursor:pointer">SHOW</button>
+      </div>
+      <div style="position:relative">
+        <input id="custSignPw2" type="password" placeholder="Confirm Password" style="padding-right:60px">
+        <button type="button" onclick="toggleCustPw('custSignPw2',this)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:#999;font-size:11px;cursor:pointer">SHOW</button>
+      </div>
+      <button class="full-btn" onclick="custSignup()">CREATE ACCOUNT</button>
+      <button class="full-btn" onclick="custGoogle()" style="margin-top:8px">CONTINUE WITH GOOGLE</button>
+      <p style="font-size:13px;margin-top:12px">Already have an account? <a style="cursor:pointer;text-decoration:underline" onclick="showCustView('login')">Login</a></p>
+      <p id="custSignupMsg" class="message"></p>
+    </div>
+
+    <div id="custForgotView" style="display:none">
+      <input id="custForgotEmail" type="email" placeholder="Email Address">
+      <button class="full-btn" onclick="custForgot()">SEND RESET EMAIL</button>
+      <p style="font-size:13px;margin-top:12px"><a style="cursor:pointer;text-decoration:underline" onclick="showCustView('login')">Back to Login</a></p>
+      <p id="custForgotMsg" class="message"></p>
+    </div>
+
+    <div id="custVerifyView" style="display:none">
+      <p style="font-size:14px">Hum ne aapke email par verification link bheja hai. Link par click karke wapas aayein, phir neeche button dabayein.</p>
+      <button class="full-btn" onclick="custCheckVerified()">I HAVE VERIFIED</button>
+      <button class="full-btn" id="custResendBtn" onclick="custResend()" style="margin-top:8px">RESEND EMAIL</button>
+      <p id="custVerifyMsg" class="message"></p>
+    </div>
+  </div>
+</div>
+<div id="custAccountModal" class="modal">
+  <div class="modal-card">
+    <div class="modal-head"><h2>MY ACCOUNT</h2><button onclick="document.getElementById('custAccountModal').classList.remove('show')">&#10005;</button></div>
+    <label style="font-size:12px;color:#999">Full Name</label>
+    <input id="caName" placeholder="Full Name">
+    <label style="font-size:12px;color:#999">Phone Number</label>
+    <input id="caPhone" type="tel" placeholder="Phone Number">
+    <label style="font-size:12px;color:#999">Email</label>
+    <input id="caEmail" type="email" disabled>
+    <button class="full-btn" onclick="custSaveAccount()">SAVE PROFILE</button>
+    <button class="full-btn" onclick="custLogout()" style="margin-top:8px">LOGOUT</button>
+    <p id="caMsg" class="message"></p>
+  </div>
+</div>
 <div id="adminLoginModal" class="modal">
   <div class="modal-card">
     <div class="modal-head"><h2>ADMIN LOGIN</h2><button onclick="closeAdminLogin()">&#10005;</button></div>
@@ -1324,6 +1393,32 @@ setInterval(function() {
     <div class="info-body" id="infoBody"></div>
   </div>
 </div>
+    <div id="myOrdersModal" class="full-page" style="display:none">
+  <div class="fp-top">
+    <button class="fp-back" onclick="closeMyOrders()">&#8592;</button>
+    <h2>MY ORDERS</h2>
+  </div>
+  <div class="fp-body">
+    <div id="myOrdersList"></div>
+  </div>
+    </div>
+    <div id="addrModal" class="full-page" style="display:none">
+  <div class="fp-top">
+    <button class="fp-back" onclick="closeAddr()">&#8592;</button>
+    <h2>MY ADDRESSES</h2>
+  </div>
+  <div class="fp-body">
+    <div id="addrList"></div>
+    <h3 id="addrFormTitle" style="margin-top:18px;font-size:15px">NAYA ADDRESS</h3>
+    <input id="adName" placeholder="Full Name" style="width:100%;padding:12px;margin-bottom:8px;box-sizing:border-box">
+    <input id="adPhone" type="tel" placeholder="Phone Number" style="width:100%;padding:12px;margin-bottom:8px;box-sizing:border-box">
+    <input id="adCity" placeholder="City" style="width:100%;padding:12px;margin-bottom:8px;box-sizing:border-box">
+    <textarea id="adAddress" placeholder="Complete Address" rows="3" style="width:100%;padding:12px;margin-bottom:8px;box-sizing:border-box"></textarea>
+    <input type="hidden" id="adEditId" value="">
+    <button class="full-btn" onclick="saveAddr()">SAVE ADDRESS</button>
+    <p id="adMsg" class="message"></p>
+  </div>
+    </div>
 <div id="trackModal" class="full-page" style="display:none">
   <div class="fp-top">
     <button class="fp-back" onclick="closeTrack()">&#8592;</button>
@@ -1636,6 +1731,268 @@ let currentCat = "ALL";
 let currentProduct = null;
 let currentSize = null;
 let cart = JSON.parse(localStorage.getItem("cd_cart") || "[]");
+  /* ===== CUSTOMER AUTH (sirf customers; admin login alag hai aur usay chhoya nahi gaya) ===== */
+let custUser = null;      // customer ka firebase user (admin ka flag ho to null rehta hai)
+let custProfile = null;   // users/{uid} ka data
+let custVerifyTimer = null;
+let custCooldownLeft = 0;
+
+function custMsg(id, text, ok){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text || "";
+  el.style.color = ok ? "#2e7d32" : "#c0392b";
+}
+function custErr(e){
+  const map = {
+    "auth/email-already-in-use": "Ye email pehle se registered hai. Login karein.",
+    "auth/invalid-email": "Email sahi nahi hai.",
+    "auth/weak-password": "Password kamzor hai (kam az kam 6 characters).",
+    "auth/invalid-credential": "Email ya password galat hai.",
+    "auth/wrong-password": "Email ya password galat hai.",
+    "auth/user-not-found": "Email ya password galat hai.",
+    "auth/missing-password": "Password likhein.",
+    "auth/too-many-requests": "Bohat zyada koshish. Thodi der baad dobara try karein.",
+    "auth/network-request-failed": "Internet connection check karein.",
+    "auth/popup-closed-by-user": "Google login band kar diya gaya.",
+    "auth/account-exists-with-different-credential": "Is email se pehle dusre tareeqe se account bana hai. Email/password se login karein."
+  };
+  const c = (e && e.code) || "";
+  return map[c] || ("Error: " + (e && e.message ? e.message : c));
+}
+function showCustView(v){
+  ["custLoginView","custSignupView","custForgotView","custVerifyView"].forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = "none";
+  });
+  const map = { login:"custLoginView", signup:"custSignupView", forgot:"custForgotView", verify:"custVerifyView" };
+  const titles = { login:"CUSTOMER LOGIN", signup:"CREATE ACCOUNT", forgot:"RESET PASSWORD", verify:"VERIFY EMAIL" };
+  const el = document.getElementById(map[v] || "custLoginView"); if (el) el.style.display = "block";
+  const t = document.getElementById("custAuthTitle"); if (t) t.textContent = titles[v] || "CUSTOMER LOGIN";
+}
+function openCustAuth(view){
+  const m = document.getElementById("custAuthModal");
+  if (!m) return;
+  if (custUser && custUser.emailVerified) { openCustAccount(); return; }
+  showCustView(custUser ? "verify" : (view || "login"));
+  m.classList.add("show");
+}
+function closeCustAuth(){ const m = document.getElementById("custAuthModal"); if (m) m.classList.remove("show"); }
+function toggleCustPw(id, btn){
+  const i = document.getElementById(id); if (!i) return;
+  i.type = i.type === "password" ? "text" : "password";
+  btn.textContent = i.type === "password" ? "SHOW" : "HIDE";
+}
+
+/* Profile: naya doc banata hai, purane doc ko sirf khaali fields mein bharta hai. admin field kabhi nahi chhoota. */
+async function custEnsureProfile(user, extra){
+  const ref = db.collection("users").doc(user.uid);
+  const snap = await ref.get();
+  const ex = extra || {};
+  if (!snap.exists) {
+    await ref.set({
+      name: ex.name || user.displayName || "",
+      email: user.email || "",
+      phone: ex.phone || "",
+      role: "customer",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } else {
+    const d = snap.data() || {};
+    const fill = {};
+    if (!d.email && user.email) fill.email = user.email;
+    if (!d.name && (ex.name || user.displayName)) fill.name = ex.name || user.displayName;
+    if (!d.phone && ex.phone) fill.phone = ex.phone;
+    if (!d.role && d.admin !== true) fill.role = "customer";
+    if (Object.keys(fill).length) await ref.set(fill, { merge: true });
+  }
+  const again = await ref.get();
+  return again.data() || {};
+}
+
+function custStartCooldown(){
+  custCooldownLeft = 60;
+  clearInterval(custVerifyTimer);
+  const b = document.getElementById("custResendBtn");
+  const tick = () => {
+    if (!b) return;
+    if (custCooldownLeft <= 0) { clearInterval(custVerifyTimer); b.disabled = false; b.textContent = "RESEND EMAIL"; return; }
+    b.disabled = true; b.textContent = "RESEND (" + custCooldownLeft + "s)";
+    custCooldownLeft--;
+  };
+  tick();
+  custVerifyTimer = setInterval(tick, 1000);
+}
+
+async function custSignup(){
+  const name = document.getElementById("custName").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const email = document.getElementById("custSignEmail").value.trim();
+  const pw = document.getElementById("custSignPw").value;
+  const pw2 = document.getElementById("custSignPw2").value;
+  if (name.length < 2) return custMsg("custSignupMsg", "Naam likhein");
+  if (phone.replace(/\D/g, "").length < 10) return custMsg("custSignupMsg", "Sahi phone number likhein");
+  if (!/^\S+@\S+\.\S+$/.test(email)) return custMsg("custSignupMsg", "Sahi email likhein");
+  if (pw.length < 6) return custMsg("custSignupMsg", "Password kam az kam 6 characters ka ho");
+  if (pw !== pw2) return custMsg("custSignupMsg", "Dono passwords match nahi karte");
+  custMsg("custSignupMsg", "Account bana rahe hain...", true);
+  try {
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const cred = await firebase.auth().createUserWithEmailAndPassword(email, pw);
+    await cred.user.updateProfile({ displayName: name });
+    await custEnsureProfile(cred.user, { name: name, phone: phone });
+    await cred.user.sendEmailVerification();
+    custUser = cred.user;
+    showCustView("verify");
+    custMsg("custVerifyMsg", "Verification email " + email + " par bhej diya gaya hai. Spam folder bhi check karein.", true);
+    custStartCooldown();
+  } catch (e) { custMsg("custSignupMsg", custErr(e)); }
+}
+
+async function custLogin(){
+  const email = document.getElementById("custLoginEmail").value.trim();
+  const pw = document.getElementById("custLoginPw").value;
+  if (!email || !pw) return custMsg("custLoginMsg", "Email aur password likhein");
+  custMsg("custLoginMsg", "Login ho raha hai...", true);
+  try {
+    const remember = document.getElementById("custRemember").checked;
+    await firebase.auth().setPersistence(remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
+    const cred = await firebase.auth().signInWithEmailAndPassword(email, pw);
+    const u = cred.user;
+    if (!u.emailVerified) {
+      custUser = u;
+      showCustView("verify");
+      custMsg("custVerifyMsg", "Aap ka email abhi verify nahi hua. Link par click karke 'I HAVE VERIFIED' dabayein.", false);
+      custStartCooldown();
+      return;
+    }
+    await custEnsureProfile(u, {});
+    custUser = u;
+    closeCustAuth();
+    toast("Welcome ✅");
+    renderDrawer();
+  } catch (e) { custMsg("custLoginMsg", custErr(e)); }
+}
+
+async function custGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  try {
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const cred = await firebase.auth().signInWithPopup(provider);
+    await custEnsureProfile(cred.user, {});
+    custUser = cred.user;
+    closeCustAuth();
+    toast("Welcome ✅");
+    renderDrawer();
+  } catch (e) {
+    if (e && e.code === "auth/popup-blocked") { return firebase.auth().signInWithRedirect(provider); }
+    custMsg("custLoginMsg", custErr(e));
+  }
+}
+
+async function custCheckVerified(){
+  const u = firebase.auth().currentUser;
+  if (!u) return custMsg("custVerifyMsg", "Pehle login karein");
+  try {
+    await u.reload();
+    const fresh = firebase.auth().currentUser;
+    if (!fresh || !fresh.emailVerified) return custMsg("custVerifyMsg", "Abhi email verify nahi hua. Link par click karke dobara check karein.");
+    await custEnsureProfile(fresh, {});
+    custUser = fresh;
+    closeCustAuth();
+    toast("Email verify ho gaya ✅");
+    renderDrawer();
+  } catch (e) { custMsg("custVerifyMsg", custErr(e)); }
+}
+
+async function custResend(){
+  const u = firebase.auth().currentUser;
+  if (!u) return custMsg("custVerifyMsg", "Pehle login karein");
+  try {
+    await u.sendEmailVerification();
+    custMsg("custVerifyMsg", "Verification email dobara bhej diya gaya hai.", true);
+    custStartCooldown();
+  } catch (e) { custMsg("custVerifyMsg", custErr(e)); }
+}
+
+async function custForgot(){
+  const email = document.getElementById("custForgotEmail").value.trim();
+  if (!email) return custMsg("custForgotMsg", "Email likhein");
+  try {
+    await firebase.auth().sendPasswordResetEmail(email);
+    custMsg("custForgotMsg", "Agar ye email registered hai to reset link bhej diya gaya hai.", true);
+  } catch (e) { custMsg("custForgotMsg", custErr(e)); }
+}
+
+async function custLogout(){
+  try { await firebase.auth().signOut(); toast("Logout ho gaye"); }
+  catch (e) { toast(e.message); }
+  const m = document.getElementById("custAccountModal"); if (m) m.classList.remove("show");
+}
+
+function openCustAccount(){
+  if (!custUser) return openCustAuth("login");
+  const p = custProfile || {};
+  document.getElementById("caName").value = p.name || custUser.displayName || "";
+  document.getElementById("caPhone").value = p.phone || "";
+  document.getElementById("caEmail").value = custUser.email || "";
+  custMsg("caMsg", "");
+  document.getElementById("custAccountModal").classList.add("show");
+}
+
+async function custSaveAccount(){
+  const name = document.getElementById("caName").value.trim();
+  const phone = document.getElementById("caPhone").value.trim();
+  if (name.length < 2) return custMsg("caMsg", "Naam likhein");
+  if (phone.replace(/\D/g, "").length < 10) return custMsg("caMsg", "Sahi phone number likhein");
+  if (!custUser) return custMsg("caMsg", "Pehle login karein");
+  try {
+    await db.collection("users").doc(custUser.uid).set({ name: name, phone: phone }, { merge: true });
+    if (custUser.displayName !== name) await custUser.updateProfile({ displayName: name });
+    custProfile = Object.assign({}, custProfile || {}, { name: name, phone: phone });
+    custMsg("caMsg", "Profile save ho gaya ✅", true);
+    renderDrawer();
+  } catch (e) { custMsg("caMsg", custErr(e)); }
+}
+
+function custMenuItems(d){
+  const add = (label, fn, gold) => {
+    const a = document.createElement("a");
+    a.textContent = label;
+    a.style.fontWeight = "700";
+    if (gold) a.style.color = "#d4af37";
+    a.onclick = () => { fn(); toggleDrawer(); };
+    d.appendChild(a);
+  };
+  if (custUser && custUser.emailVerified) {
+    add("👤 MY ACCOUNT", () => openCustAccount(), true);
+        add("📦 MY ORDERS", () => openMyOrders(), true);
+        add("📍 MY ADDRESSES", () => openAddr(), true);
+    add("🚪 LOGOUT", () => custLogout());
+  } else if (custUser) {
+    add("📧 VERIFY EMAIL", () => openCustAuth("verify"), true);
+    add("🚪 LOGOUT", () => custLogout());
+  } else {
+    add("👤 LOGIN / SIGN UP", () => openCustAuth("login"), true);
+  }
+    }
+
+/* Auth state: admin ka account customer menu mein nahi aayega */
+firebase.auth().onAuthStateChanged(async function(user){
+  try {
+    if (!user) { custUser = null; custProfile = null; }
+    else {
+      const prof = await custEnsureProfile(user, {});
+      if (prof && prof.admin === true) { custUser = null; custProfile = null; }
+      else { custUser = user; custProfile = prof; if (user.emailVerified) custSyncData(); }
+    }
+  } catch (e) { console.error("cust auth state", e); }
+  renderDrawer();
+});
+firebase.auth().getRedirectResult().then(function(r){
+  if (r && r.user) custEnsureProfile(r.user, {}).catch(function(){});
+}).catch(function(){});
+/* ===== END CUSTOMER AUTH ===== */
 let isAdmin = false;
 // Admin login manual only — ?admin kholo aur har baar credentials daalo (no auto-login).
 function colorHex(n) {
@@ -1758,7 +2115,7 @@ function renderDrawer(){
   const d = document.getElementById("drawerLinks");
   if(!d) return;
   d.innerHTML = "";
-  
+    custMenuItems(d);
   const activeCats = getActiveCategories();
 
   ["ALL", ...activeCats].forEach(c => {
@@ -1777,6 +2134,7 @@ function renderDrawer(){
   a2.textContent = "❤️ WISHLIST";
   a2.onclick = () => { openWishlist(); toggleDrawer(); };
   d.appendChild(a2);
+  
 
   [["ABOUT US","about"],["SHOPPING GUIDE","guide"],["EXCHANGE & RETURNS","returns"],["SHIPPING & DELIVERY","shipping"],["CONTACT US","contact"]].forEach(x => {
     const a = document.createElement("a");
@@ -2373,6 +2731,7 @@ function buyNow(){
 }
 function saveCart(){
   localStorage.setItem("cd_cart", JSON.stringify(cart));
+    custCloudSave("carts", { items: cart });
   const n = cart.reduce((a, c) => a + c.qty, 0);
   document.getElementById("cartCount").textContent = n;
 }
@@ -2383,8 +2742,10 @@ function getWishlist(){
 }
 function saveWishlist(){
   localStorage.setItem("cd_wish", JSON.stringify(wishlist));
+    custCloudSave("wishlists", { items: wishlist });
 }
 function toggleWish(id){
+    if (!custUser || !custUser.emailVerified) { toast("Wishlist ke liye pehle login karein"); openCustAuth("login"); return; }
   const i = wishlist.findIndex(w => w.id === id);
   if (i > -1) wishlist.splice(i, 1);
   else {
@@ -2538,6 +2899,7 @@ function openCheckout(){
   }
   document.getElementById("coMessage").textContent = "";
   document.getElementById("checkoutModal").classList.add("show");
+    custFillCheckout();
   document.body.style.overflow = "hidden";
 }
 document.addEventListener("focusin", function(e){
@@ -2598,7 +2960,7 @@ async function placeOrder(){
    if (tC >= 2 && BUNDLE_ON) { const bP = BUNDLE_PRICE * Math.floor(tC / 2) + (tC % 2) * (tT / tC); if (bP < tT) bSaved = tT - bP; }
   const cSaved2 = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
   const grandTotal = total + delivery - Math.max(bSaved, cSaved2);
-  const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "",customerUid: (custUser && custUser.uid) ? custUser.uid : "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   if (catalogMode) { try { await Promise.all(items.map(it => { const pp = products.find(x => x.id === it.id); return pp ? fetchFullInto(pp, true) : null; })); } catch (e) { console.error(e); } }
 for (const it of items) {
   const p = products.find(x => x.id === it.id);
@@ -2628,7 +2990,7 @@ for (const it of items) {
     order.orderId = docId;
     order.trackToken = docId;
     await db.collection("orders").doc(docId).set(order);
-
+    await db.collection("orderStatus").doc(docId).set({ status: "Pending", updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
     cart = [];
     saveCart();
     couponDiscount = 0;
@@ -3568,7 +3930,7 @@ async function updateStatus(id, status){
     if (status === "Cancelled" && od.exists && ["Confirmed","Shipping","Delivered"].includes(od.data().status)) await restockOrder(od.data());
     
     await db.collection("orders").doc(id).update({ status });
-
+    await db.collection("orderStatus").doc(id).set({ status: status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
 if (status === "Confirmed") {
   try {
     const items = od.data().items || [];
@@ -3689,65 +4051,241 @@ function trackOrder(){
   if (!val) { toast("Enter your Order ID"); return; }
   const res = document.getElementById("trackResult");
   res.innerHTML = '<p style="text-align:center;padding:20px">Searching...</p>';
-  db.collection("orders").doc(val).get().then(doc => {
+  db.collection("orderStatus").doc(val).get().then(doc => {
     if (!doc.exists) { res.innerHTML = '<p class="empty">No order found. Check your Order ID.</p>'; return; }
-    const snap = { empty: false, forEach: function(fn){ fn(doc); } }; 
-    res.innerHTML = "";
+    const o = doc.data();
     const steps = ["Pending", "Confirmed", "Shipping", "Delivered"];
-    snap.forEach(doc => {
-      const o = doc.data();
-      const curIdx = steps.indexOf(o.status);
-      const d = document.createElement("div");
-      d.className = "track-item track-card";
-      let timeline = '<div class="track-timeline">';
-      steps.forEach((s, i) => {
-        timeline += '<div class="track-step' + (i <= curIdx ? ' done' : '') + '"><span>' + s + '</span></div>';
-      });
-      timeline += '</div>';
-      d.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
-        + '<strong style="font-size:15px">' + esc(o.customer) + '</strong>'
-        + '<span class="track-status ' + o.status + '">' + o.status + '</span>'
-        + '</div>'
-        + timeline
-        + '<div class="track-info">Order ID: ' + (o.orderId || doc.id) + '</div>'
-        + '<div class="track-info">Total: ' + fmt(o.total) + '</div>'
-        + '<div style="margin:10px 0">' + (o.items||[]).map(i => {
-        const pp = products.find(x => x.id === i.id);
-        const im = pp ? (pp.image || "") : "";
-        return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">'
-          + (im ? '<img src="'+im+'" style="width:56px;height:72px;object-fit:cover;border-radius:8px;cursor:pointer;background:#f5f5f5" onclick="viewImg(\''+im+'\')">' : '')
-          + '<div><div style="font-size:13px;font-weight:600">'+i.name+'</div><div style="font-size:12px;color:#888">'+(i.color||'-')+' | Size: '+i.size+' | x'+i.qty+'</div></div>'
-          + '</div>';
-      }).join("") + '</div>'
-        + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + o.reply + '</div>' : '')
-        + '<div class="track-info" style="margin-top:10px;font-size:12px;color:#999">Placed: ' + (o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString() : "N/A") + '</div>'
-              + (o.status === "Pending" ? '<button onclick="cancelOrder(\'' + o.orderId + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
-+ (o.status === "Cancelled" ? '<button onclick="removeCancelled(\'' + o.orderId + '\')" style="margin-top:12px;background:#555;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">REMOVE CANCELLED ORDER</button>' : '')
-      res.appendChild(d);
-    });
+    const curIdx = steps.indexOf(o.status);
+    let timeline = '<div class="track-timeline">';
+    steps.forEach((s, i) => { timeline += '<div class="track-step' + (i <= curIdx ? ' done' : '') + '"><span>' + s + '</span></div>'; });
+    timeline += '</div>';
+    res.innerHTML = '<div class="track-item track-card">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+      + '<strong style="font-size:15px">Order ' + esc(doc.id) + '</strong>'
+      + '<span class="track-status ' + esc(o.status) + '">' + esc(o.status) + '</span></div>'
+      + timeline
+      + (o.status === "Pending" ? '<button onclick="cancelOrder(\'' + esc(doc.id) + '\')" style="margin-top:12px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '')
+      + '<p style="font-size:12px;color:#999;margin-top:12px">Order ki poori detail ke liye apne account mein login karein.</p>'
+      + '</div>';
   }).catch(e => { res.innerHTML = "Error: " + e.message; });
 }
-  emailjs.init({publicKey:"onKfdiuEHid3NeRnn"});
-function cancelOrder(orderId){
+function cancelOrder(orderId, fromAccount){
   if(!confirm("Are you sure you want to cancel this order?")) return;
-  db.collection("orders").doc(orderId).get().then(doc=>{
-    if(!doc.exists) return;
-    const snap={forEach:function(fn){fn(doc);}};
-    snap.forEach(doc=>{
-doc.ref.update({status:"Cancelled"}).then(()=>{
-  const od = doc.data();
-  sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Customer: " + (od.customer||"-") + "\nPhone: " + (od.phone||"-") + "\nEmail: " + (od.email||"-"));
-  if (od.email) sendMail(od.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
-}).then(()=>{
-          toast("Order cancelled. We'll be in touch.");
-          trackOrder();
-        }).catch(e=>{
-          toast("Order cancelled but email failed: " + JSON.stringify(e));
-          trackOrder();
-        });
-      });
-    });
+  const ts = firebase.firestore.FieldValue.serverTimestamp();
+  db.collection("orders").doc(orderId).update({ status: "Cancelled" })
+    .then(() => db.collection("orderStatus").doc(orderId).update({ status: "Cancelled", updatedAt: ts }))
+    .then(() => {
+      sendMail(ADMIN_EMAIL, "ORDER CANCELLED - " + orderId, "Order ID: " + orderId + "\nAdmin panel mein customer ki detail dekhein.");
+      if (fromAccount && custUser && custUser.email) {
+        sendMail(custUser.email, "Aapka JAZB Order Cancelled - " + orderId, "Order Cancelled\n\nOrder ID: " + orderId + "\n\nAgar galti se cancel hua hai toh rabta karein: https://jazb.wear");
+      }
+      toast("Order cancelled. We'll be in touch.");
+      if (fromAccount) loadMyOrders(); else trackOrder();
+    })
+    .catch(e => toast("Error: " + e.message));
 }
+
+/* ===== MY ORDERS (sirf logged-in customer ke apne orders) ===== */
+function openMyOrders(){
+  if (!custUser) return openCustAuth("login");
+  document.getElementById("myOrdersModal").style.display = "flex";
+  loadMyOrders();
+}
+function closeMyOrders(){ document.getElementById("myOrdersModal").style.display = "none"; }
+function orderTime(o){ return (o.createdAt && o.createdAt.toDate) ? o.createdAt.toDate().getTime() : 0; }
+async function loadMyOrders(){
+  const box = document.getElementById("myOrdersList");
+  if (!box) return;
+  if (!custUser) { box.innerHTML = '<p class="empty">Pehle login karein.</p>'; return; }
+  box.innerHTML = '<p style="text-align:center;padding:20px">Loading...</p>';
+  try {
+    const snap = await db.collection("orders").where("customerUid", "==", custUser.uid).get();
+    const list = [];
+    snap.forEach(d => list.push(Object.assign({ _id: d.id }, d.data())));
+    list.sort((a, b) => orderTime(b) - orderTime(a));
+    if (!list.length) { box.innerHTML = '<p class="empty">Abhi koi order nahi hai.</p>'; return; }
+    box.innerHTML = list.map(renderMyOrder).join("");
+  } catch (e) {
+    box.innerHTML = '<p style="color:#c0392b">Error: ' + esc(e.message) + '</p>';
+  }
+}
+function renderMyOrder(o){
+  const id = o.orderId || o._id;
+  const date = (o.createdAt && o.createdAt.toDate) ? o.createdAt.toDate().toLocaleDateString() : "-";
+  const items = (o.items || []).map(i => {
+    const pp = products.find(x => x.id === i.id);
+    const im = pp ? (pp.image || "") : "";
+    return '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">'
+      + (im ? '<img src="' + im + '" style="width:56px;height:72px;object-fit:cover;border-radius:8px;background:#f5f5f5;cursor:pointer" onclick="viewImg(\'' + im + '\')">' : '')
+      + '<div><div style="font-size:13px;font-weight:600">' + esc(i.name) + '</div>'
+      + '<div style="font-size:12px;color:#888">' + esc(i.color || "-") + ' | Size: ' + esc(i.size) + ' | Qty: ' + esc(i.qty) + ' | ' + fmt(i.price) + '</div></div></div>';
+  }).join("");
+  const cancel = o.status === "Pending" ? '<button onclick="cancelOrder(\'' + esc(id) + '\', true)" style="margin-top:10px;background:#c0392b;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">CANCEL ORDER</button>' : '';
+  return '<div class="track-item track-card" style="margin-bottom:14px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>' + esc(id) + '</strong><span class="track-status ' + esc(o.status) + '">' + esc(o.status) + '</span></div>'
+    + items
+    + '<div class="track-info">Total: ' + fmt(o.total) + '</div>'
+    + '<div class="track-info">Date: ' + date + '</div>'
+    + '<div class="track-info">Address: ' + esc(o.address) + ', ' + esc(o.city) + '</div>'
+    + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + esc(o.reply) + '</div>' : '')
+    + cancel + '</div>';
+}
+/* ===== END MY ORDERS ===== */
+  /* ===== PHASE 3: wishlist/cart cloud sync, saved addresses ===== */
+function custCloudSave(col, data){
+  if (!custUser || !custUser.emailVerified) return;
+  db.collection(col).doc(custUser.uid).set(data).catch(function(e){ console.error("cloud save", col, e); });
+}
+async function custSyncData(){
+  if (!custUser || !custUser.emailVerified) return;
+  try {
+    const uid = custUser.uid;
+    const wSnap = await db.collection("wishlists").doc(uid).get();
+    const cloudW = (wSnap.exists && wSnap.data().items) || [];
+    const mergedW = cloudW.slice();
+    wishlist.forEach(w => { if (!mergedW.some(x => x.id === w.id)) mergedW.push(w); });
+    wishlist = mergedW;
+    localStorage.setItem("cd_wish", JSON.stringify(wishlist));
+    db.collection("wishlists").doc(uid).set({ items: wishlist }).catch(function(){});
+    document.querySelectorAll(".wish-btn").forEach(b => {
+      b.textContent = wishlist.some(w => w.id === b.dataset.id) ? "❤️" : "🤍";
+    });
+
+    const cSnap = await db.collection("carts").doc(uid).get();
+    const cloudC = (cSnap.exists && cSnap.data().items) || [];
+    const key = c => c.id + "|" + c.size + "|" + c.color;
+    const mergedC = cloudC.map(c => Object.assign({}, c));
+    cart.forEach(c => {
+      const ex = mergedC.find(x => key(x) === key(c));
+      if (ex) ex.qty = Math.max(ex.qty, c.qty);
+      else mergedC.push(Object.assign({}, c));
+    });
+    cart = mergedC;
+    saveCart();
+  } catch (e) { console.error("sync", e); }
+}
+
+function openAddr(){
+  if (!custUser || !custUser.emailVerified) return openCustAuth("login");
+  document.getElementById("addrModal").style.display = "flex";
+  resetAddrForm();
+  loadAddr();
+}
+function closeAddr(){ document.getElementById("addrModal").style.display = "none"; }
+function resetAddrForm(){
+  ["adName","adPhone","adCity","adAddress","adEditId"].forEach(id => { document.getElementById(id).value = ""; });
+  document.getElementById("addrFormTitle").textContent = "NAYA ADDRESS";
+  custMsg("adMsg", "");
+}
+async function loadAddr(){
+  const box = document.getElementById("addrList");
+  box.innerHTML = '<p style="text-align:center;padding:12px">Loading...</p>';
+  try {
+    const snap = await db.collection("addresses").where("uid", "==", custUser.uid).get();
+    const list = [];
+    snap.forEach(d => list.push(Object.assign({ _id: d.id }, d.data())));
+    list.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+    if (!list.length) { box.innerHTML = '<p class="empty">Abhi koi address save nahi hai.</p>'; return; }
+    box.innerHTML = list.map(a => {
+      const id = esc(a._id);
+      return '<div class="track-item track-card" style="margin-bottom:12px">'
+        + '<strong>' + esc(a.name) + '</strong>' + (a.isDefault ? ' <span style="color:#25D366;font-size:12px">(DEFAULT)</span>' : '')
+        + '<div class="track-info">' + esc(a.phone) + '</div>'
+        + '<div class="track-info">' + esc(a.address) + ', ' + esc(a.city) + '</div>'
+        + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'
+        + (a.isDefault ? '' : '<button onclick="setDefaultAddr(\'' + id + '\')" class="addr-btn">DEFAULT</button>')
+        + '<button onclick="editAddr(\'' + id + '\')" class="addr-btn">EDIT</button>'
+        + '<button onclick="delAddr(\'' + id + '\')" class="addr-btn addr-del">DELETE</button>'
+        + '</div></div>';
+    }).join("");
+  } catch (e) { box.innerHTML = '<p style="color:#c0392b">Error: ' + esc(e.message) + '</p>'; }
+}
+async function editAddr(id){
+  try {
+    const d = await db.collection("addresses").doc(id).get();
+    if (!d.exists) return;
+    const a = d.data();
+    document.getElementById("adName").value = a.name || "";
+    document.getElementById("adPhone").value = a.phone || "";
+    document.getElementById("adCity").value = a.city || "";
+    document.getElementById("adAddress").value = a.address || "";
+    document.getElementById("adEditId").value = id;
+    document.getElementById("addrFormTitle").textContent = "ADDRESS EDIT KAREIN";
+    custMsg("adMsg", "");
+  } catch (e) { toast("Error: " + e.message); }
+}
+async function saveAddr(){
+  if (!custUser || !custUser.emailVerified) return;
+  const name = document.getElementById("adName").value.trim();
+  const phone = document.getElementById("adPhone").value.trim();
+  const city = document.getElementById("adCity").value.trim();
+  const address = document.getElementById("adAddress").value.trim();
+  if (name.length < 2) return custMsg("adMsg", "Naam likhein");
+  if (phone.replace(/\D/g, "").length < 10) return custMsg("adMsg", "Sahi phone number likhein");
+  if (!city) return custMsg("adMsg", "City likhein");
+  if (address.length < 5) return custMsg("adMsg", "Complete address likhein");
+  const editId = document.getElementById("adEditId").value;
+  try {
+    if (editId) {
+      await db.collection("addresses").doc(editId).update({ name: name, phone: phone, city: city, address: address });
+    } else {
+      const snap = await db.collection("addresses").where("uid", "==", custUser.uid).get();
+      await db.collection("addresses").add({
+        uid: custUser.uid, name: name, phone: phone, city: city, address: address,
+        isDefault: snap.empty,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    resetAddrForm();
+    loadAddr();
+    toast("Address save ho gaya ✅");
+  } catch (e) { custMsg("adMsg", "Error: " + e.message); }
+}
+async function setDefaultAddr(id){
+  try {
+    const snap = await db.collection("addresses").where("uid", "==", custUser.uid).get();
+    const batch = db.batch();
+    snap.forEach(d => batch.update(d.ref, { isDefault: d.id === id }));
+    await batch.commit();
+    loadAddr();
+  } catch (e) { toast("Error: " + e.message); }
+}
+async function delAddr(id){
+  if (!confirm("Ye address delete karein?")) return;
+  try {
+    const d = await db.collection("addresses").doc(id).get();
+    const wasDefault = d.exists && d.data().isDefault;
+    await db.collection("addresses").doc(id).delete();
+    if (wasDefault) {
+      const snap = await db.collection("addresses").where("uid", "==", custUser.uid).limit(1).get();
+      if (!snap.empty) await snap.docs[0].ref.update({ isDefault: true });
+    }
+    loadAddr();
+    toast("Address delete ho gaya");
+  } catch (e) { toast("Error: " + e.message); }
+}
+async function custFillCheckout(){
+  if (!custUser || !custUser.emailVerified) return;
+  try {
+    const emailEl = document.getElementById("coEmail");
+    if (emailEl && !emailEl.value) emailEl.value = custUser.email || "";
+    const snap = await db.collection("addresses").where("uid", "==", custUser.uid).get();
+    let def = null;
+    snap.forEach(d => { if (d.data().isDefault) def = d.data(); });
+    if (!def) return;
+    document.getElementById("coName").value = def.name || "";
+    document.getElementById("coPhone").value = def.phone || "";
+    document.getElementById("coAddress").value = def.address || "";
+    const sel = document.getElementById("coCity");
+    const other = document.getElementById("coCityOther");
+    const found = [...sel.options].some(o => o.value === def.city);
+    if (found) { sel.value = def.city; other.style.display = "none"; other.value = ""; }
+    else { sel.value = "Other"; other.style.display = "block"; other.value = def.city || ""; }
+  } catch (e) { console.error("fill checkout", e); }
+}
+/* ===== END PHASE 3 ===== */
+  emailjs.init({publicKey:"onKfdiuEHid3NeRnn"});
+
 function expandPdpImg(){
   if (document.querySelector(".pdp-exp")) return;
   const imgs = window.pdpImgs || [];
@@ -3876,6 +4414,7 @@ function viewImg(url){
     const snap={forEach:function(fn){fn(doc);}};
     snap.forEach(doc=>{
       if(doc.data().status==="Cancelled"){
+                db.collection("orderStatus").doc(orderId).delete().catch(()=>{});
         doc.ref.delete().then(()=>{
           toast("Cancelled order removed ✅");
           trackOrder();
@@ -4446,6 +4985,7 @@ document.addEventListener("change", function(e) {
     try {
       if (typeof db !== "undefined") {
         db.collection("orders").doc(id).update({ status: newStatus });
+                db.collection("orderStatus").doc(id).set({ status: newStatus, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
       }
     } catch (err) {
       console.error(err);
