@@ -1311,7 +1311,9 @@ setInterval(function() {
     <button class="full-btn" onclick="saveSetting('focusShorts')">SAVE SHORTS FOCUS</button>
 
     <h3 style="margin:20px 0 10px">CATALOG IMAGES (Tabs)</h3>
-    
+        <!-- ALL Tab -->
+    <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setcatAll" placeholder="ALL tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setcatAll')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
+    <button class="full-btn" onclick="saveSetting('catAll')">SAVE ALL TAB</button>
     <!-- T-Shirts Tab -->
     <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;"><input id="setCatT" placeholder="T-Shirts tab image URL" style="margin:0; flex:1;"><input type="file" accept="image/*" style="display:none;" onchange="uploadSettingImage(this, 'setCatT')"><button type="button" onclick="this.previousElementSibling.click()" style="background:#222;color:#fff;border:none;padding:10px 12px;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap;">📁 Upload</button></div>
     <button class="full-btn" onclick="saveSetting('catT')">SAVE T-SHIRTS TAB</button>
@@ -4579,6 +4581,7 @@ function applySettings(s){
 
   // 2. Men categories mapping
   if (typeof catImages !== 'undefined') {
+        if (s.catAll) catImages["ALL"] = s.catAll;
     if (s.catT) catImages["T-SHIRTS"] = s.catT;
     if (s.catTrackSuit) catImages["TRACK SUIT"] = s.catTrackSuit;
     if (s.catShirts) catImages["SHIRTS"] = s.catShirts;
