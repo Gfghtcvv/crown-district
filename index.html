@@ -1882,7 +1882,7 @@ async function custGoogle(){
     await custEnsureProfile(cred.user, {});
     custUser = cred.user;
     closeCustAuth();
-    toast("Welcome ✅");
+        toast(cred.additionalUserInfo && cred.additionalUserInfo.isNewUser ? "Account ban gaya ✅ Aap login ho gaye" : "Welcome ✅");
     renderDrawer();
   } catch (e) {
     if (e && e.code === "auth/popup-blocked") { return firebase.auth().signInWithRedirect(provider); }
@@ -2087,8 +2087,9 @@ function renderTabs(){
   // ALL Tab
   const allBtn = document.createElement("button");
   allBtn.className = "tab " + (currentCat === "ALL" ? "active" : "");
+  window.ALL_FALLBACK = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140"><rect width="200" height="140" fill="#222"/><text x="100" y="86" font-size="44" font-family="Arial" font-weight="700" fill="#888" text-anchor="middle">ALL</text></svg>');
   let allImg = (catImages && catImages['ALL']) ? catImages['ALL'] : 'https://i.supaimg.com/0bd64392-b233-4010-9f88-816df6f7af5b/9eaa081f-6e95-485d-9609-56ce253b2221.png';
-  let imgTag = '<img src="' + allImg + '" onerror="this.src=\'https://placehold.co/200x140?text=ALL\'">';
+  let imgTag = '<img src="' + allImg + '" onerror="this.onerror=null;this.src=window.ALL_FALLBACK">';
   allBtn.innerHTML = imgTag + '<span>ALL</span>';
   allBtn.onclick = () => setCat("ALL");
   t.appendChild(allBtn);
