@@ -1932,6 +1932,8 @@ async function custLogout(){
     wishlist = [];
     localStorage.removeItem("cd_cart");
     localStorage.removeItem("cd_wish");
+        document.getElementById("cartCount").textContent = "0";
+    if (typeof renderProducts === "function") renderProducts();
     await firebase.auth().signOut();
     toast("Logout ho gaye");
                  }
@@ -3597,6 +3599,15 @@ function addColorRow(c){
   row.querySelector(".cr-del").onclick = () => row.remove();
   document.getElementById("pfColors").appendChild(row);
 }
+  function smallestJpeg(canvas){
+  const LIMIT = CLOUDINARY_CLOUD ? 9000000 : 380000;
+  let url = "";
+  for (const q of [0.85, 0.75, 0.65, 0.55]) {
+    url = canvas.toDataURL('image/jpeg', q);
+    if (url.length <= LIMIT) break;
+  }
+  return url;
+  }
 function uploadSettingImage(fileInput, targetId) {
     const file = fileInput.files[0];
     if (!file) return;
@@ -3608,9 +3619,8 @@ function uploadSettingImage(fileInput, targetId) {
             const canvas = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
-
-           const MAX_WIDTH = CLOUDINARY_CLOUD ? 1000 : 550;
-            const MAX_HEIGHT = CLOUDINARY_CLOUD ? 1000 : 550;
+  const MAX_WIDTH = 1000;
+const MAX_HEIGHT = 1000;
 
             if (width > height) {
                 if (width > MAX_WIDTH) {
@@ -3627,9 +3637,11 @@ function uploadSettingImage(fileInput, targetId) {
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+ctx.fillRect(0, 0, width, height);
             ctx.drawImage(img, 0, 0, width, height);
 
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            const compressedDataUrl = smallestJpeg(canvas);
             const targetInput = document.getElementById(targetId);
             if (targetInput) pushToCloud(compressedDataUrl, targetInput);
         };
@@ -3652,8 +3664,8 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       let width = img.width;
       let height = img.height;
 
-      const MAX_WIDTH = CLOUDINARY_CLOUD ? 1000 : 550;
-      const MAX_HEIGHT = CLOUDINARY_CLOUD ? 1000 : 550;
+    const MAX_WIDTH = 1000;
+const MAX_HEIGHT = 1000;
 
       if (width > height) {
         if (width > MAX_WIDTH) {
@@ -3671,9 +3683,11 @@ function uploadDirectImage(fileInput, targetClass, parentRow) {
       canvas.height = height;
 
       const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+ctx.fillRect(0, 0, width, height);
       ctx.drawImage(img, 0, 0, width, height);
 
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      const compressedDataUrl = smallestJpeg(canvas);
 
       const targetInput = parentRow.querySelector('.' + targetClass);
       if (targetInput) pushToCloud(compressedDataUrl, targetInput);
