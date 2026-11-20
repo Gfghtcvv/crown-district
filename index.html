@@ -3880,6 +3880,7 @@ function loadOrders(){
   unsubOrders = db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
     const list = document.getElementById("orderList");
     const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        window._ord = {}; orders.forEach(o => { window._ord[o.id] = o; });
     if (!orders.length) { list.innerHTML = '<p class="empty">No orders yet</p>'; return; }
     list.innerHTML = "";
     orders.forEach(o => {
@@ -3911,6 +3912,7 @@ function loadOrders(){
         + '<select id="st_' + o.id + '" class="status-select" data-id="' + o.id + '" data-customer="' + esc(o.customer) + '" data-orderid="' + (o.orderId || o.id) + '" data-phone="' + o.phone + '" data-total="' + fmt(o.total) + '" data-items="' + esc(JSON.stringify(o.items || [])) + '">'
         + ['Pending','Confirmed','Shipping','Delivered','Cancelled'].map(s => '<option ' + (s === o.status ? 'selected' : '') + '>' + s + '</option>').join("")
         + '</select>'
+                + '<button onclick="printOrderPdf(window._ord[\'' + o.id + '\'])">PDF</button>'
         + '<button onclick="retryAdminEmail(\'' + o.id + '\')">EMAIL</button>'
         + '<button onclick="replyToOrder(\'' + o.id + '\')">REPLY</button>'
         + '<button onclick="deleteOrder(\'' + o.id + '\')" style="border-color:#c0392b;color:#c0392b">DELETE</button>'
@@ -4154,6 +4156,27 @@ function renderMyOrder(o){
     + (o.reply ? '<div class="track-reply"><strong>Update from JAZB:</strong><br>' + esc(o.reply) + '</div>' : '')
     + cancel + '</div>';
 }
+  /* ===== ORDER PDF (print / Save as PDF) ===== */
+function printOrderPdf(o){
+  if (!o) { toast("Order nahi mila"); return; }
+  const w = window.open("", "_blank");
+  if (!w) { toast("Popup allow karein"); return; }
+  const id = o.orderId || o.id || o._id || "";
+  const date = (o.createdAt && o.createdAt.toDate) ? o.createdAt.toDate().toLocaleString() : "-";
+  const rows = (o.items || []).map(i => '<tr><td>' + esc(i.name) + '</td><td>' + esc(i.color || "-") + '</td><td>' + esc(i.size || "-") + '</td><td>' + esc(i.qty) + '</td><td style="text-align:right">' + fmt(i.price) + '</td><td style="text-align:right">' + fmt((Number(i.price) || 0) * (Number(i.qty) || 1)) + '</td></tr>').join("");
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invoice ' + esc(id) + '</title>'
+    + '<style>body{font-family:Arial,sans-serif;color:#111;padding:28px;max-width:720px;margin:auto}h1{margin:0;font-size:26px;letter-spacing:2px}.muted{color:#666;font-size:12px}table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}th{background:#f4f4f4}.total{text-align:right;font-size:16px;font-weight:700;margin-top:14px}.box{margin-top:18px;font-size:13px;line-height:1.6}</style></head><body>'
+    + '<h1>JAZB</h1><div class="muted">Invoice / Order Receipt</div>'
+    + '<div class="box"><strong>Order ID:</strong> ' + esc(id) + '<br><strong>Date:</strong> ' + esc(date) + '</div>'
+    + '<div class="box"><strong>Customer:</strong> ' + esc(o.customer || "-") + '<br><strong>Phone:</strong> ' + esc(o.phone || "-") + '<br>' + (o.email ? '<strong>Email:</strong> ' + esc(o.email) + '<br>' : '') + '<strong>Address:</strong> ' + esc(o.address || "") + ', ' + esc(o.city || "") + (o.notes ? '<br><strong>Notes:</strong> ' + esc(o.notes) : '') + '</div>'
+    + '<table><thead><tr><th>Item</th><th>Color</th><th>Size</th><th>Qty</th><th style="text-align:right">Price</th><th style="text-align:right">Amount</th></tr></thead><tbody>' + rows + '</tbody></table>'
+    + '<div class="total">Total: ' + fmt(o.total) + '</div>'
+    + '<p class="muted" style="margin-top:30px">Shukriya JAZB ko choose karne ka.</p>'
+    + '<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>'
+    + '</body></html>');
+  w.document.close();
+}
+/* ===== END ORDER PDF ===== */
 /* ===== END MY ORDERS ===== */
   /* ===== PHASE 3: wishlist/cart cloud sync, saved addresses ===== */
 function custCloudSave(col, data){
