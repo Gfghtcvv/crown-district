@@ -1128,6 +1128,7 @@ setInterval(function() {
 <div id="checkoutModal" class="modal">
   <div class="modal-card">
     <div class="modal-head"><h2>CHECKOUT</h2><button onclick="closeCheckout()">&#10005;</button></div>
+    <select id="coAddrPick" onchange="pickCheckoutAddr(this.value)" style="display:none;margin-bottom:8px"><option value="">Saved address chunein</option></select>
     <input id="coName" placeholder="Full Name">
     <input id="coPhone" type="tel" placeholder="Phone (03xx-xxxxxxx)">
     <input id="coEmail" type="email" placeholder="Email (required)" autocomplete="off" autocapitalize="none" autocorrect="off">
@@ -1774,6 +1775,8 @@ function showCustView(v){
 function openCustAuth(view){
   const m = document.getElementById("custAuthModal");
   if (!m) return;
+    const pdpEl = document.getElementById("pdp");
+  if (pdpEl && pdpEl.classList.contains("show") && window._curPdpId) window._loginReturnPid = window._curPdpId;
   if (custUser && custUser.emailVerified) { openCustAccount(); return; }
   showCustView(custUser ? "verify" : (view || "login"));
   m.classList.add("show");
@@ -1872,6 +1875,7 @@ async function custLogin(){
     closeCustAuth();
     toast("Welcome ✅");
     renderDrawer();
+        custReturnToPdp();
   } catch (e) { custMsg("custLoginMsg", custErr(e)); }
 }
 
@@ -1886,6 +1890,7 @@ async function custGoogle(){
     closeCustAuth();
         toast(cred.additionalUserInfo && cred.additionalUserInfo.isNewUser ? "Account ban gaya ✅ Aap login ho gaye" : "Welcome ✅");
     renderDrawer();
+        custReturnToPdp();
   } catch (e) {
     if (e && e.code === "auth/popup-blocked") { return firebase.auth().signInWithRedirect(provider); }
     custMsg("custLoginMsg", custErr(e));
@@ -2454,6 +2459,7 @@ function renderPdpSizes(p){
   sz.appendChild(_t);
 }
 function openPDP(p){
+    window._curPdpId = p.id;
   (function(){
     let rv=JSON.parse(localStorage.getItem("cd_recent")||"[]");
     rv=rv.filter(x=>x!==p.id);
@@ -2589,6 +2595,7 @@ if (allSoldOut) {
   document.body.style.overflow = "hidden";
 }
 function closePDP(){
+    window._curPdpId = null;
   document.querySelectorAll(".pdp-images").forEach(w => { const p = w.parentElement; if (p) p.querySelectorAll("div").forEach(x => { if (x.textContent === "SOLD OUT" && x.style.position === "absolute") x.remove(); }); });
   document.getElementById("pdp").classList.remove("show");
     document.getElementById("pdpSticky").classList.remove("show");
@@ -2972,7 +2979,7 @@ async function placeOrder(){
    if (tC >= 2 && BUNDLE_ON) { const bP = BUNDLE_PRICE * Math.floor(tC / 2) + (tC % 2) * (tT / tC); if (bP < tT) bSaved = tT - bP; }
   const cSaved2 = (couponDiscount > 0 && !hasFlash) ? Math.round(total * couponDiscount / 100) : 0;
   const grandTotal = total + delivery - Math.max(bSaved, cSaved2);
-  const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, status: "Pending", reply: "",customerUid: (custUser && custUser.uid) ? custUser.uid : "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+  const order = { customer: name, phone, email, address, city: finalCity, notes, items, total: grandTotal, delivery: delivery, discount: Math.max(bSaved, cSaved2), status: "Pending", reply: "",customerUid: (custUser && custUser.uid) ? custUser.uid : "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
   if (catalogMode) { try { await Promise.all(items.map(it => { const pp = products.find(x => x.id === it.id); return pp ? fetchFullInto(pp, true) : null; })); } catch (e) { console.error(e); } }
 for (const it of items) {
   const p = products.find(x => x.id === it.id);
@@ -4170,6 +4177,8 @@ function printOrderPdf(o){
     + '<div class="box"><strong>Order ID:</strong> ' + esc(id) + '<br><strong>Date:</strong> ' + esc(date) + '</div>'
     + '<div class="box"><strong>Customer:</strong> ' + esc(o.customer || "-") + '<br><strong>Phone:</strong> ' + esc(o.phone || "-") + '<br>' + (o.email ? '<strong>Email:</strong> ' + esc(o.email) + '<br>' : '') + '<strong>Address:</strong> ' + esc(o.address || "") + ', ' + esc(o.city || "") + (o.notes ? '<br><strong>Notes:</strong> ' + esc(o.notes) : '') + '</div>'
     + '<table><thead><tr><th>Item</th><th>Color</th><th>Size</th><th>Qty</th><th style="text-align:right">Price</th><th style="text-align:right">Amount</th></tr></thead><tbody>' + rows + '</tbody></table>'
+                       + (o.delivery !== undefined ? '<div style="text-align:right;font-size:13px;margin-top:10px">Delivery: ' + (o.delivery ? fmt(o.delivery) : 'FREE') + '</div>' : '')
+    + (o.discount ? '<div style="text-align:right;font-size:13px">Discount: -' + fmt(o.discount) + '</div>' : '')
     + '<div class="total">Total: ' + fmt(o.total) + '</div>'
     + '<p class="muted" style="margin-top:30px">Shukriya JAZB ko choose karne ka.</p>'
     + '<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>'
@@ -4311,24 +4320,45 @@ async function delAddr(id){
     toast("Address delete ho gaya");
   } catch (e) { toast("Error: " + e.message); }
 }
+let _coAddrs = [];
+function coFillFields(a){
+  document.getElementById("coName").value = a.name || "";
+  document.getElementById("coPhone").value = a.phone || "";
+  document.getElementById("coAddress").value = a.address || "";
+  const sel = document.getElementById("coCity");
+  const other = document.getElementById("coCityOther");
+  const found = [...sel.options].some(o => o.value === a.city);
+  if (found) { sel.value = a.city; other.style.display = "none"; other.value = ""; }
+  else { sel.value = "Other"; other.style.display = "block"; other.value = a.city || ""; }
+}
+function pickCheckoutAddr(id){
+  if (!id) return;
+  const a = _coAddrs.find(x => x.id === id);
+  if (a) coFillFields(a);
+}
 async function custFillCheckout(){
   if (!custUser || !custUser.emailVerified) return;
   try {
     const emailEl = document.getElementById("coEmail");
     if (emailEl && !emailEl.value) emailEl.value = custUser.email || "";
     const snap = await db.collection("addresses").where("uid", "==", custUser.uid).get();
-    let def = null;
-    snap.forEach(d => { if (d.data().isDefault) def = d.data(); });
-    if (!def) return;
-    document.getElementById("coName").value = def.name || "";
-    document.getElementById("coPhone").value = def.phone || "";
-    document.getElementById("coAddress").value = def.address || "";
-    const sel = document.getElementById("coCity");
-    const other = document.getElementById("coCityOther");
-    const found = [...sel.options].some(o => o.value === def.city);
-    if (found) { sel.value = def.city; other.style.display = "none"; other.value = ""; }
-    else { sel.value = "Other"; other.style.display = "block"; other.value = def.city || ""; }
+    _coAddrs = [];
+    snap.forEach(d => _coAddrs.push(Object.assign({ id: d.id }, d.data())));
+    const pick = document.getElementById("coAddrPick");
+    if (!pick) return;
+    pick.innerHTML = '<option value="">Saved address chunein ya niche khud type karein</option>' + _coAddrs.map(a => '<option value="' + esc(a.id) + '">' + esc(a.name || "") + ' - ' + esc(a.city || "") + (a.isDefault ? ' (Default)' : '') + '</option>').join("");
+    if (!_coAddrs.length) { pick.style.display = "none"; return; }
+    pick.style.display = "block";
+    const def = _coAddrs.find(a => a.isDefault);
+    if (def) { pick.value = def.id; coFillFields(def); }
   } catch (e) { console.error("fill checkout", e); }
+}
+function custReturnToPdp(){
+  const id = window._loginReturnPid;
+  window._loginReturnPid = null;
+  if (!id) return;
+  const p = products.find(x => x.id === id);
+  if (p) setTimeout(() => openPDP(p), 250);
 }
 /* ===== END PHASE 3 ===== */
   emailjs.init({publicKey:"onKfdiuEHid3NeRnn"});
