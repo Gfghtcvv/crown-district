@@ -4331,8 +4331,15 @@ function coFillFields(a){
   if (found) { sel.value = a.city; other.style.display = "none"; other.value = ""; }
   else { sel.value = "Other"; other.style.display = "block"; other.value = a.city || ""; }
 }
+function coClearFields(){
+  ["coName","coPhone","coAddress"].forEach(k => { const el = document.getElementById(k); if (el) el.value = ""; });
+  const sel = document.getElementById("coCity");
+  if (sel) sel.value = "";
+  const other = document.getElementById("coCityOther");
+  if (other) { other.value = ""; other.style.display = "none"; }
+}
 function pickCheckoutAddr(id){
-  if (!id) return;
+  if (!id) { coClearFields(); return; }
   const a = _coAddrs.find(x => x.id === id);
   if (a) coFillFields(a);
 }
